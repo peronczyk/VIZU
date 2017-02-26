@@ -1,0 +1,30 @@
+<header>
+	<h1>Edycja strony</h1>
+	<a href="" class="nav"><svg class="icon-16 rotate-180"><use xlink:href="#icon-16_arrowhead"></use></svg> Wróć</a>
+</header>
+
+<ul class="tabs">
+	<li class="label">Język:</li>
+	{{ languages }}
+</ul>
+
+<form method="post" action="admin/edit/save?field_category={{ field_type }}&amp;language={{ active_lang }}">
+
+	<fieldset>
+		<div class="box">
+		{{ fields }}
+		</div>
+	</fieldset>
+
+	<div class="buttons ending">
+		<button type="submit" class="accept">
+			Zapisz
+			<svg class="icon-16"><use xlink:href="#icon-16_accept"></use></svg>
+		</button>
+		<button type="reset" class="cancel">
+			Resetuj
+			<svg class="icon-16"><use xlink:href="#icon-16_ban"></use></svg>
+		</button>
+	</div>
+
+</form>

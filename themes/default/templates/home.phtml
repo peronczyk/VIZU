@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="{{ lang id='lang' }}">
+
+<head>
+
+	<base href="{{ site_path }}/">
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<meta name="description" content="{{ setting type='simple' id='site_description' name='Site description' max='160' }}">
+
+	<title>{{ setting type='simple' id='site_title' name='Site name' }}</title>
+
+	<link rel="stylesheet" href="{{ theme_path }}css/theme-basic.min.css" type="text/css">
+
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<link rel="icon" sizes="32x32" href="{{ theme_path }}images/favicon32.png" type="image/png">
+	<link rel="icon" sizes="64x64" href="{{ theme_path }}images/favicon64.png" type="image/png">
+
+	<meta property="og:title" content="{{ setting id='site_title' }}">
+	<meta property="og:url" content="{{ site_path }}">
+	<meta property="og:image" content="{{ theme_path }}images/og-image.png">
+	<meta property="og:description" content="{{ setting id='site_description' }}">
+
+</head>
+
+<body>
+
+	<header class="c-Header">
+		<a href="#top" class="c-Header__logo">{{ setting id='site_title' }}</a>
+		<nav class="c-Header__menu">
+			<ul>
+				<li><a href="#sec01">{{ lang id='start' }}</a></li>
+				<li><a href="#sec02">{{ lang id='about' }}</a></li>
+				<li><a href="#sec03">{{ lang id='contact' }}</a></li>
+			</ul>
+		</nav>
+	</header>
+
+	<section class="u-Hero">
+		<h1>{{ text type='simple' id='slogan' name='Slogan' }}
+	</section>
+
+	<footer>
+	</footer>
+
+</body>
+
+</html>

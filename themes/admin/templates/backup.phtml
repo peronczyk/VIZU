@@ -1,0 +1,42 @@
+<header>
+	<h1>Backup</h1>
+</header>
+
+<div class="box grid">
+	<div class="row">
+		<div class="col-6 pad">
+			<h3><strong>Wykonaj</strong> kopię bezpieczeństwa</h3>
+			<p>Ta czynność pobierze na Twój dysk kopię bezpieczeństwa danych zapisanych na serwerze. Dzięki temu plikowi będzie można w każdej chwili odtworzyć serwis po jakiejkolwiek awarii.</p>
+		</div>
+
+		<div class="col-6 pad">
+			<h3><strong>Wczytaj</strong> kopię bezpieczeństwa</h3>
+			<p>Ta czynność wczyta z pliku kopii bezpieczeństwa dane i <strong>NADPISZE</strong> nimi aktualne dane serwisu. Pamiętaj że czynność ta jest nieodwracalna. Jeśli wprowadzono do serwisu ważne treści należy najpierw wykonać backup.</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-6 pad">
+			<form method="post" action="admin/backup/save">
+				<button type="submit" class="accept">
+					Wykonaj
+					<svg class="icon-16"><use xlink:href="#icon-16_cloud-download"></use></svg>
+				</button>
+			</form>
+		</div>
+
+		<div class="col-6 pad">
+			<form method="post" action="admin/backup/upload">
+				<label class="file">
+					Wybierz plik
+					<input type="file" name="backup-file">
+				</label>
+				<br>
+				<button type="submit" class="critical">
+					Wczytaj
+					<svg class="icon-16"><use xlink:href="#icon-16_cloud-upload"></use></svg>
+				</button>
+			</form>
+		</div>
+	</div>
+</div>
