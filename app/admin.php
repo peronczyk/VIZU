@@ -7,7 +7,7 @@ $tpl->assign(array(
 	'app_path'			=> Config::APP_DIR,
 	'site_path' 		=> $router->site_path,
 	'theme_path'		=> 'themes/admin',
-	'script_version'	=> Config::VERSION,
+	'script_version'	=> VERSION,
 	'phpversion'		=> phpversion(),
 ));
 
