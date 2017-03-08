@@ -1,6 +1,6 @@
 <?php
 
-if ($_POST['op'] != "send") die('This file can be loaded only in admin'); // Security check
+if ($_POST['op'] != "send") die(); // Security check
 
 require_once(Config::APP_DIR . 'libs/mail.php');
 require_once(Config::APP_DIR . 'libs/ajax.php');
@@ -10,16 +10,24 @@ $ajax = new Ajax();
 
 // Validate sended form
 
-$inputs_required = array('topic', 'message');
+$inputs_required = Config::$_CF_REQUIRED_INPUTS;
 $inputs_with_errors = array();
 
 foreach($inputs_required as $input_name) {
-	if (empty($_POST[$input_name])) {
-		array_push($inputs_with_errors, array('inputName' => $input_name, 'errorMessage' => 'To pole jest wymagane'));
+	if (!isset($_POST[$input_name]) || strlen($_POST[$input_name]) < 3) {
+		array_push($inputs_with_errors, array(
+			'inputName' => $input_name,
+			'errorMessage' => 'To pole jest wymagane'
+		));
 	}
 }
 
-if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) array_push($inputs_with_errors, array('inputName' => 'email', 'errorMessage' => 'Podano niepoprawny adres email'));
+if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+	array_push($inputs_with_errors, array(
+		'inputName' => 'email',
+		'errorMessage' => 'Podano niepoprawny adres email'
+	));
+}
 
 
 // If errors occurred

@@ -1,6 +1,6 @@
 RewriteEngine on
 RewriteCond %{DOCUMENT_ROOT} !-f
-RewriteRule !\.(js|ico|gif|jpg|png|css|htm?l|swf|flv|xml|otf|ttf|woff?2|svg|eot)$ index.php [QSA,L]
+RewriteRule !\.(js|ico|gif|jpg|png|css|htm?l|swf|flv|xml|otf|ttf|woff?2|svg|eot|mp4|pdf|doc|docx|ppt|pptx|txt)$ index.php [QSA,L]
 
 AddType application/vnd.ms-fontobject .eot
 AddType application/x-font-woff .woff

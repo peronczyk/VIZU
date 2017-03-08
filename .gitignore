@@ -1,4 +1,43 @@
-ftpsync.settings
+# ---------------
+# Ignore OS files
+
 .dropbox*
+.DS_Store
+.idea
+.log
+.log.*
+.project
 desktop.ini
+node_modules
+temp
+Thumbs.db
+tmp
 typings
+
+
+# ----------------------------------------
+# Ignore node/grunt/gulp/bower directories
+
+node_modules
+bower_modules
+/themes/*/dist
+/dist
+.sass-cache
+
+
+# -------------------
+# Ignore Editor files
+
+*.sublime-project
+*.sublime-workspace
+*.komodoproject
+ftpsync.settings
+
+
+# -------------
+# Other ignores
+
+php.ini
+*.crt
+*.key
+*.csr

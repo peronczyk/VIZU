@@ -1,34 +1,77 @@
 
-$.fn.ajaxForms = function() {
+/*	================================================================================
+ *
+ *	JQ: AJAXFORMS
+ *
+ *	Author : Bartosz Perończyk
+ *
+ *	--------------------------------------------------------------------------------
+ *	DESCRIPTION:
+ *
+ *
+ *	--------------------------------------------------------------------------------
+ *	INSTALATION:
+ *
+ *
+ *	================================================================================
+ */
 
-	//	------------------------------------------------------------------------
-	//	BEFORE FORM SUBMISSION
+(function($) {
 
-	function formSendBefore($form) {
-		if (debug) console.info('ajaxForms: Start sending');
-		$form.removeClass('error').addClass('loading') // Remove 'error' class from form and add 'loading'
-			.find('.error').removeClass('error'); // Remove 'error' classes from inputs
+	'use strict';
+
+
+	/*	----------------------------------------------------------------------------
+	 *	PLUGIN DEFAULT CONFIGURATION
+	 */
+
+	var defaults = {
+			debug: 0,
+			messageBoxElem: '.message',
+			formSuccessClassName: 'is-success',
+			inputErrorClassName: 'is-error',
+			inputErrorTooltipClassName: 'error-tooltip'
+		};
+
+
+	/*	----------------------------------------------------------------------------
+	 *	BEFORE FORM SUBMISSION
+	 */
+
+	var formSendBefore = function($form, config) {
+		if (config.debug) console.info('ajaxForms: Start sending');
+
+		$form
+			// Remove 'error' class from form and add 'loading'
+			.removeClass('error').addClass('loading')
+
+			// Remove 'error' classes from inputs
+			.find('.error').removeClass(config.inputErrorClassName);
+
+		// Remove error tooltips
+		$form.find('.' + config.inputErrorTooltipClassName).remove();
 	}
 
 
-	//	------------------------------------------------------------------------
-	//	AFTER RECEIVING DATA
+	/*	----------------------------------------------------------------------------
+	 *	AFTER RECEIVING DATA
+	 */
 
-	function formSendSuccess($form, dataType, data) {
+	var formSendSuccess = function($form, config, dataType, data) {
 		$form.removeClass('loading');
-		if (debug) console.info('ajaxForms: Form sended');
+		if (config.debug) console.info('ajaxForms: Form sended');
 
 		if (!data) {
-			if (debug) console.log('ajaxForm: No data received');
+			if (config.debug) console.log('ajaxForm: No data received');
 			return;
 		}
 
-		var $messageBox = $form.find('.message');
+		var $messageBox = $form.find(config.messageBoxElem);
 
 		// If received data is JSON object
 
 		if (typeof data === 'object') {
-			if (debug) console.log(data);
+			if (config.debug) console.log(data);
 
 			// If errors are detected
 
@@ -36,25 +79,25 @@ $.fn.ajaxForms = function() {
 				for (var i = 0; i < data.formErrors.length; i++) {
 					if (data.formErrors[i].inputName) {
 						var $input = $form.find('[name=' + data.formErrors[i].inputName + ']');
-						$input.addClass('error').focus();
+						$input.addClass(config.inputErrorClassname).focus();
 
 						if (data.formErrors[i].errorMessage) {
-							var $errorTooltip = $('<div/>', {'class': 'error-tooltip'}).html(data.formErrors[i].errorMessage);
+							var $errorTooltip = $('<div/>', {'class': config.inputErrorTooltipClassName}).html(data.formErrors[i].errorMessage);
 							$input.parent().append($errorTooltip);
 							$input.on('change input', function() {
-								monitorErrorTooltip($(this));
+								monitorErrorTooltip($(this), config);
 							});
 						}
 					}
 				};
-				console.error('ajaxForms: ' + i + ' errors found in sended form');
+				if (config.debug) console.error('ajaxForms: ' + i + ' errors found in sended form');
 			}
 
 			// If there is no errors and form has message box
 
 			else if ($messageBox.length > 0) {
 				var $message = $messageBox.find('p');
-				$form.addClass('success');
+				$form.addClass(config.formSuccessClassName);
 				if (data.message) {
 					$message.html(data.message);
 				}
@@ -65,19 +108,14 @@ $.fn.ajaxForms = function() {
 				});
 			}
 		}
-
-		// If received data is string
-
-		else {
-			$message.html(data);
-		}
 	}
 
 
-	//	------------------------------------------------------------------------
-	//	IF AJAX DIDN'T WORK PROPERTLY
+	/*	----------------------------------------------------------------------------
+	 *	IF AJAX DIDN'T WORK PROPERTLY
+	 */
 
-	function formSendError($form, jqXHR, textStatus, errorThrown, action) {
+	var formSendError = function($form, config, jqXHR, textStatus, errorThrown, action) {
 
 		$form.removeClass('loading').addClass('error');
 
@@ -104,65 +142,90 @@ $.fn.ajaxForms = function() {
 			return closeMessage($form, $message);
 		});
 
-		if (debug) { console.error('ajaxForms: Error'); console.error('errorThrown: ' + errorThrown); console.error('textStatus: ' + textStatus); console.log(jqXHR); }
+		if (config.debug) { console.error('ajaxForms: Error'); console.error('errorThrown: ' + errorThrown); console.error('textStatus: ' + textStatus); console.log(jqXHR); }
 	}
 
 
-	//	------------------------------------------------------------------------
-	//	MONITORS INPUT WITH ERROR TOOLTIP FOR CHANGES
+	/*	----------------------------------------------------------------------------
+	 *	MONITORS INPUT WITH ERROR TOOLTIP FOR CHANGES
+	 */
 
-	function monitorErrorTooltip($input) {
+	var monitorErrorTooltip = function($input, config) {
 		if ($input.val().length > 0) {
 			$input.off('change input').removeClass('error');
-			$input.siblings('.error-tooltip').remove();
+			$input.siblings('.' + config.inputErrorTooltipClassname).remove();
 		}
 	}
 
 
-	//	------------------------------------------------------------------------
-	//	HANDLE CLOSE BUTTON FOR POPUP MESSAGE
+	/*	----------------------------------------------------------------------------
+	 *	HANDLE CLOSE BUTTON FOR POPUP MESSAGE
+	 */
 
-	function closeMessage($form, $message) {
-		console.log('ajaxForm: Close button clicked');
+	var closeMessage = function($form, config, $message) {
+		if (config.debug) console.log('ajaxForm: Close button clicked');
 		$message.empty();
 		$form.removeClass('loading success error');
 		return false;
 	}
 
 
-	//	------------------------------------------------------------------------
-	//	LOOP OVER ALL ELEMENTS FOUND
+	/*	----------------------------------------------------------------------------
+	 *	SET UP JQUERY PLUGIN
+	 */
 
-	$(this).each(function() {
 
-		var $form		= $(this),
-			method		= $form.attr('method'),
-			action		= $form.attr('action'),
-			dataType	= $form.data('type');
+	$.fn.ajaxForms = function(options) {
 
-		// Check if selected element is OK
+		var
+			// Setup configuration
+			config = $.extend({}, defaults, options);
 
-		if (!$form.is('form')) return;
-		if (!action) {
-			if (debug) console.log('Form does not have proper attributes: method, action');
-			return;
-		}
 
-		if (['post', 'get'].indexOf(method) < 0) method = 'post'; // Set default method if it wasn't defined in <form>
+		//	------------------------------------------------------------------------
+		//	LOOP OVER ALL ELEMENTS FOUND
 
-		// Form submit action
+		$(this).each(function() {
 
-		$form.on('submit', function() {
-			$.ajax({
-				type		: method,
-				url			: action,
-				data		: $form.serialize(),
-				dataType	: dataType,
-				beforeSend	: function() { formSendBefore($form); },
-				success		: function(data) { formSendSuccess($form, dataType, data); },
-				error		: function(jqXHR, textStatus, errorThrown) { formSendError($form, jqXHR, textStatus, errorThrown, action); }
+			var $form		= $(this),
+				method		= $form.attr('method'),
+				action		= $form.attr('action'),
+				dataType	= $form.data('type');
+
+			// Check if selected element is OK
+
+			if (!$form.is('form')) return;
+			if (!action) {
+				if (config.debug) console.log('Form does not have proper attributes: method, action');
+				return;
+			}
+
+			// Set default method if it wasn't defined in <form>
+			if (['post', 'get'].indexOf(method) < 0) method = 'post';
+
+			// Form submit action
+
+			$form.on('submit', function(event) {
+				event.preventDefault();
+
+				$.ajax({
+					type		: method,
+					url			: action,
+					data		: $form.serialize(),
+					dataType	: dataType,
+
+					beforeSend: function() {
+						formSendBefore($form, config);
+					},
+					success: function(data) {
+						formSendSuccess($form, config, dataType, data);
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						formSendError($form, config, jqXHR, textStatus, errorThrown, action);
+					}
+				});
 			});
-			return false;
 		});
-	});
-}
+	}
+
+})(jQuery);
