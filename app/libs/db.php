@@ -1,34 +1,27 @@
 <?php
 
 /*
-Needs to be rewriten to write queries this way:
-$db
-	->where(array('id' => 3, 'val' => 'test'))
-	->update('table', array('name' => 'lorem'));
+@TODO:
+	Need to be rewriten to write queries this way:
+		$db
+			->where(array('id' => 3, 'val' => 'test'))
+			->update('table', array('name' => 'lorem'));
 
-or this way:
+		or this way:
 
-$db->arrayQuery(array(
-	'select' => array(
-		'what'	=> '*',
-		'where'	=> array('id' => 3, 'val' => 'test'),
-		'limit'	=> 1
-	)
-));
+		$db->arrayQuery(array(
+			'select' => array(
+				'what'	=> '*',
+				'where'	=> array('id' => 3, 'val' => 'test'),
+				'limit'	=> 1
+			)
+		));
 
 */
 
 class Database {
 
 	private $connection = false;
-
-
-	# ==============================================================================
-	# CONSTRUCTOR
-	# ==============================================================================
-
-	public function __construct() {
-	}
 
 
 	# ==============================================================================
@@ -97,6 +90,15 @@ class Database {
 			return $arr;
 		}
 		else return false;
+	}
+
+
+	# ==============================================================================
+	# GET MYSQL SERVER VERSION
+	# ==============================================================================
+
+	public function version() {
+		return $connection->server_version;
 	}
 
 }
