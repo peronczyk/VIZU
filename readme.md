@@ -8,7 +8,7 @@ Simple, dependency-free CMS system that allows for quick implementation of simpl
 
 1. Create directory in themes/ - it will be your theme name.
 2. Create direcory "templates" inside your theme directory.
-3. HTML code should be put in "home.phtml" in "templates" directory.
+3. HTML code should be put in "home.html" in "templates" directory.
 4. Avery other aspect of your theme depends on your preferences.
 
 ### Adding editable Field

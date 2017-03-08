@@ -26,7 +26,7 @@ class Template {
 	# ==============================================================================
 
 	public function get_content($file) {
-		$file_path = Config::THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . '.phtml';
+		$file_path = Config::THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . '.html';
 
 		if (empty($this->theme)) {
 			Core::error('Nie zdefiniowano szablonu', __FILE__, __LINE__, debug_backtrace());
