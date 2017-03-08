@@ -76,7 +76,7 @@ if ($router->request[count($router->request) - 1] == 'save') {
 		// If field doesn't exist create it
 		if (!isset($fields_data[$post_key])) {
 
-			$result = $db->query("INSERT INTO `fields` VALUES ('', 'home', '" . $active_lang . "', '" . $post_key . "', '" . $post_val . "', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);");
+			$result = $db->query("INSERT INTO `fields` VALUES ('', 'home', '" . $active_lang . "', '" . $post_key . "', '" . $post_val . "', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1');");
 			$ajax->add('log', 'Try to create field: ' . $post_key . '. Result: ' . $result);
 			if ($result) $num_changes++;
 		}
