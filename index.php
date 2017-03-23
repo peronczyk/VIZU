@@ -72,9 +72,7 @@ if (isset($router->request[0])) {
 			break;
 
 		default:
-			header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-			echo '<h1>404 Not Found</h1>';
-			echo '<p>The page that you have requested could not be found.</p>';
+			require_once(Config::APP_DIR . '404.php');
 	}
 }
 else require_once(Config::APP_DIR . 'page.php');
