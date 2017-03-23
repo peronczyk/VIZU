@@ -36,7 +36,7 @@ Simple, dependency-free CMS system that allows for quick implementation of simpl
 
 Editor types are defined in theme with `type='<type>'` param. Available types:
 * `simple` - simple input without ability to style inserted text
-* `rich_text` - advanced WYSIWYG editor that allows to add styling to inserted text
+* `rich` - advanced WYSIWYG editor that allows to add styling to inserted text
 
 ### Predefined fields
 
