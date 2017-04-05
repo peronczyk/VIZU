@@ -8,11 +8,17 @@
  #	================================================================================
 
 
-define('VERSION', 0.1); // VIZU version
+define('VIZU_VERSION', '1.0.0');
+
+
+// Load configuration
+
+if (!file_exists('config.php')) die('Configuration file does not exist');
+require_once('config.php');
+
 
 // Start application core libraries
 
-require_once('config.php');
 require_once(Config::APP_DIR . 'libs/core.php');
 require_once(Config::APP_DIR . 'libs/router.php');
 
@@ -25,7 +31,7 @@ $router	= new Router();
 if (Config::REDIRECT_TO_WWW === true) $router->redirect_to_www();
 
 
-// Redirect to installation if it exists
+// Redirect to installation if it exists and if app is not in dev mode
 
 if (!$core->is_dev() && file_exists(Config::INSTALL_DIR) && ((isset($router->request[0]) && $router->request[0] !== 'install') || !isset($router->request[0]))) {
 	header('Location: ' . $router->site_path . '/' . Config::INSTALL_DIR . '?redirected=true');
@@ -49,6 +55,7 @@ $tpl = new Template();
 
 require_once(Config::APP_DIR . 'libs/language.php');
 $lang = new Language($db);
+
 if ($lang->set((isset($router->request[0]) ? $router->request[0] : ''))) {
 	$router->request_shift();
 }
@@ -72,9 +79,7 @@ if (isset($router->request[0])) {
 			break;
 
 		default:
-			header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-			echo '<h1>404 Not Found</h1>';
-			echo '<p>The page that you have requested could not be found.</p>';
+			require_once(Config::APP_DIR . '404.php');
 	}
 }
 else require_once(Config::APP_DIR . 'page.php');

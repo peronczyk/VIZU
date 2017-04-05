@@ -17,7 +17,7 @@ foreach($inputs_required as $input_name) {
 	if (!isset($_POST[$input_name]) || strlen($_POST[$input_name]) < 3) {
 		array_push($inputs_with_errors, array(
 			'inputName' => $input_name,
-			'errorMessage' => 'To pole jest wymagane'
+			'errorMessage' => $lang->_t('mailer-field-required', 'This field is required')
 		));
 	}
 }
@@ -25,7 +25,7 @@ foreach($inputs_required as $input_name) {
 if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 	array_push($inputs_with_errors, array(
 		'inputName' => 'email',
-		'errorMessage' => 'Podano niepoprawny adres email'
+		'errorMessage' => $lang->_t('mailer-email-wrong', 'Incorrect email address')
 	));
 }
 
@@ -40,7 +40,9 @@ if (count($inputs_with_errors) > 0) {
 // Flood blockade
 
 elseif (isset($_SESSION['email_sended']) && (date('U') - $_SESSION['email_sended']) < 3600) {
-	$ajax->set('message', '<strong>Wiadomość nie została wysłana</strong><br>Nie możesz tak często przesyłać wiadomości');
+	$ajax->set('message',
+		$lang->_t('mailer-flood', 'You can not send messages so often')
+	);
 }
 
 
@@ -68,7 +70,9 @@ else {
 		$mail->add_recipient($main_recipient);
 		$mail->set_topic('[' . $router->domain . '] ' . ucfirst($_POST['topic']));
 		$mail->set_reply_to($_POST['email']);
-		$mail->set_from($main_recipient); // Need to be an e-mail that exists on hosting account becouse some services only send it like that
+
+		// Need to be an e-mail that exists on hosting account becouse some services only send it like that
+		$mail->set_from($main_recipient);
 
 		// Prepare mail
 
@@ -90,13 +94,19 @@ else {
 		$result = $mail->send($_POST['message']);
 
 		if ($result === true) {
-			$ajax->set('message', '<strong>Wiadomość została wysłana</strong><br>Dziękujemy za kontakt!<br />Postaramy się odpowiedzieć na nią jak najszybciej.');
+			$ajax->set('message',
+				$lang->_t('mailer-sent', 'Message sent')
+			);
 			$_SESSION['email_sended'] = date('U');
 		}
 		else $ajax->set('message', $result);
 	}
 
-	else $ajax->set('message', '<strong>Wiadomość nie została wysłana</strong><br>Brak skonfigurowanego poprawnie odbiorcy.');
+	else {
+		$ajax->set('message',
+			$lang->_t('mailer-recipient-error', 'Message recipient not configured')
+		);
+	}
 
 }
 

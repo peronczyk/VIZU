@@ -1,8 +1,12 @@
-# VIZU
+# VIZU 1.0.0 beta
 Simple, dependency-free CMS system that allows for quick implementation of simple Web pages without having to configure anything in the administration panel.
 
 
-## Instalation
+## Installation
+1. Import file `install/db.sql` in to your MySQL database.
+2. Provide database connection credentials in `config.php` file.
+3. Remove `install/` directory.
+4. Head to administration panel _yourwebsite.com/**admin/**_ and change default user credentials. Login data: 'admin@website.com' / 'admin'.
 
 ## Creating theme
 
@@ -36,7 +40,7 @@ Simple, dependency-free CMS system that allows for quick implementation of simpl
 
 Editor types are defined in theme with `type='<type>'` param. Available types:
 * `simple` - simple input without ability to style inserted text
-* `rich_text` - advanced WYSIWYG editor that allows to add styling to inserted text
+* `rich` - advanced WYSIWYG editor that allows to add styling to inserted text
 
 ### Predefined fields
 

@@ -34,6 +34,8 @@ arsort($fields_data_simple);
 $display_str = '';
 
 foreach($fields_data_simple as $key => $val) {
+	if (!isset($template_fields[$key]['name']) || !isset($template_fields[$key]['category'])) continue;
+
 	$date = explode(' ', $val);
 	switch($template_fields[$key]['category']) {
 		case 'text':	$category = 'Zawartość'; break;

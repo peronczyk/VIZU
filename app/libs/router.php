@@ -17,7 +17,7 @@ class Router {
 	public function __construct() {
 
 		// Set website protocol
-		$this->protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
+		$this->protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
 
 		// Set full actual URL, eg.: http://domain.com/website/request/?query=true
 		$this->url = $this->protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];

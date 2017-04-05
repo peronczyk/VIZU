@@ -30,6 +30,9 @@ CREATE TABLE `users` (
 	PRIMARY KEY (`id`)
 ) CHARSET=utf8;
 
+INSERT INTO `users` VALUES
+	(NULL, 'admin@website.com', '0a5b5d819b8a9d2e90843df535516e41e41330140acb2bb69a29092d3cb49993');
+
 
 -- --------------------------------------------------------
 

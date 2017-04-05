@@ -13,7 +13,7 @@ class Language {
 	public function __construct($db) {
 		// Check if variable passed to this class is database controller
 		if ($db && is_object($db) && is_a($db, 'Database')) $this->_db = $db;
-		else Core::error('Variable passed to class "User" is not correct "Database" object', __FILE__, __LINE__, debug_backtrace());
+		else Core::error('Variable passed to class "Language" is not correct "Database" object', __FILE__, __LINE__, debug_backtrace());
 	}
 
 
@@ -65,5 +65,27 @@ class Language {
 			Core::error('Theme translations file not found at this location: ' . $lang_file, __FILE__, __LINE__, debug_backtrace());
 		}
 		$this->translations = include $lang_file;
+	}
+
+
+	# ==============================================================================
+	# TRANSLATE STRING
+	#
+	# @param string $key
+	# 	Key name that will be returned from loaded translations
+	#
+	# @param string or array $additionals
+	# 	Used in case if $key was not found in loaded translations.
+	# 	If array is passed script searches in it for key.
+	# 	If string is passed it will be returned as it is.
+	# ==============================================================================
+
+	public function _t($key, $additionals = false) {
+		if (isset($this->translations[$key])) return $this->translations[$key];
+		elseif ($additionals) {
+			if (is_array($additionals) && isset($additionals[$key])) return $additionals[$key];
+			else return $additionals;
+		}
+		else return false;
 	}
 }

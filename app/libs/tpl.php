@@ -9,11 +9,15 @@ class Template {
 	// Stores theme name (folder)
 	private $theme;
 
+	// Templates direcotory name that is inside each theme
 	private $tpl_dir = 'templates/';
+
+	// Template files extension
+	private $tpl_ext = '.html';
 
 
 	# ==============================================================================
-	# SETTING UP TEMPLATE FOLDER
+	# SETTING UP THEME DIRECTORY NAME
 	# ==============================================================================
 
 	public function set_theme($theme_name) {
@@ -22,19 +26,33 @@ class Template {
 
 
 	# ==============================================================================
-	# PARSING TEMPLATE
+	# CHECK IF TEMPLATE EXISTS AND RETURN IT'S PATH OR FALSE
+	# ==============================================================================
+
+	public function get_template_path($file) {
+		if (empty($this->theme)) {
+			Core::error('Nie zdefiniowano żadnego szablonu', __FILE__, __LINE__, debug_backtrace());
+		}
+
+		$file_path = Config::THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
+		if (!file_exists($file_path)) return false;
+		return $file_path;
+	}
+
+
+	# ==============================================================================
+	# GET CONTENTS OF TEMPLATE FILE
 	# ==============================================================================
 
 	public function get_content($file) {
-		$file_path = Config::THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . '.html';
+		$file_path = $this->get_template_path($file);
 
-		if (empty($this->theme)) {
-			Core::error('Nie zdefiniowano szablonu', __FILE__, __LINE__, debug_backtrace());
-		}
-		elseif (!file_exists($file_path)) {
+		if (!$file_path) {
 			Core::error('Plik szablonu nie istnieje: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
+			return false;
 		}
-		else return file_get_contents($file_path);
+
+		return file_get_contents($file_path);
 	}
 
 
