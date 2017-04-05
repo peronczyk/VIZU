@@ -8,7 +8,7 @@
  #	================================================================================
 
 
-define('VERSION', 0.1); // VIZU version
+define('VIZU_VERSION', '1.0.0');
 
 
 // Load configuration
@@ -55,6 +55,7 @@ $tpl = new Template();
 
 require_once(Config::APP_DIR . 'libs/language.php');
 $lang = new Language($db);
+
 if ($lang->set((isset($router->request[0]) ? $router->request[0] : ''))) {
 	$router->request_shift();
 }
