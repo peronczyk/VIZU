@@ -10,9 +10,15 @@
 
 define('VERSION', 0.1); // VIZU version
 
+
+// Load configuration
+
+if (!file_exists('config.php')) die('Configuration file does not exist');
+require_once('config.php');
+
+
 // Start application core libraries
 
-require_once('config.php');
 require_once(Config::APP_DIR . 'libs/core.php');
 require_once(Config::APP_DIR . 'libs/router.php');
 
@@ -25,7 +31,7 @@ $router	= new Router();
 if (Config::REDIRECT_TO_WWW === true) $router->redirect_to_www();
 
 
-// Redirect to installation if it exists
+// Redirect to installation if it exists and if app is not in dev mode
 
 if (!$core->is_dev() && file_exists(Config::INSTALL_DIR) && ((isset($router->request[0]) && $router->request[0] !== 'install') || !isset($router->request[0]))) {
 	header('Location: ' . $router->site_path . '/' . Config::INSTALL_DIR . '?redirected=true');
