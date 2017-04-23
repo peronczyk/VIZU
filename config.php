@@ -1,9 +1,17 @@
 <?php
 
-// Configuration file
-// This way variables are available globally
+# ==================================================================================
+#
+#	VIZU CMS
+#	Configuration file
+#	This way variables are available globally
+#
+# ==================================================================================
 
 class Config {
+
+	// VIZU module that will be loaded by default (if there is no parameters in URL)
+	const DEFAULT_MODULE = 'page';
 
 	// Language that will be set by default when entering the website.
 	const DEFAULT_LANG = 'en';
@@ -15,10 +23,10 @@ class Config {
 	# ------------------------------------------------------------------------------
 	# DATABASE CONNECTION
 
-	const DB_HOST		= 'localhost';
-	const DB_NAME		= 'vizu';
-	const DB_USER		= 'root';
-	const DB_PASS		= '';
+	const DB_HOST = 'localhost';
+	const DB_NAME = 'vizu';
+	const DB_USER = 'root';
+	const DB_PASS = '';
 
 
 	# ------------------------------------------------------------------------------

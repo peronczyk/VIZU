@@ -1,13 +1,20 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Lib: Router
+#
+# ==================================================================================
+
 class Router {
 
 	public $protocol;	// Website protocol: http:// or https://
 	public $url;		// Full actual URL
 	public $domain;		// Domain, eg: domain.com
 	public $site_path;	// Website path, eg: http://www.domain.com/website
-	public $request;	// Array of reqested modules, eg.: /admin/login
-	public $query;		// Array of requested query, eg.: ?foo=bar&baz=lorem
+	public $request;	// Array of reqested modules, eg: /admin/login
+	public $query;		// Array of requested query, eg: ?foo=bar&baz=lorem
 
 
 	# ==============================================================================
@@ -47,11 +54,35 @@ class Router {
 
 
 	# ==============================================================================
+	# LOAD MODULE
+	# ==============================================================================
+
+	public function get_module_to_load() {
+		if (!empty($this->request[0])) {
+			$module_file = Config::APP_DIR . 'modules/' . $this->request[0] . '/' . $this->request[0] . '.php';
+			if (file_exists($module_file)) return $module_file;
+			else {
+				$error404_module_file = Config::APP_DIR . 'modules/404/404.php';
+				if (file_exists($error404_module_file)) return $error404_module_file;
+				else Core::error('Requested module "' . Config::DEFAULT_MODULE . '" and module "404" does not exist.', __FILE__, __LINE__, debug_backtrace());
+			}
+		}
+		else {
+			$default_module_file = Config::APP_DIR . 'modules/' . Config::DEFAULT_MODULE . '/' . Config::DEFAULT_MODULE . '.php';
+			if (file_exists($default_module_file)) return $default_module_file;
+			else Core::error('Configured default module "' . Config::DEFAULT_MODULE . '" does not exist', __FILE__, __LINE__, debug_backtrace());
+		}
+		return false;
+	}
+
+
+	# ==============================================================================
 	# MOVE REQUESTS FORWARD
 	# ==============================================================================
 
 	public function request_shift() {
-		return array_shift($this->request);
+		$this->request = array_shift($this->request);
+		return $this->request;
 	}
 
 

@@ -1,11 +1,18 @@
 <?php
 
-class Mail {
+# ==================================================================================
+#
+#	VIZU CMS
+#	Lib: Mailer
+#
+# ==================================================================================
+
+class Mailer {
 
 	private $recipients	= array();
 	private $list_data	= array();
-	private $cc 		= array();
-	private $bcc 		= array();
+	private $cc			= array();
+	private $bcc		= array();
 	private $reply_to;
 	private $from;
 	private $topic;

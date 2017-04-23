@@ -1,7 +1,15 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Module: 404 error page
+#
+# ==================================================================================
+
 header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
 
+$tpl = $core->load_lib('Template');
 $tpl->set_theme(Config::THEME_NAME);
 
 if ($tpl->get_template_path('404')) {

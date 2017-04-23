@@ -1,9 +1,20 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Lib: Core
+#
+# ==================================================================================
+
 class Core {
 
-	public $project_id;
-	public static $ajax_loaded = false; // Check if script is run as request by AJAX
+	// Check if script is run as request by AJAX
+	public static $ajax_loaded = false;
+
+	// Stores array of loaded libraries instances
+	// to prevent multiple library loading
+	private $loaded_libs = array();
 
 
 	# ==============================================================================
@@ -17,7 +28,38 @@ class Core {
 		//ob_start();
 
 		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') self::$ajax_loaded = true;
+	}
 
+
+	# ==============================================================================
+	# LIBRARY LOADER
+	# ==============================================================================
+
+	public function load_lib($lib_name) {
+
+		$lib_file_name = strtolower($lib_name);
+		$lib_class_name = ucfirst($lib_name);
+
+		// If library is already loaded return handle to it's instance
+		if (array_key_exists($lib_class_name, $this->loaded_libs)) {
+			return $this->loaded_libs[$lib_name];
+		}
+
+		$lib_file = Config::APP_DIR . 'libs/' . $lib_class_name . '.php';
+		if (!file_exists($lib_file)) {
+			self::error('Library "' . $lib_name . '" file not found.', __FILE__, __LINE__, debug_backtrace());
+			return false;
+		}
+
+		require_once($lib_file);
+
+		if (!class_exists($lib_class_name)) {
+			self::error('Library "' . $lib_name . '" file does not contain proper class', __FILE__, __LINE__, debug_backtrace());
+			return false;
+		}
+
+		$this->loaded_libs[$lib_name] = new $lib_class_name;
+		return $this->loaded_libs[$lib_name];
 	}
 
 
@@ -80,23 +122,6 @@ class Core {
 
 
 	# ==============================================================================
-	# DISPLAY ERRORS
-	# ==============================================================================
-
-	public function load_field_class($field_name) {
-		$class_file = 'app/fields/' . $field_name . '.php';
-		if (file_exists($class_file)) {
-			require_once($class_file);
-			if (class_exists($field_name)) {
-				return new $field_name;
-			}
-			else return 'Plik sterujacy polem nie zawiera odpowiedniej klasy: ' . $field_name;
-		}
-		else { return 'Plik klasy sterujacej polem nie istnieje: ' . $class_file; }
-	}
-
-
-	# ==============================================================================
 	# IS DEV
 	# ==============================================================================
 
@@ -117,7 +142,7 @@ class Core {
 			print_r($arr);
 			echo("</pre>");
 		}
-		else echo('<pre>This is not a table</pre>');
+		else echo('<pre>This is not a array</pre>');
 	}
 
 

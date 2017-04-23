@@ -1,5 +1,12 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Module: Admin / Edit
+#
+# ==================================================================================
+
 if (IN_ADMIN !== true) die('This file can be loaded only in admin'); // Security check
 
 
@@ -165,7 +172,7 @@ else {
 
 		// Setup field type class if i wasn't started before
 		if (!isset($field_class[$field['type']])) {
-			$field_class[$field['type']] = $core->load_field_class($field['type']);
+			$field_class[$field['type']] = $tpl->load_field_class($field['type']);
 
 			// If class of field failed to start
 			if (!is_object($field_class[$field['type']])) {

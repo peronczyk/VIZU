@@ -1,16 +1,24 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Lib: Language
+#
+# ==================================================================================
+
 class Language {
+
 	private $lang_code;
 	public $translations = array();
 	private $_db; // Handle to database controller
 
 
 	# ==============================================================================
-	# CONSTRUCT / LOAD DEPENDENCIES
+	# INJECT DEPENDENCIES
 	# ==============================================================================
 
-	public function __construct($db) {
+	public function inject($db) {
 		// Check if variable passed to this class is database controller
 		if ($db && is_object($db) && is_a($db, 'Database')) $this->_db = $db;
 		else Core::error('Variable passed to class "Language" is not correct "Database" object', __FILE__, __LINE__, debug_backtrace());

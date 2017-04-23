@@ -1,5 +1,12 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Module: Admin
+#
+# ==================================================================================
+
 define('IN_ADMIN', true); // Security constant. Needs to be checked in all included files
 
 $tpl->set_theme('admin');

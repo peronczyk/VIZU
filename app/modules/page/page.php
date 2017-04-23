@@ -1,6 +1,15 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Module: Page
+#
+# ==================================================================================
+
+$tpl = $core->load_lib('Template');
 $tpl->set_theme(Config::THEME_NAME);
+
 $template_content	= $tpl->get_content('home');
 $template_fields	= $tpl->get_fields($template_content);
 
@@ -33,4 +42,4 @@ $tpl->assign(array(
 $parsed_html = $tpl->parse($template_content, $template_fields, $lang->translations);
 
 if (!empty($parsed_html)) echo $parsed_html;
-else Core::error('Funkcja parsująca szablon nie zwróciła żadnej wartości.', __FILE__, __LINE__, debug_backtrace());
+else Core::error('Parsing function does not return any value.', __FILE__, __LINE__, debug_backtrace());

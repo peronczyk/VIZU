@@ -5,7 +5,7 @@
 // Configuration
 
 define('DB_FILE', 'db.sql');
-if (!file_exists(Config::INSTALL_DIR . DB_FILE)) Core::error('Brak wymaganego pliku zawierającego strukturę bazy danych: "db.sql"', __FILE__, __LINE__, debug_backtrace());
+if (!file_exists(Config::INSTALL_DIR . DB_FILE)) Core::error('Missing required default database dump file: "db.sql"', __FILE__, __LINE__, debug_backtrace());
 
 require_once(Config::INSTALL_DIR . 'install.class.php');
 $install = new Install();

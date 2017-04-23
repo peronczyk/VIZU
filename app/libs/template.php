@@ -1,5 +1,12 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Lib: Template
+#
+# ==================================================================================
+
 class Template {
 
 	// Assignement storage. This values will be parsed in to the template
@@ -31,12 +38,29 @@ class Template {
 
 	public function get_template_path($file) {
 		if (empty($this->theme)) {
-			Core::error('Nie zdefiniowano żadnego szablonu', __FILE__, __LINE__, debug_backtrace());
+			Core::error('Theme not set', __FILE__, __LINE__, debug_backtrace());
 		}
 
 		$file_path = Config::THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
 		if (!file_exists($file_path)) return false;
 		return $file_path;
+	}
+
+
+	# ==============================================================================
+	# LOAD FIELD CLASS
+	# ==============================================================================
+
+	public function load_field_class($field_name) {
+		$class_file = 'app/fields/' . $field_name . '.php';
+		if (file_exists($class_file)) {
+			require_once($class_file);
+			if (class_exists($field_name)) {
+				return new $field_name;
+			}
+			else return 'Template field handling file does not have proper class: "' . $field_name . '"';
+		}
+		else { return 'Template field handling file does not exist: "' . $class_file . '"'; }
 	}
 
 
@@ -48,7 +72,7 @@ class Template {
 		$file_path = $this->get_template_path($file);
 
 		if (!$file_path) {
-			Core::error('Plik szablonu nie istnieje: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
+			Core::error('Template file does not exist: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
 			return false;
 		}
 
@@ -62,7 +86,7 @@ class Template {
 
 	public function assign($array) {
 		if (!is_array($array)) {
-			Core::error('Nie przypisano żadnej tablicy do parsowania', __FILE__, __LINE__, debug_backtrace());
+			Core::error('Variable passed to "assign" method is not an array', __FILE__, __LINE__, debug_backtrace());
 		}
 		foreach($array as $key => $val) {
 			$this->vars[$key] = $val;
@@ -178,7 +202,7 @@ class Template {
 			}
 			else $preg_status_text = $preg_status;
 
-			Core::error('Nie udało się wyświetlić szablonu strony ponieważ w funkcji parsującej wystąpił błąd o następującym kodzie:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
+			Core::error('Unable to display template becouse of error in parsing function. Returned error:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
 		}
 	}
 }
