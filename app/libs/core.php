@@ -7,19 +7,20 @@
 #
 # ==================================================================================
 
+namespace libs;
+
 class Core {
 
 	// Check if script is run as request by AJAX
 	public static $ajax_loaded = false;
 
-	// Stores array of loaded libraries instances
-	// to prevent multiple library loading
+	// Stores list of loaded libraries
 	private $loaded_libs = array();
 
 
-	# ==============================================================================
-	# CONSTRUCTOR
-	# ==============================================================================
+	/**
+	 * Constructor
+	 */
 
 	public function __construct() {
 		error_reporting(E_ERROR | E_WARNING | E_PARSE);
@@ -31,41 +32,14 @@ class Core {
 	}
 
 
-	# ==============================================================================
-	# LIBRARY LOADER
-	# ==============================================================================
-
-	public function load_lib($lib_name) {
-
-		$lib_file_name = strtolower($lib_name);
-		$lib_class_name = ucfirst($lib_name);
-
-		// If library is already loaded return handle to it's instance
-		if (array_key_exists($lib_class_name, $this->loaded_libs)) {
-			return $this->loaded_libs[$lib_name];
-		}
-
-		$lib_file = Config::APP_DIR . 'libs/' . $lib_class_name . '.php';
-		if (!file_exists($lib_file)) {
-			self::error('Library "' . $lib_name . '" file not found.', __FILE__, __LINE__, debug_backtrace());
-			return false;
-		}
-
-		require_once($lib_file);
-
-		if (!class_exists($lib_class_name)) {
-			self::error('Library "' . $lib_name . '" file does not contain proper class', __FILE__, __LINE__, debug_backtrace());
-			return false;
-		}
-
-		$this->loaded_libs[$lib_name] = new $lib_class_name;
-		return $this->loaded_libs[$lib_name];
-	}
-
-
-	# ==============================================================================
-	# DISPLAY ERRORS
-	# ==============================================================================
+	/**
+	 * Display critical errors
+	 *
+	 * @param string $msg
+	 * @param string $file - Pass here __FILE__
+	 * @param string $line - Pass here __LINE__
+	 * @param array $debug - Pass here debug_backtrace()
+	 */
 
 	public static function error($msg, $file = null, $line = null, $debug = null) {
 		$headers_sent = headers_sent();
@@ -121,20 +95,20 @@ class Core {
 	}
 
 
-	# ==============================================================================
-	# IS DEV
-	# ==============================================================================
+	/**
+	 * Check if application is in development mode
+	 */
 
 	public function is_dev() {
 		$default_dev_ip = array('127.0.0.1', '0.0.0.0', '::1');
-		if ($_SERVER['REMOTE_ADDR'] === Config::DEV_IP || in_array($_SERVER['REMOTE_ADDR'], $default_dev_ip)) return true;
+		if ($_SERVER['REMOTE_ADDR'] === \Config::$DEV_IP || in_array($_SERVER['REMOTE_ADDR'], $default_dev_ip)) return true;
 		return false;
 	}
 
 
-	# ==============================================================================
-	# PRINT VIEWABLE ARRAY
-	# ==============================================================================
+	/**
+	 * Print out eye-friendly array
+	 */
 
 	public static function print_arr($arr) {
 		if (is_array($arr)) {
@@ -146,9 +120,9 @@ class Core {
 	}
 
 
-	# ==============================================================================
-	# GET MTIME
-	# ==============================================================================
+	/**
+	 * GETTER : Mtime
+	 */
 
 	public static function get_mtime() {
 		list($usec, $sec) = explode (" ", microtime());
@@ -156,10 +130,14 @@ class Core {
 	}
 
 
-	# ==============================================================================
-	# PROCESS ARRAY
-	# Changes default keys in array to $key_name values taken from inside tahe array
-	# ==============================================================================
+	/**
+	 * Changes default keys in array to $key_name values taken from inside the array
+	 *
+	 * @param array $array
+	 * @param string $key_name
+	 *
+	 * @return array
+	 */
 
 	public function process_array($array, $key_name) {
 		if (!is_array($array)) return false;

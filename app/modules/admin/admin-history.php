@@ -18,7 +18,7 @@ $fields_data = $core->process_array($db->fetch($result), 'id');
 
 // Get fields from home of user template
 
-$tpl->set_theme(Config::THEME_NAME);
+$tpl->set_theme(Config::$THEME_NAME);
 $content			= $tpl->get_content('home');
 $template_fields	= $tpl->get_fields($content);
 

@@ -7,6 +7,8 @@
 #
 # ==================================================================================
 
+namespace libs;
+
 class Template {
 
 	// Assignement storage. This values will be parsed in to the template
@@ -23,33 +25,35 @@ class Template {
 	private $tpl_ext = '.html';
 
 
-	# ==============================================================================
-	# SETTING UP THEME DIRECTORY NAME
-	# ==============================================================================
+	/**
+	 * SETTER : Theme direcory name
+	 */
 
 	public function set_theme($theme_name) {
 		$this->theme = $theme_name;
 	}
 
 
-	# ==============================================================================
-	# CHECK IF TEMPLATE EXISTS AND RETURN IT'S PATH OR FALSE
-	# ==============================================================================
+	/**
+	 * Check if template exists
+	 *
+	 * @return string|false - Return template path or false if not found
+	 */
 
 	public function get_template_path($file) {
 		if (empty($this->theme)) {
 			Core::error('Theme not set', __FILE__, __LINE__, debug_backtrace());
 		}
 
-		$file_path = Config::THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
+		$file_path = \Config::$THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
 		if (!file_exists($file_path)) return false;
 		return $file_path;
 	}
 
 
-	# ==============================================================================
-	# LOAD FIELD CLASS
-	# ==============================================================================
+	/**
+	 * Load field class
+	 */
 
 	public function load_field_class($field_name) {
 		$class_file = 'app/fields/' . $field_name . '.php';
@@ -60,13 +64,13 @@ class Template {
 			}
 			else return 'Template field handling file does not have proper class: "' . $field_name . '"';
 		}
-		else { return 'Template field handling file does not exist: "' . $class_file . '"'; }
+		else return 'Template field handling file does not exist: "' . $class_file . '"';
 	}
 
 
-	# ==============================================================================
-	# GET CONTENTS OF TEMPLATE FILE
-	# ==============================================================================
+	/**
+	 * Get contents of template file
+	 */
 
 	public function get_content($file) {
 		$file_path = $this->get_template_path($file);
@@ -80,9 +84,9 @@ class Template {
 	}
 
 
-	# ==============================================================================
-	# ASSIGN VARS TO PARSE
-	# ==============================================================================
+	/**
+	 * Assign vars to parse
+	 */
 
 	public function assign($array) {
 		if (!is_array($array)) {
@@ -94,9 +98,12 @@ class Template {
 	}
 
 
-	# ==============================================================================
-	# PREPARE ARRAY OF FIELDS FOUND IN CONTENT
-	# ==============================================================================
+	/**
+	 * Prepare array of fields found in content
+	 *
+	 * @param string $content
+	 * @return array
+	 */
 
 	public function get_fields($content) {
 		$num_matches = preg_match_all('/{{(.*?)}}/', $content, $matches);
@@ -107,7 +114,7 @@ class Template {
 			$chunks	= array_filter(explode(' ', $val));
 			$field	= array();
 
-			if (in_array($chunks[0], Config::$_FIELD_CATEGORIES['content']) or in_array($chunks[0], Config::$_FIELD_CATEGORIES['other'])) {
+			if (in_array($chunks[0], \Config::$FIELD_CATEGORIES['content']) or in_array($chunks[0], \Config::$FIELD_CATEGORIES['other'])) {
 				$field['category'] = $chunks[0];
 
 				// Get params of the field
@@ -132,11 +139,13 @@ class Template {
 	}
 
 
-	# ==============================================================================
-	# PARSING TEMPLATE
-	#
-	# $content - string containing html code with template codes: {{ something }}
-	# ==============================================================================
+	/**
+	 * Parse template
+	 *
+	 * @param string - HTML code with template tags: {{ something }}
+	 * @param array $fields
+	 * @param array $translations
+	 */
 
 	public function parse($content, $fields, $translations = array()) {
 

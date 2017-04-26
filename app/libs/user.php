@@ -7,6 +7,8 @@
 #
 # ==================================================================================
 
+namespace libs;
+
 class User {
 
 	private $_db;			// Handle to database controller
@@ -14,13 +16,15 @@ class User {
 	private $id;			// Logged in user ID
 
 
-	# ==============================================================================
-	# CHECK IF LOGGED IN
-	# ==============================================================================
+	/**
+	 * Constructor & login status check
+	 */
 
-	public function __construct($db) {
+	public function __construct() {
+		$args = func_get_args();
+
 		// Check if variable passed to this class is database controller
-		if ($db && is_object($db) && is_a($db, 'Database')) $this->_db = $db;
+		if ($args[0] && is_object($args[0]) && is_a($args[0], 'Database')) $this->_db = $args[0];
 		else Core::error('Variable passed to class "User" is not correct "Database" object', __FILE__, __LINE__, debug_backtrace());
 
 		// Set up access level by checking if user is logged in
@@ -42,23 +46,19 @@ class User {
 	}
 
 
-	# ==============================================================================
-	# VERIFY LOGIN FOR SECURITY REASONS
-	# ==============================================================================
+	/**
+	 * Verify login (username)
+	 */
 
 	public static function verify_username($username) {
-
-		// @TODO : Trzeba dopisać kod weryfikujący czy ktoś nie próbuje wstrzyknąć złośliwego kodu jako swój login w sesji
-		// Najlepiej przez preg
-
-		return true;
+		return (preg_match('/^[a-zA-Z0-9]{5,}$/', $username));
 	}
 
 
-	# ==============================================================================
-	# SET LEVEL OF ACCESS
-	# ==============================================================================
-
+	/**
+	 * SETTER : Access level
+	 */
+	
 	public function set_access($lvl) {
 		if (is_int($lvl) && $lvl > -1) {
 			$this->access = $lvl;
@@ -68,36 +68,42 @@ class User {
 	}
 
 
-	# ==============================================================================
-	# GET LEVEL OF ACCESS
-	# ==============================================================================
+	/**
+	 * GETTER : User access level
+	 */
 
 	public function get_access() {
 		return $this->access;
 	}
 
 
-	# ==============================================================================
-	# GET LOGGED IN USER ID
-	# ==============================================================================
+	/**
+	 * GETTER : Logged in user ID
+	 */
 
 	public function get_id() {
 		return $this->id;
 	}
 
 
-	# ==============================================================================
-	# PASSWORD CODE
-	# ==============================================================================
+	/**
+	 * Password encode
+	 *
+	 * @return {string} salted password hash
+	 */
 
 	public static function password_encode($password) {
-		return hash('sha256', $password . Config::PASSWORD_SALT);
+		return hash('sha256', $password . Config::$PASSWORD_SALT);
 	}
 
 
-	# ==============================================================================
-	# USER LOGIN
-	# ==============================================================================
+	/**
+	 * Try to login user
+	 *
+	 * @param string $login
+	 * @param string $password
+	 * @return true|string - Returns true if succes or error text
+	 */
 
 	public function login($login, $password) {
 		if (empty($login))					return 'Nie podałeś swojego loginu';
@@ -120,9 +126,9 @@ class User {
 	}
 
 
-	# ==============================================================================
-	# USER LOGOUT
-	# ==============================================================================
+	/**
+	 * Logout user
+	 */
 
 	public function logout() {
 		unset($_SESSION['login'], $_SESSION['pass']);

@@ -5,17 +5,19 @@
 // Configuration
 
 define('DB_FILE', 'db.sql');
-if (!file_exists(Config::INSTALL_DIR . DB_FILE)) Core::error('Missing required default database dump file: "db.sql"', __FILE__, __LINE__, debug_backtrace());
+if (!file_exists(Config::$INSTALL_DIR . DB_FILE)) {
+	Core::error('Missing required default database dump file: "db.sql"', __FILE__, __LINE__, debug_backtrace());
+}
 
-require_once(Config::INSTALL_DIR . 'install.class.php');
+require_once(Config::$INSTALL_DIR . 'install.class.php');
 $install = new Install();
 
 if (empty($_GET['op'])) {
 	echo $install->show_html_header('Start');
-	echo('<ul>
+	echo '<ul>
 		<li><a href="?op=install">Install database</a></li>
 		<li><a href="?op=password_generate">Generate password hash</a></li>
-	</ul>');
+	</ul>';
 	echo $install->show_html_footer();
 }
 
@@ -24,16 +26,13 @@ elseif ($_GET['op'] == 'install') {
 
 elseif ($_GET['op'] == 'password_generate') {
 	echo $install->show_html_header('Start');
-	echo('<form method="post">
+	echo '<form method="post">
 		<input type="password" name="password">
-	</form>');
+	</form>';
 
 	if (!empty($_POST['password'])) {
-		require_once(Config::APP_DIR . 'libs/user.php');
 		$user = new User($db);
-		echo('<p>' . $user->password_encode($_POST['password']) . '</p>');
+		echo '<p>' . $user->password_encode($_POST['password']) . '</p>';
 	}
 	echo $install->show_html_footer();
 }
-
-?>

@@ -9,12 +9,12 @@
 
 if ($_POST['op'] !== "send") die(); // Security check
 
-$mail = $core->load_lib('Mail');
-$ajax = $core->load_lib('Ajax');
+$mail = new libs\Mailer();
+$ajax = new libs\Ajax();
 
 // Validate sended form
 
-$inputs_required = Config::$_CF_REQUIRED_INPUTS;
+$inputs_required = Config::$CF_REQUIRED_INPUTS;
 $inputs_with_errors = array();
 
 foreach($inputs_required as $input_name) {
@@ -61,11 +61,11 @@ else {
 
 	if (count($result) > 0) {
 		foreach($result as $user) {
-			if ($user['id'] == Config::CONTACT_USER) {
+			if ($user['id'] == Config::$CONTACT_USER) {
 				$main_recipient = $user['email'];
-				if (Config::CONTACT_ALL !== true) break;
+				if (Config::$CONTACT_ALL !== true) break;
 			}
-			elseif (Config::CONTACT_ALL === true) $mail->add_bcc($user['email']);
+			elseif (Config::$CONTACT_ALL === true) $mail->add_bcc($user['email']);
 		}
 	}
 

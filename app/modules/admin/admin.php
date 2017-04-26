@@ -11,23 +11,21 @@ define('IN_ADMIN', true); // Security constant. Needs to be checked in all inclu
 
 $tpl->set_theme('admin');
 $tpl->assign(array(
-	'app_path'			=> Config::APP_DIR,
+	'app_path'			=> Config::$APP_DIR,
 	'site_path' 		=> $router->site_path,
 	'theme_path'		=> 'themes/admin',
-	'script_version'	=> VERSION,
+	'script_version'	=> VIZU_VERSION,
 	'phpversion'		=> phpversion(),
 ));
 
-require_once(Config::APP_DIR . 'libs/user.php');
-$user = new User($db);
+$user = new libs\User($db);
 
 
-# ==================================================================================
-# PAGE LOADED WITH AJAX
-#
-# Check if request was done asynchronously.
-# If true change the behavior of page to always return JSON data.
-# ==================================================================================
+/**
+ * PAGE LOADED VIA AJAX
+ * Check if request was done asynchronously.
+ * If true change the behavior of page to always return JSON data.
+ */
 
 if (Core::$ajax_loaded === true) {
 
@@ -49,11 +47,11 @@ if (Core::$ajax_loaded === true) {
 	$old_error_handler = set_error_handler("error_handler");
 
 
-	# ------------------------------------------------------------------------------
-	# START AJAX CLASS AND SET SOME VARIABLES
+	/**
+	 * Start AJAX class and set it up
+	 */
 
-	require_once(Config::APP_DIR . 'libs/ajax.php');
-	$ajax = new Ajax();
+	$ajax = new libs\Ajax();
 
 	$display = true; // Is there anything that needs to be shown?
 
@@ -61,8 +59,9 @@ if (Core::$ajax_loaded === true) {
 	else $request = $router->request[1];
 
 
-	# ------------------------------------------------------------------------------
-	# HANDLE POST REQUESTS
+	/**
+	 * Handle post requests
+	 */
 
 	if (count($_POST) > 0) {
 		switch($request) {
@@ -84,8 +83,9 @@ if (Core::$ajax_loaded === true) {
 		}
 	}
 
-	# ------------------------------------------------------------------------------
-	# DISPLAY RESULTS
+	/**
+	 * Display results
+	 */
 
 	if (($user->get_access() > 0) && ($display == true)) {
 		$ajax->set('loggedin', true);
@@ -154,11 +154,10 @@ if (Core::$ajax_loaded === true) {
 }
 
 
-# ==================================================================================
-# PAGE LOADED NORMALLY
-#
-# If page was not loaded asynchronously display admin template.
-# ==================================================================================
+/**
+ * PAGE LOADED NORMALLY
+ * If page was not loaded asynchronously display admin template.
+ */
 
 else {
 	if ($user->get_access() > 0) {

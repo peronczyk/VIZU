@@ -7,6 +7,8 @@
 #
 # ==================================================================================
 
+namespace Libs;
+
 class Router {
 
 	public $protocol;	// Website protocol: http:// or https://
@@ -17,9 +19,10 @@ class Router {
 	public $query;		// Array of requested query, eg: ?foo=bar&baz=lorem
 
 
-	# ==============================================================================
-	# CONSTRUCTOR
-	# ==============================================================================
+	/**
+	 * Constructor
+	 * Sets often used variables that describes user location
+	 */
 
 	public function __construct() {
 
@@ -53,32 +56,33 @@ class Router {
 	}
 
 
-	# ==============================================================================
-	# LOAD MODULE
-	# ==============================================================================
+	/**
+	 * Load module
+	 */
 
 	public function get_module_to_load() {
 		if (!empty($this->request[0])) {
-			$module_file = Config::APP_DIR . 'modules/' . $this->request[0] . '/' . $this->request[0] . '.php';
+			$module_file = \Config::$APP_DIR . 'modules/' . $this->request[0] . '/' . $this->request[0] . '.php';
 			if (file_exists($module_file)) return $module_file;
 			else {
-				$error404_module_file = Config::APP_DIR . 'modules/404/404.php';
+				$error404_module_file = \Config::$APP_DIR . 'modules/404/404.php';
 				if (file_exists($error404_module_file)) return $error404_module_file;
-				else Core::error('Requested module "' . Config::DEFAULT_MODULE . '" and module "404" does not exist.', __FILE__, __LINE__, debug_backtrace());
+				else Core::error('Requested module "' . \Config::$DEFAULT_MODULE . '" and module "404" does not exist.', __FILE__, __LINE__, debug_backtrace());
 			}
 		}
 		else {
-			$default_module_file = Config::APP_DIR . 'modules/' . Config::DEFAULT_MODULE . '/' . Config::DEFAULT_MODULE . '.php';
+			$default_module_file = \Config::$APP_DIR . 'modules/' . \Config::$DEFAULT_MODULE . '/' . \Config::$DEFAULT_MODULE . '.php';
 			if (file_exists($default_module_file)) return $default_module_file;
-			else Core::error('Configured default module "' . Config::DEFAULT_MODULE . '" does not exist', __FILE__, __LINE__, debug_backtrace());
+			else Core::error('Configured default module "' . \Config::$DEFAULT_MODULE . '" does not exist', __FILE__, __LINE__, debug_backtrace());
 		}
 		return false;
 	}
 
 
-	# ==============================================================================
-	# MOVE REQUESTS FORWARD
-	# ==============================================================================
+	/**
+	 * Request shift
+	 * Moves requests array forward
+	 */
 
 	public function request_shift() {
 		$this->request = array_shift($this->request);
@@ -86,9 +90,10 @@ class Router {
 	}
 
 
-	# ==============================================================================
-	# CHECK IF DOMAIN HAS WWW. IN FRONT AND IF NO REDIRECT
-	# ==============================================================================
+	/**
+	 * Redirect to url address with WWW at the beginning
+	 * if configuration requires it.
+	 */
 
 	public function redirect_to_www() {
 		$domain = explode('.', $this->domain);

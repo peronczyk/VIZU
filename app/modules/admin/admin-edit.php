@@ -19,7 +19,7 @@ if (IN_ADMIN !== true) die('This file can be loaded only in admin'); // Security
 // If yes set up allowed_field_types to view them
 
 if (!empty($router->query['field_category'])) {
-	if (in_array($router->query['field_category'], Config::$_FIELD_CATEGORIES['content'])) {
+	if (in_array($router->query['field_category'], Config::$FIELD_CATEGORIES['content'])) {
 		$allowed_field_category = array($router->query['field_category']);
 		$tpl->assign(array('field_type' => $router->query['field_category']));
 	}
@@ -55,14 +55,14 @@ $fields_data = $core->process_array($db->fetch($result), 'id');
 
 // Get fields from home of user template
 
-$tpl->set_theme(Config::THEME_NAME);
+$tpl->set_theme(Config::$THEME_NAME);
 $content			= $tpl->get_content('home');
 $template_fields	= $tpl->get_fields($content);
 
 
-# ==================================================================================
-# SAVE DATA
-# ==================================================================================
+/**
+ * Save data
+ */
 
 if ($router->request[count($router->request) - 1] == 'save') {
 
@@ -111,9 +111,9 @@ if ($router->request[count($router->request) - 1] == 'save') {
 }
 
 
-# ==================================================================================
-# DISPLAY FORM
-# ==================================================================================
+/**
+ * Display form
+ */
 
 else {
 
@@ -142,8 +142,10 @@ else {
 	$field_num		= array();	// Stores numbers of each field types
 	$skiped_fields	= 0;		// Stores number of skiped fields (not editable fields or with errors)
 
+	/**
+	 * Loop over fields
+	 */
 
-	// Loop over fields
 	foreach($template_fields as $field_id => $field) {
 
 		// Skip if field don't have 'category' or it's 'category' is not editable
@@ -153,7 +155,7 @@ else {
 		}
 
 		// Skip if field don't have 'type' or it's 'type' is not editable
-		if (!isset($field['type']) || !in_array($field['type'], Config::$_FIELD_TYPES)) {
+		if (!isset($field['type']) || !in_array($field['type'], Config::$FIELD_TYPES)) {
 			$ajax->add('log', 'Skipped: ' . $field_id . ' / ' . $field['category']);
 			$skiped_fields++;
 			continue;
@@ -217,7 +219,9 @@ else {
 	));
 
 
-	// Display layout
+	/**
+	 * Display layout
+	 */
 
 	$tpl->set_theme('admin');
 

@@ -1,0 +1,65 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	outline: none;
+	border: none;
+	background: transparent;
+}
+
+body {
+	font-family: 'Roboto', Arial, Helvetica, sans-serif;
+	background-color: #f5f5f3;
+}
+
+.Inner {
+	margin: auto;
+	padding: 0 60px;
+	width: 100%;
+	max-width: 1000px;
+}
+
+h1 {
+	margin: 24px 0 40px 0;
+	font-size: 50px;
+	line-height: 1.2em;
+	font-weight: 500;
+	color: #1f1e38;
+}
+
+	h1 span {
+		color: #00a8ff;
+	}
+
+h2 {
+	margin: 30px 0;
+	font-size: 24px;
+	font-weight: 400;
+	line-height: 1.4em;
+	color: #8fa3ad;
+}
+
+p {
+	margin: 14px 0 0 0;
+	font-size: 15px;
+	line-height: 1.6em;
+}
+
+a {
+	color: #00a8ff;
+	text-decoration: none;
+}
+
+.Header {
+	height: 100vh;
+	display: flex;
+}
+
+	.Header__text {
+		align-content: center;
+		max-width: 500px;
+	}
+
+.Main {}
+
+.Footer {}

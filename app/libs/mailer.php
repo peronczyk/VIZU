@@ -7,84 +7,90 @@
 #
 # ==================================================================================
 
+namespace libs;
+
 class Mailer {
 
-	private $recipients	= array();
-	private $list_data	= array();
-	private $cc			= array();
-	private $bcc		= array();
+	private $recipients = array();
+	private $list_data = array();
+	private $cc = array();
+	private $bcc = array();
 	private $reply_to;
 	private $from;
 	private $topic;
 
 
-	# ==============================================================================
-	# SET TOPIC
-	# ==============================================================================
+	/**
+	 * SETTER : Topic
+	 */
 
 	public function set_topic($topic) {
 		$this->topic = $topic;
 	}
 
 
-	# ==============================================================================
-	# ADD RECIPIENT
-	# ==============================================================================
+	/**
+	 * Add recipient
+	 */
 
 	public function add_recipient($mail, $name = '') {
 		$this->recipients[] = array($mail, $name);
 	}
 
 
-	# ==============================================================================
-	# ADD BCC EMAIL
-	# ==============================================================================
+	/**
+	 * Add BCC email
+	 */
 
 	public function add_bcc($mail, $name = '') {
 		$this->bcc[] = array($mail, $name);
 	}
 
 
-	# ==============================================================================
-	# ADD LIST DATA
-	# Data presented as list at the beginning of message
-	# ==============================================================================
+	/**
+	 * Add list data
+	 * Data presented as list at the beginning of message
+	 *
+	 * @param string $name
+	 * @param string $value
+	 */
 
-	public function add_list_data($name, $data) {
-		$this->list_data[] = array($name, $data);
+	public function add_list_data($name, $value) {
+		$this->list_data[] = array($name, $value);
 	}
 
 
-	# ==============================================================================
-	# ADD REPLY TO HEADERS
-	# ==============================================================================
+	/**
+	 * SETTER : "reply-to" header
+	 */
 
 	public function set_reply_to($mail) {
 		$this->reply_to = $mail;
 	}
 
 
-	# ==============================================================================
-	# ADD FROM TO HEADERS
-	# ==============================================================================
+	/**
+	 * SETTER : "from" header
+	 */
 
 	public function set_from($mail) {
 		$this->from = $mail;
 	}
 
 
-	# ==============================================================================
-	# ADD 'FROM TO' HEADERS
-	# ==============================================================================
+	/**
+	 * Emails to string
+	 * Converts array that contains email addresses in to string that can be set
+	 * as header.
+	 *
+	 * @param array $emails
+	 */
 
 	private function emails2string($emails) {
 		$str = '';
 		if (is_array($emails)) {
 			$num = count($emails);
 			for($i = 0; $i < $num; $i++) {
-				/*echo('<pre>');
-				print_r($emails[$i]);
-				echo('</pre><br>');*/
 				if (empty($emails[$i][1]))	$str .= $emails[$i][0];
 				else						$str .= $emails[$i][1] . '<' . $emails[$i][0] . '>';
 
@@ -95,9 +101,11 @@ class Mailer {
 	}
 
 
-	# ==============================================================================
-	# SEND EMAIL
-	# ==============================================================================
+	/**
+	 * ACTION : Send email
+	 *
+	 * @param string $message
+	 */
 
 	public function send($message) {
 		if (empty($message))	return 'Pusta wiadomość';
@@ -108,8 +116,9 @@ class Mailer {
 		$recipients = $this->emails2string($this->recipients);
 		$content = '';
 
-		# --------------------------------------------------------------------------
-		# CONTENT
+		/**
+		 * The content
+		 */
 
 		$content .= '<html><body><h3>Kontakt z witryny</h3>';
 		$content .= '<p>' . $message . '</p>';
@@ -124,8 +133,9 @@ class Mailer {
 
 		$content .= '</body></html>';
 
-		# --------------------------------------------------------------------------
-		# HEADERS
+		/**
+		 * Headers
+		 */
 
 		$headers  = "X-Mailer: PHP/" . phpversion() . "\r\n";
 		$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
@@ -136,8 +146,9 @@ class Mailer {
 		if (!empty($this->cc))			$headers .= "\r\nCc: " . $this->emails2string($this->cc);
 		if (!empty($this->bcc))			$headers .= "\r\nBcc: " . $this->emails2string($this->bcc);
 
-		# --------------------------------------------------------------------------
-		# SENDING
+		/**
+		 * The action
+		 */
 
 		if (@mail($recipients, $topic, $content, $headers)) return true;
 		else return 'Nie udało się wysłać wiadomości. Spróbuj ponownie lub skontaktuj się z nami telefonicznie.';
