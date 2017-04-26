@@ -39,6 +39,10 @@ h2 {
 	color: #8fa3ad;
 }
 
+article {
+	margin-bottom: 30px;
+}
+
 p {
 	margin: 14px 0 0 0;
 	font-size: 15px;
@@ -50,6 +54,14 @@ a {
 	text-decoration: none;
 }
 
+ul {
+	font-size: 14px;
+}
+
+	li {
+		margin-left: 40px;
+	}
+
 .Header {
 	height: 100vh;
 	display: flex;
@@ -60,6 +72,16 @@ a {
 		max-width: 500px;
 	}
 
-.Main {}
+.Main {
+	padding-top: 80px;
+	padding-bottom: 80px;
+	border-top: 1px solid #dcdcd9;
+}
 
-.Footer {}
+.Footer {
+	padding-top: 40px;
+	padding-bottom: 80px;
+	border-top: 1px solid #dcdcd9;
+	font-size: 12px;
+	color: #969694;
+}

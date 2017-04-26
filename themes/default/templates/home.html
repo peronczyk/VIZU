@@ -7,7 +7,7 @@
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<meta name="description" content="{{ setting type='simple' id='site_description' name='Site description' max='160' }}">
+	<meta name="description" content="{{ setting type='simple' id='site_description' name='Site description' desc='This could be edited in admin panel' max='160' }}">
 
 	<title>{{ setting type='simple' id='site_title' name='Site name' }}</title>
 
@@ -34,19 +34,28 @@
 				<h2>Simple, dependency-free CMS system that allows for quick implementation of simple Web pages</h2>
 				<p>This theme is only for presentation purpose. View it's source to see how themes are made and then... delete it! Nobody likes crap.</p>
 				<p>&mdash; &nbsp; <a href="https://github.com/peronczyk/vizu">View VISU on Github</a></p>
+				<p>&mdash; &nbsp; <a href="#main">Scroll down</a>
 			</hgroup>
 		</div>
 	</header>
 
-	<main class="Main">
+	<main class="Main" id="main">
 		<div class="Inner">
-			Connected to database: {{ db_connected }}<br>
-			Queries made: {{ db_queries }}
+			<h2>{{ text type='simple' id='editable_header' name='Editable header' desc='Edit this in admin panel' }}</h2>
+
+			<article>{{ text type='rich' id='editable_article' name='Editable article' desc='This text could be edited also' }}</article>
+
+			<ul>
+				<li>Connected to database: {{ db_connected }}</li>
+				<li>Queries made: {{ db_queries }}</li>
+			</ul>
 		</div>
 	</main>
 
 	<footer class="Footer">
-		<div class="Inner"></div>
+		<div class="Inner">
+			Created with keyboard by <a href="http://peronczyk.com/" target="_blank">Bartosz Perończyk</a>
+		</div>
 	</footer>
 
 </body>

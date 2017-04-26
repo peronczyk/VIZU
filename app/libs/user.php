@@ -20,11 +20,9 @@ class User {
 	 * Constructor & login status check
 	 */
 
-	public function __construct() {
-		$args = func_get_args();
-
+	public function __construct($db) {
 		// Check if variable passed to this class is database controller
-		if ($args[0] && is_object($args[0]) && is_a($args[0], 'Database')) $this->_db = $args[0];
+		if ($db && is_object($db) && is_a($db, __NAMESPACE__ . '\Database')) $this->_db = $db;
 		else Core::error('Variable passed to class "User" is not correct "Database" object', __FILE__, __LINE__, debug_backtrace());
 
 		// Set up access level by checking if user is logged in
@@ -47,11 +45,11 @@ class User {
 
 
 	/**
-	 * Verify login (username)
+	 * Verify login (email address)
 	 */
 
 	public static function verify_username($username) {
-		return (preg_match('/^[a-zA-Z0-9]{5,}$/', $username));
+		return filter_var($username, FILTER_VALIDATE_EMAIL);
 	}
 
 
@@ -93,7 +91,7 @@ class User {
 	 */
 
 	public static function password_encode($password) {
-		return hash('sha256', $password . Config::$PASSWORD_SALT);
+		return hash('sha256', $password . \Config::$PASSWORD_SALT);
 	}
 
 

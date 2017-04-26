@@ -1,0 +1,46 @@
+<header>
+	<h1>Zmień hasło</h1>
+	<a href="" class="nav"><svg class="icon-16 rotate-180"><use xlink:href="#icon-16_arrowhead"></use></svg> Wróć</a>
+</header>
+
+<form method="post" action="admin/user/change_password">
+	<div class="box">
+
+		<label class="row">
+			<div class="desc">
+				<h4>Aktualne hasło</h4>
+			</div>
+			<div class="field"><input type="password" name="password_actual"></div>
+		</label>
+
+	</div>
+
+	<div class="box">
+
+		<label class="row">
+			<div class="desc">
+				<h4>Nowe hasło</h4>
+			</div>
+			<div class="field"><input type="password" name="password_new1"></div>
+		</label>
+
+		<label class="row">
+			<div class="desc">
+				<h4>Powtórz nowe hasło</h4>
+			</div>
+			<div class="field"><input type="password" name="password_new2"></div>
+		</label>
+
+	</div>
+
+	<div class="buttons ending">
+		<button type="submit" class="accept">
+			Zapisz
+			<svg class="icon-16"><use xlink:href="#icon-16_accept"></use></svg>
+		</button>
+		<button type="reset" class="cancel">
+			Resetuj
+			<svg class="icon-16"><use xlink:href="#icon-16_ban"></use></svg>
+		</button>
+	</div>
+</form>

@@ -9,6 +9,8 @@
 
 define('IN_ADMIN', true); // Security constant. Needs to be checked in all included files
 
+$tpl = new libs\Template();
+
 $tpl->set_theme('admin');
 $tpl->assign(array(
 	'app_path'			=> Config::$APP_DIR,
@@ -27,7 +29,7 @@ $user = new libs\User($db);
  * If true change the behavior of page to always return JSON data.
  */
 
-if (Core::$ajax_loaded === true) {
+if (libs\Core::$ajax_loaded === true) {
 
 	# ------------------------------------------------------------------------------
 	# BYPASS DEFAULT PHP ERRORS BY OWN FUNCTION TO SEND THEM AS JSON
