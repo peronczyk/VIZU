@@ -37,15 +37,13 @@ class Language {
 		if (!empty($requested)) {
 			$result = $this->_db->query('SELECT * FROM `languages`');
 			$languages = $this->_db->fetch($result);
-			if (!is_array($languages)) {
-				Core::error('There is no configured languages in database.', __FILE__, __LINE__, debug_backtrace());
-			}
 
-			foreach($languages as $lang) {
-				if ($lang['code'] == $requested && $lang['active'] == true) {
-					$this->lang_code = $lang['code'];
-					$lang_file = \Config::$THEME_NAME . '/lang/' . LANG_CODE . '.php';
-					return true;
+			if (is_array($languages)) {
+				foreach($languages as $lang) {
+					if ($lang['code'] == $requested && $lang['active'] === true) {
+						$this->lang_code = $lang['code'];
+						return true;
+					}
 				}
 			}
 		}

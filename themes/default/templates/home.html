@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ lang id='lang' }}">
+<html lang="{{ lang_code }}">
 
 <head>
 
@@ -46,6 +46,7 @@
 			<article>{{ text type='rich' id='editable_article' name='Editable article' desc='This text could be edited also' }}</article>
 
 			<ul>
+				<li>Current language: {{ lang_code }}</li>
 				<li>Connected to database: {{ db_connected }}</li>
 				<li>Queries made: {{ db_queries }}</li>
 			</ul>

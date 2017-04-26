@@ -19,9 +19,6 @@ class Database {
 	private $connection;
 	private $queries_count = 0;
 
-	// This option disables all error notifications if set to 'true'
-	private $silent_mode = false;
-
 
 	/**
 	 * Constructor
@@ -71,15 +68,6 @@ class Database {
 
 
 	/**
-	 * Enable silent mode
-	 */
-
-	public function enable_silent_mode() {
-		return $this->silent_mode = true;
-	}
-
-
-	/**
 	 * GETTER : Database connection handle
 	 */
 
@@ -97,10 +85,6 @@ class Database {
 
 		$result = $this->connection->query($query);
 		$this->queries_count++;
-
-		if ($result === false && !$this->silent_mode) {
-			Core::error('Database query failed. Returned error:<br>' . mysqli_error($this->connection), __FILE__, __LINE__, debug_backtrace());
-		}
 		return $result;
 	}
 
@@ -146,6 +130,42 @@ class Database {
 	
 	public function get_queries_count() {
 		return $this->queries_count;
+	}
+
+
+	/**
+	 * Import file
+	 */
+
+	public function import_file($file) {
+		if (!file_exists($file)) {
+			Core::error('Unable to import SQL file "' . $file . '" becouse it does not exists.', __FILE__, __LINE__, debug_backtrace());
+		}
+
+		$errors = 0;
+
+		// Temporary variable, used to store current query
+		$templine = '';
+		
+		// Read in entire file
+		$lines = file($file);
+
+		foreach ($lines as $line) {
+
+			// Skip it if it's a comment
+			if (substr($line, 0, 2) == '--' || $line == '') continue;
+
+			// Add this line to the current segment
+			$templine .= $line;
+
+			// If it has a semicolon at the end, it's the end of the query
+			if (substr(trim($line), -1, 1) == ';') {
+				if (!$this->query($templine)) $errors++;
+				$templine = '';
+			}
+		}
+
+		return ($errors > 0) ? false : true;
 	}
 
 }

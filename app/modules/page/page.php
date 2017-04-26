@@ -36,6 +36,7 @@ $tpl->assign(array(
 	'site_path'		=> $router->site_path . '/',
 	'theme_path'	=> 'themes/' . Config::$THEME_NAME . '/',
 	'app_path'		=> Config::$APP_DIR,
+	'lang_code'		=> $lang->get(),
 	'db_connected'	=> $db->is_connected(),
 	'db_queries'	=> $db->get_queries_count(),
 	'fields'		=> print_r($template_fields, true), // For debug purposes

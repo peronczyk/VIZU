@@ -23,8 +23,6 @@ class Install {
 		// Check if variable passed to this class is database controller
 		if ($db && is_object($db) && is_a($db, 'libs\Database')) $this->_db = $db;
 		else \libs\Core::error('Variable passed to class "Install" is not correct "Database" object', __FILE__, __LINE__, debug_backtrace());
-
-		$this->_db->enable_silent_mode();
 	}
 
 
@@ -38,9 +36,14 @@ class Install {
 		return $table_fields && $table_users;
 	}
 
+
+	/**
+	 * Ckeck if there are any users in database
+	 */
+
 	public function check_db_users() {
 		$result = $this->_db->query("SELECT `id` FROM `users`");
-		return !($this->_db->fetch($result) > 0) ? true : false;
+		return ($this->_db->fetch($result) > 0) ? true : false;
 	}
 
 
@@ -56,6 +59,7 @@ class Install {
 				<head>
 					<meta charset="utf-8">
 					<title>VIZU Installer: ' . $title . '</title>
+					<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700">
 					<style type="text/css">
 						* { box-sizing: border-box; margin: 0; padding: 0; border: none; outline: none; }
 						body { background-color: #f5f5f3; font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 14px; color: #1f1e38; }
