@@ -65,10 +65,10 @@ ul {
 .Header {
 	height: 100vh;
 	display: flex;
+	align-items: center;
 }
 
 	.Header__text {
-		align-content: center;
 		max-width: 500px;
 	}
 

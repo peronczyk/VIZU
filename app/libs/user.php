@@ -54,6 +54,15 @@ class User {
 
 
 	/**
+	 * Verify password
+	 */
+
+	public static function verify_password($password) {
+		return strlen($password) > 6;
+	}
+
+
+	/**
 	 * SETTER : Access level
 	 */
 	

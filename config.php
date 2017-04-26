@@ -34,7 +34,6 @@ class Config {
 
 	static $APP_DIR		= 'app/';
 	static $THEMES_DIR	= 'themes/';
-	static $INSTALL_DIR	= 'install/';
 
 
 	# ------------------------------------------------------------------------------

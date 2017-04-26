@@ -19,6 +19,9 @@ class Database {
 	private $connection;
 	private $queries_count = 0;
 
+	// This option disables all error notifications if set to 'true'
+	private $silent_mode = false;
+
 
 	/**
 	 * Constructor
@@ -62,8 +65,17 @@ class Database {
 			}
 			else $mysqli_err_txt = 'Unknown error';
 
-			Core::error('Unable to connect to MySQL database. Returned error:<br>' . $mysqli_err_txt . ' [' . mysqli_connect_errno() . ']', __FILE__, __LINE__, debug_backtrace());
+			Core::error('Unable to connect to MySQL database. Returned error:<br>' . $mysqli_err_txt . ' [' . mysqli_connect_errno() . '].<br>Check if application is installed propertly by going to "install/" address in your browser.', __FILE__, __LINE__, debug_backtrace());
 		}
+	}
+
+
+	/**
+	 * Enable silent mode
+	 */
+
+	public function enable_silent_mode() {
+		return $this->silent_mode = true;
 	}
 
 
@@ -86,10 +98,10 @@ class Database {
 		$result = $this->connection->query($query);
 		$this->queries_count++;
 
-		if ($result === false) {
+		if ($result === false && !$this->silent_mode) {
 			Core::error('Database query failed. Returned error:<br>' . mysqli_error($this->connection), __FILE__, __LINE__, debug_backtrace());
 		}
-		else return $result;
+		return $result;
 	}
 
 

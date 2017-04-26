@@ -18,7 +18,13 @@ spl_autoload_register(function($lib_name) {
 		$lib_class_name = ucfirst($lib_file_name);
 
 		switch($chunks[0]) {
-			case 'libs': $lib_file_path = Config::$APP_DIR . 'libs/' . $lib_file_name . '.php';
+			case 'libs':
+				$lib_file_path = Config::$APP_DIR . 'libs/' . $lib_file_name . '.php';
+				break;
+
+			case 'modules':
+				$lib_file_path = Config::$APP_DIR . 'modules/' . $chunks[1] . '/' . $lib_file_name . '.class.php';
+				break;
 		}
 
 		if (file_exists($lib_file_path)) require_once($lib_file_path);
