@@ -31,8 +31,8 @@ class Install {
 	 */
 
 	public function check_db_tables() {
-		$table_fields = $this->_db->query("SELECT 1 FROM `fields` LIMIT 1");
-		$table_users = $this->_db->query("SELECT 1 FROM `users` LIMIT 1");
+		$table_fields = $this->_db->query('SELECT 1 FROM `fields` LIMIT 1', true);
+		$table_users = $this->_db->query('SELECT 1 FROM `users` LIMIT 1', true);
 		return $table_fields && $table_users;
 	}
 
@@ -42,7 +42,7 @@ class Install {
 	 */
 
 	public function check_db_users() {
-		$result = $this->_db->query("SELECT `id` FROM `users`");
+		$result = $this->_db->query('SELECT `id` FROM `users`', true);
 		return (count($this->_db->fetch($result)) > 0) ? true : false;
 	}
 }

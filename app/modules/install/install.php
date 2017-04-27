@@ -41,6 +41,7 @@ if ($router->request[1] === 'error') {
 			echo '<h1>Unknown error occured</h1>';
 	}
 
+	echo '<a href="./">&lsaquo; &nbsp; Back</a>';
 	echo libs\Core::common_html_footer();
 
 	$_SESSION['vizu_installation_error'] = false;

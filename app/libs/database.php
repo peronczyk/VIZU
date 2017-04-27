@@ -40,15 +40,12 @@ class Database {
 		mysqli_report(MYSQLI_REPORT_STRICT);
 
 		try {
-			$connection = new \mysqli($this->host, $this->user, $this->pass, $this->name);
+			$this->connection = new \mysqli($this->host, $this->user, $this->pass, $this->name);
 		}
 		catch(\Exception $e) {
 			Core::error('Unable to connect to MySQL database. Returned error: ' . $e->getMessage() . ' [' . $e->getCode() . '].<br>Probably application is not installed propertly. Check configured database connection credentials and be sure database "' . \Config::$DB_NAME . '" exists.', __FILE__, __LINE__, debug_backtrace());
 			exit;
 		}
-
-		$this->connection = $connection;
-		$this->connected = true;
 
 		mysqli_set_charset($this->connection, 'utf8');
 	}
@@ -65,13 +62,25 @@ class Database {
 
 	/**
 	 * Query
+	 *
+	 * @param string $query - MySQL query
+	 * @param boolean $is_silent - if true this method will not throw errors
+	 *	on failure.
+	 *
+	 * @return object - MySQL result
 	 */
 
-	public function query($query) {
+	public function query($query, $is_silent = false) {
 		if (!$this->connection) $this->connect();
 
 		$result = $this->connection->query($query);
 		$this->queries_count++;
+
+		// Display critical error if queried table doesn't exist
+		if (!$is_silent && !$result && mysqli_errno($this->connection) === 1146) {
+			Core::error('<strong>Queried database table does not exist</strong>. Returned error: ' . mysqli_error($this->connection) . '. Probably the application is not installed. Navigate to "install/" to start installation process.', __FILE__, __LINE__, debug_backtrace());
+		}
+
 		return $result;
 	}
 
@@ -107,7 +116,7 @@ class Database {
 	 */
 
 	public function is_connected() {
-		return $this->connection ? 1 : 0;
+		return $this->connection ? true : false;
 	}
 
 

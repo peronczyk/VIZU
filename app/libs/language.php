@@ -35,7 +35,7 @@ class Language {
 
 	public function set($requested = null) {
 		if (!empty($requested)) {
-			$result = $this->_db->query('SELECT * FROM `languages`');
+			$result = $this->_db->query('SELECT * FROM `languages`', true);
 			$languages = $this->_db->fetch($result);
 
 			if (is_array($languages)) {

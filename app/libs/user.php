@@ -29,9 +29,10 @@ class User {
 
 		if (!empty($_SESSION['login']) && !empty($_SESSION['password'])) {
 
-			if (!$this->verify_username($_SESSION['login'])) return; // If username stored in session is invalid
+			// If username stored in session is invalid
+			if (!$this->verify_username($_SESSION['login'])) return;
 
-			$result = $this->_db->query('SELECT `id`, `password` FROM `users` WHERE `email` = "' . $_SESSION['login'] . '" LIMIT 1');
+			$result = $this->_db->query('SELECT `id`, `password` FROM `users` WHERE `email` = "' . $_SESSION['login'] . '" LIMIT 1', true);
 			$user_data = $this->_db->fetch($result);
 
 			if (count($user_data) > 0) {
