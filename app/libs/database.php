@@ -37,33 +37,20 @@ class Database {
 	 */
 
 	public function connect() {
-		$connection = new \mysqli($this->host, $this->user, $this->pass, $this->name);
-		$mysqli_errno = mysqli_connect_errno();
+		mysqli_report(MYSQLI_REPORT_STRICT);
 
-		// If connection was established
-		if ($mysqli_errno === 0) {
-			$this->connection = $connection;
-			$this->connected = true;
-
-			mysqli_set_charset($this->connection, 'utf8');
+		try {
+			$connection = new \mysqli($this->host, $this->user, $this->pass, $this->name);
+		}
+		catch(\Exception $e) {
+			Core::error('Unable to connect to MySQL database. Returned error: ' . $e->getMessage() . ' [' . $e->getCode() . '].<br>Probably application is not installed propertly. Check configured database connection credentials and be sure database "' . \Config::$DB_NAME . '" exists.', __FILE__, __LINE__, debug_backtrace());
+			exit;
 		}
 
-		// If there was problem with connection
-		else {
-			$err_numbers = array(
-				1044 => 'Access danied for provided user',
-				1045 => 'Access danied for provided password',
-				1049 => 'Unknown database',
-				2002 => 'Unable to connect database - provided host didn\'t answare',
-			);
+		$this->connection = $connection;
+		$this->connected = true;
 
-			if (isset($err_numbers[$mysqli_errno])) {
-				$mysqli_err_txt = $err_numbers[$mysqli_errno];
-			}
-			else $mysqli_err_txt = 'Unknown error';
-
-			Core::error('Unable to connect to MySQL database. Returned error:<br>' . $mysqli_err_txt . ' [' . mysqli_connect_errno() . '].<br>Check if application is installed propertly by going to "install/" address in your browser.', __FILE__, __LINE__, debug_backtrace());
-		}
+		mysqli_set_charset($this->connection, 'utf8');
 	}
 
 
@@ -118,7 +105,7 @@ class Database {
 	/**
 	 * Check if application is connected to database
 	 */
-	
+
 	public function is_connected() {
 		return $this->connection ? 1 : 0;
 	}
@@ -127,7 +114,7 @@ class Database {
 	/**
 	 * GETTER : Number of performed queries
 	 */
-	
+
 	public function get_queries_count() {
 		return $this->queries_count;
 	}
@@ -146,7 +133,7 @@ class Database {
 
 		// Temporary variable, used to store current query
 		$templine = '';
-		
+
 		// Read in entire file
 		$lines = file($file);
 

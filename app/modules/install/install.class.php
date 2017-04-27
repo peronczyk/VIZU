@@ -43,7 +43,7 @@ class Install {
 
 	public function check_db_users() {
 		$result = $this->_db->query("SELECT `id` FROM `users`");
-		return ($this->_db->fetch($result) > 0) ? true : false;
+		return (count($this->_db->fetch($result)) > 0) ? true : false;
 	}
 
 
@@ -64,16 +64,29 @@ class Install {
 						* { box-sizing: border-box; margin: 0; padding: 0; border: none; outline: none; }
 						body { background-color: #f5f5f3; font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 14px; color: #1f1e38; }
 
-						main { display: flex; align-items: center; min-height: 100vh; }
-						.Inner { margin: auto; width: 100%; max-width: 600px; }
+						main { display: flex; align-items: center; min-height: 100vh; border-top: 2px solid #00a8ff }
+						.Inner { margin: auto; padding: 40px; width: 100%; max-width: 640px; }
 
-						h1 { margin-bottom: 20px; }
-						h2 { margin-bottom: 16px; color: #8fa3ad; font-weight: normal; }
+						h1 { margin-bottom: 20px; font-size: 40px; font-weight: 400; }
+						h2 { margin-bottom: 16px; font-size: 24px; font-weight: 500; color: #8fa3ad; }
+						h3 { font-size: 14px; font-weight: 700; }
+
+						p { margin-top: 20px; line-height: 1.2em; }
+						small { font-size: .9em; color: #8fa3ad; }
+
+						hr { margin: 20px 0; border-top: 1px solid #dcdcd9; }
+
+						a { text-decoration: none; color: #00a8ff; transition: .2s; }
+						a:hover { color: #0199e7; text-decoration: underline; }
 
 						form { margin-top: 20px; padding-top: 10px; }
 						label { display: block; margin-top: 16px; }
-						input[type="text"], input[type="password"] { display: block; margin-top: 8px; width: 100%; height: 34px; background: transparent; border-bottom: 1px solid #dcdcd9; }
-						button { margin-top: 20px; padding: 8px 14px; min-width: 100px; background-color: #00a8ff; font-weight: bold; color: #fff; text-align: center; cursor: pointer; }
+						input[type="text"], input[type="password"], input[type="email"] { display: block; margin-top: 8px; width: 100%; height: 34px; background: transparent; border-bottom: 1px solid #c8c8c5; }
+						input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus { border-color: #00a8ff; }
+						button { margin-top: 20px; padding: 12px 20px; min-width: 100px; background-color: #00a8ff; font-weight: bold; color: #fff; text-align: center; cursor: pointer; transition: .2s; }
+						button:hover { background-color: #0199e7; }
+
+						button:active, a { transform: translateY(2px); }
 					</style>
 				</head>
 				<body>

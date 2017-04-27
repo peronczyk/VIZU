@@ -20,6 +20,7 @@ if (!file_exists($module_path . DB_FILE)) {
 }
 
 $install = new modules\install\Install($db);
+$user = new libs\User($db);
 
 
 /**
@@ -28,13 +29,14 @@ $install = new modules\install\Install($db);
 
 if ($router->request[1] === 'error') {
 	echo $install->show_html_header('Error');
+	echo '<h3>Error occured</h3><hr>';
 
 	switch (@$_SESSION['vizu_installation_error']) {
 		case 1:
 			echo '<h1>Installation process error</h1>';
 			echo '<h2>Try again. If problem will repeat contact your administrator.</h2>';
 			break;
-		
+
 		default:
 			echo '<h1>Unknown error occured</h1>';
 	}
@@ -57,7 +59,12 @@ elseif ($install->check_db_tables()) {
 
 	if ($install->check_db_users()) {
 		echo $install->show_html_header('OK');
-		echo '<h1>VIZU installed <u>correctly</u></h1>';
+		?>
+			<h1>VIZU installed <u>correctly</u></h1>
+			<h2>Enjoy the simplicity</h2>
+			&mdash;&nbsp; <a href="./">Home page</a><br>
+			&mdash;&nbsp; <a href="./admin">Administration panel</a>
+		<?php
 		echo $install->show_html_footer();
 	}
 
@@ -67,29 +74,52 @@ elseif ($install->check_db_tables()) {
 	 */
 
 	else {
-		echo $install->show_html_header('Add first user');
-		?>
-			<h1>Add first user</h1>
-			<h2>There is no users in database. Please add first administrator.</h2>
 
-			<form action="" method="post">
-				<input type="hidden" name="op" value="add_user">
-				<label>Login (email): <input type="text" name="email"></label>
-				<label>Password: <input type="password" name="password"></label>
-				<button type="submit">Add</button>
-			</form>
-		<?php
-		echo $install->show_html_footer();
+		// Action: Add user to database
+		if ($_POST['op'] === 'add_user') {
+			$status = false;
+			if ($user->verify_password($_POST['password']) && $user->verify_username($_POST['email'])) {
+				$result = $db->query("INSERT INTO `users` VALUES ('', '" . $_POST['email'] . "', '" . $user->password_encode($_POST['password']) . "');");
+				if ($result) $status = true;
+			}
+
+			if ($status) header('location: ' . $router->site_path . '/install');
+			else {
+				$_SESSION['vizu_installation_error'] = 2;
+				header('location: ' . $router->site_path . '/install/error');
+			}
+		}
+
+		// Show installation step : 2
+		else {
+			echo $install->show_html_header('Add first user');
+			?>
+				<h3>Step 2/2</h3>
+				<hr>
+				<h1>Set up administrator account</h1>
+				<h2>There is no users in database. Add first one.</h2>
+
+				<form action="" method="post">
+					<input type="hidden" name="op" value="add_user">
+					<label>Login <small>(email address)</small> <input type="email" name="email" required></label>
+					<label>Password <small>(min 6 characters)</small> <input type="password" name="password" pattern=".{6,30}" required></label>
+					<button type="submit">Add &nbsp;&nbsp;&rsaquo;</button>
+				</form>
+			<?php
+			echo $install->show_html_footer();
+		}
 	}
 }
 
 
 /**
- * If there is no required database tables provide installation option
- * or handle the installation.
+ * If required tables does not exist in database provide installation option
+ * or init the installation process.
  */
 
 else {
+
+	// Action : Put data in to database
 	if ($_POST['op'] === 'install') {
 		$status = $db->import_file($module_path . 'db.sql');
 
@@ -99,14 +129,20 @@ else {
 			header('location: ' . $router->site_path . '/install/error');
 		}
 	}
+
+	// Show installation step : 1
 	else {
 		echo $install->show_html_header('OK');
 		?>
-			<h1>VIZU <u>not</u> installed correctly</h1>
+			<h3>Step 1/2</h3>
+			<hr>
+			<h1>VIZU is <u>not</u> installed</h1>
 			<h2>Proceed installation?</h2>
+			<p>All data will be inserted to database "<?php echo Config::$DB_NAME; ?>".</p>
+
 			<form action="" method="post">
 				<input type="hidden" name="op" value="install">
-				<button type="submit">YES, please</button>
+				<button type="submit">YES, please &nbsp;&nbsp;&rsaquo;</button>
 			</form>
 		<?php
 		echo $install->show_html_footer();
