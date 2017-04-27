@@ -52,13 +52,9 @@ $db = new libs\Database(Config::$DB_HOST, Config::$DB_USER, Config::$DB_PASS, Co
  */
 
 $lang = new libs\Language($db);
-
-if ($lang->set((isset($router->request[0]) ? $router->request[0] : ''))) {
-	$router->request_shift();
-}
-
+$lang_set_by_request = $lang->set(@$router->request[0]);
+if ($lang_set_by_request) $router->request_shift();
 $lang->load_theme_translations();
-
 
 /**
  * Load the module based on the page address

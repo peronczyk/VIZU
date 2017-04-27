@@ -40,7 +40,7 @@ class Language {
 
 			if (is_array($languages)) {
 				foreach($languages as $lang) {
-					if ($lang['code'] == $requested && $lang['active'] === true) {
+					if ($lang['code'] == $requested && (bool)$lang['active'] === true) {
 						$this->lang_code = $lang['code'];
 						return true;
 					}

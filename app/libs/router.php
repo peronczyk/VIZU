@@ -85,7 +85,11 @@ class Router {
 	 */
 
 	public function request_shift() {
-		$this->request = array_shift($this->request);
+		if (count($this->request) > 1) {
+			$this->request = array_shift($this->request);
+		}
+		else $this->request = null;
+
 		return $this->request;
 	}
 
