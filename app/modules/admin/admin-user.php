@@ -35,7 +35,7 @@ if ($router->request[count($router->request) - 1] == 'change_password') {
 	$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '" . $user->get_id() . "' LIMIT 1");
 	$user_data = $db->fetch($result);
 
-	if ($user_data[0]['password'] && $user_data[0]['password'] != User::password_encode($_POST['password_actual'])) {
+	if ($user_data[0]['password'] && $user_data[0]['password'] !== $user->password_encode($_POST['password_actual'])) {
 		$ajax->set('message', 'Podane aktualne hasło nie jest poprawne');
 		return;
 	}
@@ -43,7 +43,7 @@ if ($router->request[count($router->request) - 1] == 'change_password') {
 
 	// Save new password
 
-	$new_password = User::password_encode($_POST['password_new1']);
+	$new_password = $user->password_encode($_POST['password_new1']);
 	$result = $db->query("UPDATE `users` SET `password` = '" . $new_password . "' WHERE `id` = '" . $user->get_id() . "' LIMIT 1");
 
 	if ($result) {
