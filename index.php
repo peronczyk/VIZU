@@ -36,13 +36,7 @@ $router = new libs\Router();
  * Redirects based on configuration and enviroment
  */
 
-// Redirect to address with www. at the beginning if configuration requires it
 if (Config::$REDIRECT_TO_WWW === true) $router->redirect_to_www();
-
-// Redirect to installation if it exists and if app is not in dev mode
-if (!$core->is_dev() && file_exists(Config::$INSTALL_DIR) && ((isset($router->request[0]) && $router->request[0] !== 'install') || !isset($router->request[0]))) {
-	header('Location: ' . $router->site_path . '/' . Config::$INSTALL_DIR . '?redirected=true');
-}
 
 
 /**
