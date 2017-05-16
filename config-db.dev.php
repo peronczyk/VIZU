@@ -3,7 +3,7 @@
 # ==================================================================================
 #
 #	VIZU CMS
-#	Test enviroment database configuration file.
+#	Development enviroment database configuration file.
 #	---
 #	Delete this file if you want to use one configuration for all enviroments.
 #
