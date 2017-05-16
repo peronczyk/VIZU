@@ -7,9 +7,8 @@
 #
 # ==================================================================================
 
-if ($_POST['op'] !== "send") die(); // Security check
+if ($_POST['op'] !== 'send') die(); // Security check
 
-$mail = new libs\Mailer();
 $ajax = new libs\Ajax();
 
 // Validate sended form
@@ -54,6 +53,8 @@ elseif (isset($_SESSION['email_sended']) && (date('U') - $_SESSION['email_sended
 
 else {
 
+	$mail = new libs\Mailer();
+
 	$main_recipient = false;
 
 	$result = $db->query("SELECT `id`, `email` FROM `users`");
@@ -71,36 +72,34 @@ else {
 
 	if ($main_recipient) {
 
-		$mail->add_recipient($main_recipient);
-		$mail->set_topic('[' . $router->domain . '] ' . ucfirst($_POST['topic']));
-		$mail->set_reply_to($_POST['email']);
+		try {
+			$result = $mail
+				->add_recipient($main_recipient)
+				->set_topic('[' . $router->domain . '] ' . ucfirst($_POST['topic']))
+				->set_reply_to($_POST['email'])
 
-		// Need to be an e-mail that exists on hosting account becouse some services only send it like that
-		$mail->set_from($main_recipient);
+				// Need to be an e-mail that exists on hosting account becouse some
+				// services only send it like that
+				->set_from($main_recipient)
 
-		// Prepare mail
+				// Add sender data
+				->add_list_data('Temat', trim(strip_tags($_POST['topic'])))
+				->add_list_data('Firma', trim(strip_tags($_POST['company'])))
+				->add_list_data('Autor', trim(strip_tags($_POST['name'])))
+				->add_list_data('Email', trim(strip_tags($_POST['email'])))
+				->add_list_data('Kiedy', date('j-n-Y') . " o godzinie " . date('H:i'))
+				->add_list_data('Host', gethostbyaddr($_SERVER['REMOTE_ADDR']) . ' (' . $_SERVER['REMOTE_ADDR'] . ')')
+				->add_list_data('Język', LANG_CODE)
 
-		$list_data_arr = array(
-			'Temat'	=> trim(strip_tags($_POST['topic'])),
-			'Firma'	=> trim(strip_tags($_POST['company'])),
-			'Autor'	=> trim(strip_tags($_POST['name'])),
-			'Email'	=> trim(strip_tags($_POST['email'])),
-			'Kiedy'	=> date("j-n-Y") . " o godzinie " . date ("H:i"),
-			'Host'	=> gethostbyaddr($_SERVER['REMOTE_ADDR']) . ' (' . $_SERVER['REMOTE_ADDR'] . ')',
-			'Język'	=> LANG_CODE
-		);
-		foreach($list_data_arr as $name => $val) {
-			$mail->add_list_data($name, $val);
+				// Send email
+				->send($_POST['message']);
+		}
+		catch (\Exception $e) {
+			$ajax->set('message', $result);
 		}
 
-		// Send mail
-
-		$result = $mail->send($_POST['message']);
-
 		if ($result === true) {
-			$ajax->set('message',
-				$lang->_t('mailer-sent', 'Message sent')
-			);
+			$ajax->set('message', $lang->_t('mailer-sent', 'Message sent'));
 			$_SESSION['email_sended'] = date('U');
 		}
 		else $ajax->set('message', $result);

@@ -92,6 +92,20 @@ class Core {
 
 
 	/**
+	 * Print out eye-friendly array
+	 */
+
+	public static function print_arr($arr) {
+		if (is_array($arr)) {
+			echo('<pre>');
+			print_r($arr);
+			echo("</pre>");
+		}
+		else echo('<pre>This is not a array</pre>');
+	}
+
+
+	/**
 	 * GETTER : Mtime
 	 */
 

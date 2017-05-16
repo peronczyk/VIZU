@@ -26,30 +26,33 @@ class Mailer {
 
 	public function set_topic($topic) {
 		$this->topic = $topic;
+		return $this;
 	}
 
 
 	/**
-	 * Add recipient
+	 * SETTER : Add recipient
 	 */
 
 	public function add_recipient($mail, $name = '') {
 		$this->recipients[] = array($mail, $name);
+		return $this;
 	}
 
 
 	/**
-	 * Add BCC email
+	 * SETTER : Add BCC email
 	 */
 
 	public function add_bcc($mail, $name = '') {
 		$this->bcc[] = array($mail, $name);
+		return $this;
 	}
 
 
 	/**
-	 * Add list data
-	 * Data presented as list at the beginning of message
+	 * SETTER : Add list data
+	 * Data presented as list after the message content.
 	 *
 	 * @param string $name
 	 * @param string $value
@@ -57,6 +60,7 @@ class Mailer {
 
 	public function add_list_data($name, $value) {
 		$this->list_data[] = array($name, $value);
+		return $this;
 	}
 
 
@@ -66,6 +70,7 @@ class Mailer {
 
 	public function set_reply_to($mail) {
 		$this->reply_to = $mail;
+		return $this;
 	}
 
 
@@ -75,11 +80,12 @@ class Mailer {
 
 	public function set_from($mail) {
 		$this->from = $mail;
+		return $this;
 	}
 
 
 	/**
-	 * Emails to string
+	 * HELPER : Emails to string
 	 * Converts array that contains email addresses in to string that can be set
 	 * as header.
 	 *
@@ -91,8 +97,10 @@ class Mailer {
 		if (is_array($emails)) {
 			$num = count($emails);
 			for($i = 0; $i < $num; $i++) {
-				if (empty($emails[$i][1]))	$str .= $emails[$i][0];
-				else						$str .= $emails[$i][1] . '<' . $emails[$i][0] . '>';
+				if (empty($emails[$i][1])) {
+					$str .= $emails[$i][0];
+				}
+				else $str .= $emails[$i][1] . '<' . $emails[$i][0] . '>';
 
 				if (($i + 1) < $num) $str .= ', ';
 			}
@@ -108,9 +116,15 @@ class Mailer {
 	 */
 
 	public function send($message) {
-		if (empty($message))	return 'Pusta wiadomość';
-		if (empty($this->topic)) return 'Nie ustawiono tematu';
-		if (count($this->recipients) < 1) return 'Brak odbiorców';
+		if (empty($message)) {
+			throw new Exception('Pusta wiadomość');
+		}
+		if (empty($this->topic)) {
+			throw new Exception('Nie ustawiono tematu');
+		}
+		if (count($this->recipients) < 1) {
+			throw new Exception('Brak odbiorców');
+		}
 
 		$topic = $this->topic;
 		$recipients = $this->emails2string($this->recipients);
@@ -141,17 +155,27 @@ class Mailer {
 		$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 		$headers .= "MIME-Version: 1.0";
 
-		if (!empty($this->reply_to))	$headers .= "\r\nReply-To: " . $this->reply_to;
-		if (!empty($this->from))		$headers .= "\r\nFrom: " . $this->from;
-		if (!empty($this->cc))			$headers .= "\r\nCc: " . $this->emails2string($this->cc);
-		if (!empty($this->bcc))			$headers .= "\r\nBcc: " . $this->emails2string($this->bcc);
+		if (!empty($this->reply_to)) {
+			$headers .= "\r\nReply-To: " . $this->reply_to;
+		}
+		if (!empty($this->from)) {
+			$headers .= "\r\nFrom: " . $this->from;
+		}
+		if (!empty($this->cc)) {
+			$headers .= "\r\nCc: " . $this->emails2string($this->cc);
+		}
+		if (!empty($this->bcc)) {
+			$headers .= "\r\nBcc: " . $this->emails2string($this->bcc);
+		}
 
 		/**
 		 * The action
 		 */
 
 		if (@mail($recipients, $topic, $content, $headers)) return true;
-		else return 'Nie udało się wysłać wiadomości. Spróbuj ponownie lub skontaktuj się z nami telefonicznie.';
+		else {
+			throw new Exception('Nie udało się wysłać wiadomości. Spróbuj ponownie lub skontaktuj się z nami telefonicznie.');
+		}
 	}
 
 }

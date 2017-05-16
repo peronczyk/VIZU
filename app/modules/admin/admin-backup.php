@@ -7,7 +7,7 @@
 #
 # ==================================================================================
 
-if (IN_ADMIN !== true) die('This file can be loaded only in admin'); // Security check
+if (IN_ADMIN !== true) die('This file can be loaded only in admin module'); // Security check
 
 
 // Display layout

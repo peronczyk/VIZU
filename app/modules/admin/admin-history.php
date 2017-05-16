@@ -7,7 +7,7 @@
 #
 # ==================================================================================
 
-if (IN_ADMIN !== true) die('This file can be loaded only in admin'); // Security check
+if (IN_ADMIN !== true) die('This file can be loaded only in admin module');
 
 
 // Get data from database for all fields
@@ -21,6 +21,7 @@ $fields_data = $core->process_array($db->fetch($result), 'id');
 $tpl->set_theme(Config::$THEME_NAME);
 $content			= $tpl->get_content('home');
 $template_fields	= $tpl->get_fields($content);
+$fields_data_simple	= array();
 
 
 // Prepare arrays to sort them

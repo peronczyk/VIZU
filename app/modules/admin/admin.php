@@ -7,7 +7,8 @@
 #
 # ==================================================================================
 
-define('IN_ADMIN', true); // Security constant. Needs to be checked in all included files
+// Security constant. Needs to be checked in all included files
+define('IN_ADMIN', true);
 
 $tpl = new libs\Template();
 
@@ -22,7 +23,6 @@ $tpl->assign(array(
 
 $user = new libs\User($db);
 
-
 /**
  * PAGE LOADED VIA AJAX
  * Check if request was done asynchronously.
@@ -31,8 +31,10 @@ $user = new libs\User($db);
 
 if (libs\Core::$ajax_loaded === true) {
 
-	# ------------------------------------------------------------------------------
-	# BYPASS DEFAULT PHP ERRORS BY OWN FUNCTION TO SEND THEM AS JSON
+	/**
+	 * Bypass default PHP errors by custom error handler.
+	 * This allows to display errors as JSON.
+	 */
 
 	function error_handler($errno, $errstr, $errfile, $errline) {
 		echo json_encode(
@@ -89,7 +91,7 @@ if (libs\Core::$ajax_loaded === true) {
 	 * Display results
 	 */
 
-	if (($user->get_access() > 0) && ($display == true)) {
+	if (($user->get_access() > 0) && ($display === true)) {
 		$ajax->set('loggedin', true);
 
 		switch($request) {

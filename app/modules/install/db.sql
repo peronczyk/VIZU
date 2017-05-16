@@ -51,5 +51,5 @@ CREATE TABLE IF NOT EXISTS `languages` (
 --
 
 INSERT INTO `languages` VALUES
-	('en', 'EN', 'English', 'Great Britain', TRUE),
-	('pl', 'PL', 'Polski', 'Polska', TRUE);
+	('pl', 'PL', 'Polski', 'Polska', TRUE),
+	('en', 'EN', 'English', 'Great Britain', TRUE);

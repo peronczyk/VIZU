@@ -7,13 +7,12 @@
 #
 # ==================================================================================
 
-if (IN_ADMIN !== true) die('This file can be loaded only in admin'); // Security check
+if (IN_ADMIN !== true) die('This file can be loaded only in admin module');
 
 
-# ==================================================================================
-# COMMON OPERATIONS
-# ==================================================================================
-
+/**
+ * Common operations
+ */
 
 // Check if field types or group was queried
 // If yes set up allowed_field_types to view them
