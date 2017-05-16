@@ -14,8 +14,8 @@ define('VIZU_VERSION', '1.1.0');
  * Load configuration
  */
 
-if (!file_exists('config.php')) die('Configuration file does not exist');
-require_once('config.php');
+if (!file_exists('config-app.php')) die('Configuration file does not exist');
+require_once('config-app.php');
 
 /**
  * Load class autoloader
@@ -41,10 +41,20 @@ if (Config::$REDIRECT_TO_WWW === true) $router->redirect_to_www();
 
 /**
  * Load database handler library
- * The connection is performed on the occasion of the first query
+ * The connection is performed on the occasion of the first query.
+ * Connection configuration depends on enviroment - development or production.
  */
 
-$db = new libs\Database(Config::$DB_HOST, Config::$DB_USER, Config::$DB_PASS, Config::$DB_NAME);
+if ($core->is_dev() && file_exists('config-db.dev.php')) {
+	$db_config = include('config-db.dev.php');
+}
+elseif (file_exists('config-db.php')) {
+	$db_config = include('config-db.php');
+}
+else Core::error('Database configuration file is missing', __FILE__, __LINE__, debug_backtrace());
+
+$db = new libs\Database($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
+unset($db_config);
 
 
 /**

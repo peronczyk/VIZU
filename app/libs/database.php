@@ -43,7 +43,7 @@ class Database {
 			$this->connection = new \mysqli($this->host, $this->user, $this->pass, $this->name);
 		}
 		catch(\Exception $e) {
-			Core::error('Unable to connect to MySQL database "' . $this->name . '". Returned error: ' . $e->getMessage() . ' [' . $e->getCode() . '].<br>Probably application is not installed propertly. Check configured database connection credentials and be sure database exists.', __FILE__, __LINE__, debug_backtrace());
+			Core::error('Unable to connect to MySQL database "' . $this->name . '". Returned error: ' . $e->getMessage() . ' [' . $e->getCode() . '].<br>Probably application is not installed propertly. Check configured database connection credentials and be sure that database exists.', __FILE__, __LINE__, debug_backtrace());
 			exit;
 		}
 
