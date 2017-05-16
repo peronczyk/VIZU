@@ -46,8 +46,10 @@ $(function() {
 
 		$loadBar.removeClass('active');
 
-		console.clear();
-		if (debug) console.info('Ajax request succed to url: ' + url);
+		if (debug) {
+			console.info('Ajax request succed to url: ' + url);
+			console.log(json);
+		}
 
 
 		/*	--------------------------------------------------------------------
@@ -68,7 +70,6 @@ $(function() {
 		else if (typeof json !== 'object') {
 			if (debug) {
 				console.log('Received data is not an AJAX object');
-				console.log(json);
 			}
 			showMsg('Odpowiedź serwera jest niepoprawna - przesłane dane nie sa obiektem AJAX<br><br>' + json);
 			return false;
