@@ -1,6 +1,13 @@
 <?php
 
-if (IN_ADMIN !== true) die('This file can be loaded only in admin'); // Security check
+# ==================================================================================
+#
+#	VIZU CMS
+#	Module: Admin / Backup
+#
+# ==================================================================================
+
+if (IN_ADMIN !== true) die('This file can be loaded only in admin module'); // Security check
 
 
 // Display layout

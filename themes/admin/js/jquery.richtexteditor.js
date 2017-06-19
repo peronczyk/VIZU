@@ -34,8 +34,7 @@
 				source	: 'o-Rte__source',
 				sublist	: 'o-Rte__sublist',
 				hidden	: 'u-Hidden',
-				active	: 'is-Active',
-				disabled: 'is-Disabled',
+				active	: 'is-Active'
 			},
 			toolbarElements: [['h1', 'h2', 'code'], 'bold', 'italic', 'underline', 'ul', 'ol', 'link', 'undo', 'redo', 'clearFormatting', 'source'],
 			lang: {
@@ -126,27 +125,14 @@
 				icon: 'Html',
 				exec: function($button) {
 
-					// Close
+					// Save changes
 					if ($button.hasClass(config.classNames.active)) {
-
-						// Save changes
 						$input.val($source.val());
 						$editor.html($source.val());
-
-						// Add/remove classes
-						$source.removeClass(config.classNames.active);
-						$toolbar.find('button').removeClass(config.classNames.disabled);
-						$button.removeClass(config.classNames.active);
 					}
 
-					// Open
-					else {
-						$source.addClass(config.classNames.active);
-						$toolbar.find('button').addClass(config.classNames.disabled);
-						$button
-							.removeClass(config.classNames.disabled)
-							.addClass(config.classNames.active);
-					}
+					$source.toggleClass(config.classNames.active);
+					$button.toggleClass(config.classNames.active);
 				}
 			},
 
@@ -218,27 +204,11 @@
 			// Component wrapper
 			$component	= $('<div/>', {class: config.classNames.wrapper});
 
-			// Component hidden input
-			$input = $('<input/>', {
-				type: 'hidden',
-				name: params.name,
-				value: params.value
-			});
-
-			// Component toolbar
-			$toolbar = that.createToolbar();
-
-			// Component editor field
-			$editor = $('<p/>', {
-				class: config.classNames.editor,
-				contenteditable: true
-			}).html(params.value);
-
-			// Component source code
-			$source = $('<textarea/>', {
-				class: config.classNames.source,
-				spellcheck: false
-			}).html(params.value);
+			// Component elements
+			$input		= $('<input/>', {type: 'hidden', name: params.name, value: params.value});
+			$toolbar	= that.createToolbar();
+			$editor		= $('<p/>', {class: config.classNames.editor, contenteditable: true}).html(params.value);
+			$source		= $('<textarea/>', {class: config.classNames.source}).html(params.value);
 
 			// Mix wrapper and elements together and replace source textarea
 			$component.append($input, $toolbar, $editor, $source);
@@ -251,7 +221,7 @@
 			});
 
 			// Handle focus on editor
-			$component.on('focus blur', function(event) {
+			$editor.on('focus blur', function(event) {
 				if (event.type === 'focus') $component.addClass(config.classNames.active);
 				else $component.removeClass(config.classNames.active);
 			});

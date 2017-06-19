@@ -2,6 +2,8 @@
 <html>
 
 	<head>
+		<base url="{{ site_path }}">
+
 		<meta charset="utf-8">
 		<title>Administracja serwisem</title>
 
@@ -30,16 +32,18 @@
 				</a></li>
 				<li><a href="admin/user">
 					<svg class="icon-24"><use xlink:href="#icon-24_user"></use></svg>
-					Użytkownik
+					Użytkownicy
 				</a></li>
 				<li><a href="admin/history">
 					<svg class="icon-24"><use xlink:href="#icon-24_history"></use></svg>
 					Historia
 					</a></li>
+				<!-- Hide unfinished option
 				<li><a href="admin/backup">
 					<svg class="icon-24"><use xlink:href="#icon-24_download"></use></svg>
 					Backup
 				</a></li>
+				-->
 				<li><a href="./" data-noajax>
 					<svg class="icon-24"><use xlink:href="#icon-24_table"></use></svg>
 					Strona
@@ -68,10 +72,6 @@
 							<svg class="icon-16"><use xlink:href="#icon-16_sign-in"></use></svg>
 							Zaloguj
 						</button>
-						<button class="cancel" data-url="{{ site_path }}">
-							<svg class="icon-16"><use xlink:href="#icon-16_arrow"></use></svg>
-							Wróć
-						</button>
 					</div>
 					<div class="errorbox"></div>
 					<p><a href="user/passrec">Nie pamiętam hasła</a></p>
@@ -84,10 +84,10 @@
 			<a href="">Cofnij</a>
 		</div>
 
-		<script type="text/javascript" src="{{ app_path }}js/jquery-3.1.0.js"></script>
-		<script type="text/javascript" src="{{ app_path }}js/jquery-rte.js"></script>
-		<script type="text/javascript" src="{{ app_path }}js/jquery-observe.js"></script>
-		<script type="text/javascript" src="{{ theme_path }}/js/jquery-svgiconsetloader.js"></script>
+		<script type="text/javascript" src="{{ theme_path }}/js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="{{ theme_path }}/js/jquery.richtexteditor.js"></script>
+		<script type="text/javascript" src="{{ theme_path }}/js/jquery.observe.js"></script>
+		<script type="text/javascript" src="{{ theme_path }}/js/jquery.svgiconsetloader.js"></script>
 		<script type="text/javascript" src="{{ theme_path }}/js/custom.js"></script>
 	</body>
 </html>

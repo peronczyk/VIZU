@@ -1,9 +1,22 @@
 <?php
 
-$tpl->set_theme(Config::THEME_NAME);
+# ==================================================================================
+#
+#	VIZU CMS
+#	Module: Page
+#
+# ==================================================================================
+
+$tpl = new libs\Template();
+$tpl->set_theme(Config::$THEME_NAME);
+
 $template_content	= $tpl->get_content('home');
 $template_fields	= $tpl->get_fields($template_content);
 
+
+/**
+ * If there are codded fields in template get their values from database
+ */
 
 if (count($template_fields) > 0) {
 
@@ -23,14 +36,26 @@ if (count($template_fields) > 0) {
 }
 
 
+/**
+ * Assign common fields that will be available in template
+ */
+
 $tpl->assign(array(
 	'site_path'		=> $router->site_path . '/',
-	'theme_path'	=> 'themes/' . Config::THEME_NAME . '/',
-	'app_path'		=> Config::APP_DIR,
+	'theme_path'	=> 'themes/' . Config::$THEME_NAME . '/',
+	'app_path'		=> Config::$APP_DIR,
+	'lang_code'		=> $lang->get(),
+	'db_connected'	=> (int)$db->is_connected(),
+	'db_queries'	=> (int)$db->get_queries_count(),
 	'fields'		=> print_r($template_fields, true), // For debug purposes
 ));
+
+
+/**
+ * Parse and display
+ */
 
 $parsed_html = $tpl->parse($template_content, $template_fields, $lang->translations);
 
 if (!empty($parsed_html)) echo $parsed_html;
-else Core::error('Funkcja parsująca szablon nie zwróciła żadnej wartości.', __FILE__, __LINE__, debug_backtrace());
+else Core::error('Parsing function does not return any value.', __FILE__, __LINE__, debug_backtrace());
