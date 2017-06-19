@@ -1,7 +1,137 @@
 <header>
-	<h1>Zmień hasło</h1>
+	<h1>Użytkownicy</h1>
 	<a href="" class="nav"><svg class="icon-16 rotate-180"><use xlink:href="#icon-16_arrowhead"></use></svg> Wróć</a>
 </header>
+
+<div class="grid">
+	<div class="row">
+		<div class="col-6 pad-right">
+			<div class="box pad pad-bottom">
+				<h3>Lista użytkowników</h3>
+				<ul>
+					{{ users_list }}
+				</ul>
+			</div>
+		</div>
+
+		<div class="col-6 pad-left">
+			<div class="box pad">
+				<h3>Zmiana hasła użytkownika</h3>
+				<p>Zalogowany użytkownik: {{ user_email }}</p>
+
+				<br>
+
+				<form method="post" action="admin/user/change_password">
+					<label>
+						Stare hasło
+						<input type="password" name="password_actual" required>
+					</label>
+					<br><br>
+					<label>
+						Nowe hasło
+						<input type="password" name="password_new1" required>
+					</label>
+					<br><br>
+					<label>
+						Powtórz nowe hasło
+						<input type="password" name="password_new2" required>
+					</label>
+
+					<div class="buttons">
+						<button type="submit" class="accept">
+							Zapisz
+							<svg class="icon-16"><use xlink:href="#icon-16_accept"></use></svg>
+						</button>
+						<button type="reset" class="cancel">
+							Resetuj
+							<svg class="icon-16"><use xlink:href="#icon-16_ban"></use></svg>
+						</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="box pad">
+				<h3>Dodawanie nowego użytkownika</h3>
+				<form method="post" action="admin/user/user_add">
+					<label>
+						Email użytkownika
+						<input type="email" name="email" required>
+					</label>
+					<br><br>
+					<p>Użytkownik zostanie poinformowany drogą mailową o założeniu konta. W korespondencji będą podane także dane logowania.</p>
+
+					<div class="buttons">
+						<button type="submit" class="accept">
+							Zapisz
+							<svg class="icon-16"><use xlink:href="#icon-16_accept"></use></svg>
+						</button>
+						<button type="reset" class="cancel">
+							Resetuj
+							<svg class="icon-16"><use xlink:href="#icon-16_ban"></use></svg>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!--
+<div class="box grid">
+	<div class="row">
+		<div class="col-6">
+			<div class="pad">
+				<h3>Lista użytkowników</h3>
+				<ul>
+					<li>Username</li>
+				</ul>
+			</div>
+
+			<hr>
+
+			<div class="pad">
+
+
+			</div>
+		</div>
+		<div class="col-6">
+			<div class="pad">
+				<h3>Zmiana hasła użytkownika</h3>
+				<p>Zalogowany użytkownik:</p>
+
+				<form method="post" action="admin/user/change_password">
+					<label class="row">
+						<div class="desc">Nowe hasło</div>
+						<div class="field"><input type="password" name="password_new1"></div>
+					</label>
+
+					<label class="row">
+						<div class="desc">Powtórz nowe hasło</div>
+						<div class="field"><input type="password" name="password_new2"></div>
+					</label>
+
+					<div class="buttons ending">
+						<button type="submit" class="accept">
+							Zapisz
+							<svg class="icon-16"><use xlink:href="#icon-16_accept"></use></svg>
+						</button>
+						<button type="reset" class="cancel">
+							Resetuj
+							<svg class="icon-16"><use xlink:href="#icon-16_ban"></use></svg>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+-->
+
+
+<!--
+
+
 
 <form method="post" action="admin/user/change_password">
 	<div class="box">
@@ -43,4 +173,4 @@
 			<svg class="icon-16"><use xlink:href="#icon-16_ban"></use></svg>
 		</button>
 	</div>
-</form>
+</form>-->
