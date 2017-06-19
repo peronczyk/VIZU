@@ -13,6 +13,7 @@ class Language {
 
 	private $lang_code;
 	public $translations = array();
+	private $lang_list;
 	private $_db; // Handle to database controller
 
 
@@ -28,39 +29,66 @@ class Language {
 
 
 	/**
-	 * SETTER : Active language
+	 * GETTER : List of configured languages
 	 *
-	 * @return boolean - Return false if language was set to default
+	 * @return array
 	 */
 
-	public function set($requested = null) {
-		if (!empty($requested)) {
+	public function get_list() {
+		if (!$lang_list) {
 			$result = $this->_db->query('SELECT * FROM `languages`', true);
-			$languages = $this->_db->fetch($result);
-
-			if (is_array($languages)) {
-				foreach($languages as $lang) {
-					if ($lang['code'] == $requested && (bool)$lang['active'] === true) {
-						$this->lang_code = $lang['code'];
-						return true;
-					}
-				}
-			}
+			$this->lang_list = $this->_db->fetch($result);
 		}
-
-		$this->lang_code = \Config::$DEFAULT_LANG;
-		return false;
+		return $this->lang_list;
 	}
 
 
 	/**
-	 * Get active language code
+	 * GETTER : Active language code
 	 *
 	 * @return string{2}
 	 */
 
 	public function get() {
 		return $this->lang_code;
+	}
+
+
+	/**
+	 * SETTER : Active language
+	 *
+	 * @return boolean - Returns false if language was set to default
+	 */
+
+	public function set($requested = null) {
+		if ($requested) $lang_code = $requested;
+		else $lang_code = \Config::$DEFAULT_LANG;
+
+		if ($this->exists($lang_code)) {
+			$this->lang_code = $lang_code;
+			return true;
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Check if provided lang code matches any configured language in database
+	 *
+	 * @return boolean
+	 */
+
+	public function exists($lang_code) {
+		$lang_list = $this->get_list();
+		if (count($lang_list) > 0) {
+			foreach($lang_list as $lang) {
+				if ($lang['code'] == $lang_code && (bool)$lang['active'] === true) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 
