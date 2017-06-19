@@ -1,28 +1,18 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Lib: Router
-#
-# ==================================================================================
-
-namespace Libs;
-
 class Router {
 
 	public $protocol;	// Website protocol: http:// or https://
 	public $url;		// Full actual URL
 	public $domain;		// Domain, eg: domain.com
 	public $site_path;	// Website path, eg: http://www.domain.com/website
-	public $request;	// Array of reqested modules, eg: /admin/login
-	public $query;		// Array of requested query, eg: ?foo=bar&baz=lorem
+	public $request;	// Array of reqested modules, eg.: /admin/login
+	public $query;		// Array of requested query, eg.: ?foo=bar&baz=lorem
 
 
-	/**
-	 * Constructor
-	 * Sets often used variables that describes user location
-	 */
+	# ==============================================================================
+	# CONSTRUCTOR
+	# ==============================================================================
 
 	public function __construct() {
 
@@ -36,73 +26,38 @@ class Router {
 		$this->domain = $_SERVER['HTTP_HOST'];
 
 		// Create website URL, eg.: http://domain.com/website
-		$this->site_path = $this->protocol . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']);
+		$this->site_path = $this->protocol . $_SERVER['SERVER_NAME'] . dirname($_SERVER["SCRIPT_NAME"]);
 
-		// Return string after domain from physical URL
-		// eg.: 'website' from http://domain.com/website/request
-		$dirname = basename($this->site_path);
-		$requested_str = $_SERVER['REQUEST_URI'];
+		$dirname = basename($this->site_path); // Return string after domain from physical URL, eg.: 'website' from http://domain.com/website/request
+		$requested_str = $_SERVER["REQUEST_URI"];
 
 		// Check if website is in subdirectory.
 		// If yes remove everything from start to occurence of subfolder name
-		$pos = strpos(strtolower($requested_str), strtolower($dirname)); // Return occurence of 'website' in requested URI
+		$pos = strpos($requested_str, $dirname); // Return occurence of 'website' in requested URI
 		if ($pos !== false) {
 			$requested_str = substr($requested_str, $pos + strlen($dirname));
 		}
 
-		// Divide string into params chunk and query string chunk
 		$requested_str = explode('?', $requested_str);
-
-		// Get request params
-		$this->request = array_values(array_filter(explode('/', $requested_str[0])));
+		$this->request = array_values(array_filter(explode('/', $requested_str[0]))); // Get request params
 
 		// Get query params
 		if (isset($requested_str[1])) parse_str($requested_str[1], $this->query);
 	}
 
 
-	/**
-	 * Load module
-	 */
-
-	public function get_module_to_load() {
-		if (!empty($this->request[0])) {
-			$module_file = \Config::$APP_DIR . 'modules/' . $this->request[0] . '/' . $this->request[0] . '.php';
-			if (file_exists($module_file)) return $module_file;
-			else {
-				$error404_module_file = \Config::$APP_DIR . 'modules/404/404.php';
-				if (file_exists($error404_module_file)) return $error404_module_file;
-				else Core::error('Requested module "' . \Config::$DEFAULT_MODULE . '" and module "404" does not exist.', __FILE__, __LINE__, debug_backtrace());
-			}
-		}
-		else {
-			$default_module_file = \Config::$APP_DIR . 'modules/' . \Config::$DEFAULT_MODULE . '/' . \Config::$DEFAULT_MODULE . '.php';
-			if (file_exists($default_module_file)) return $default_module_file;
-			else Core::error('Configured default module "' . \Config::$DEFAULT_MODULE . '" does not exist', __FILE__, __LINE__, debug_backtrace());
-		}
-		return false;
-	}
-
-
-	/**
-	 * Request shift
-	 * Moves requests array forward
-	 */
+	# ==============================================================================
+	# MOVE REQUESTS FORWARD
+	# ==============================================================================
 
 	public function request_shift() {
-		if (count($this->request) > 1) {
-			$this->request = array_shift($this->request);
-		}
-		else $this->request = null;
-
-		return $this->request;
+		return array_shift($this->request);
 	}
 
 
-	/**
-	 * Redirect to url address with WWW at the beginning
-	 * if configuration requires it.
-	 */
+	# ==============================================================================
+	# CHECK IF DOMAIN HAS WWW. IN FRONT AND IF NO REDIRECT
+	# ==============================================================================
 
 	public function redirect_to_www() {
 		$domain = explode('.', $this->domain);

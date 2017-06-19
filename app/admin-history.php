@@ -1,13 +1,6 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Module: Admin / History
-#
-# ==================================================================================
-
-if (IN_ADMIN !== true) die('This file can be loaded only in admin module');
+if (IN_ADMIN !== true) die('This file can be loaded only in admin'); // Security check
 
 
 // Get data from database for all fields
@@ -18,10 +11,9 @@ $fields_data = $core->process_array($db->fetch($result), 'id');
 
 // Get fields from home of user template
 
-$tpl->set_theme(Config::$THEME_NAME);
+$tpl->set_theme(Config::THEME_NAME);
 $content			= $tpl->get_content('home');
 $template_fields	= $tpl->get_fields($content);
-$fields_data_simple	= array();
 
 
 // Prepare arrays to sort them

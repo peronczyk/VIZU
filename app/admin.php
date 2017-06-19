@@ -1,40 +1,31 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Module: Admin
-#
-# ==================================================================================
-
-// Security constant. Needs to be checked in all included files
-define('IN_ADMIN', true);
-
-$tpl = new libs\Template();
+define('IN_ADMIN', true); // Security constant. Needs to be checked in all included files
 
 $tpl->set_theme('admin');
 $tpl->assign(array(
-	'app_path'			=> Config::$APP_DIR,
+	'app_path'			=> Config::APP_DIR,
 	'site_path' 		=> $router->site_path,
 	'theme_path'		=> 'themes/admin',
-	'script_version'	=> VIZU_VERSION,
+	'script_version'	=> VERSION,
 	'phpversion'		=> phpversion(),
 ));
 
-$user = new libs\User($db);
+require_once(Config::APP_DIR . 'libs/user.php');
+$user = new User($db);
 
-/**
- * PAGE LOADED VIA AJAX
- * Check if request was done asynchronously.
- * If true change the behavior of page to always return JSON data.
- */
 
-if (libs\Core::$ajax_loaded === true) {
+# ==================================================================================
+# PAGE LOADED WITH AJAX
+#
+# Check if request was done asynchronously.
+# If true change the behavior of page to always return JSON data.
+# ==================================================================================
 
-	/**
-	 * Bypass default PHP errors by custom error handler.
-	 * This allows to display errors as JSON.
-	 */
+if (Core::$ajax_loaded === true) {
+
+	# ------------------------------------------------------------------------------
+	# BYPASS DEFAULT PHP ERRORS BY OWN FUNCTION TO SEND THEM AS JSON
 
 	function error_handler($errno, $errstr, $errfile, $errline) {
 		echo json_encode(
@@ -51,11 +42,11 @@ if (libs\Core::$ajax_loaded === true) {
 	$old_error_handler = set_error_handler("error_handler");
 
 
-	/**
-	 * Start AJAX class and set it up
-	 */
+	# ------------------------------------------------------------------------------
+	# START AJAX CLASS AND SET SOME VARIABLES
 
-	$ajax = new libs\Ajax();
+	require_once(Config::APP_DIR . 'libs/ajax.php');
+	$ajax = new Ajax();
 
 	$display = true; // Is there anything that needs to be shown?
 
@@ -63,9 +54,8 @@ if (libs\Core::$ajax_loaded === true) {
 	else $request = $router->request[1];
 
 
-	/**
-	 * Handle post requests
-	 */
+	# ------------------------------------------------------------------------------
+	# HANDLE POST REQUESTS
 
 	if (count($_POST) > 0) {
 		switch($request) {
@@ -87,11 +77,10 @@ if (libs\Core::$ajax_loaded === true) {
 		}
 	}
 
-	/**
-	 * Display results
-	 */
+	# ------------------------------------------------------------------------------
+	# DISPLAY RESULTS
 
-	if (($user->get_access() > 0) && ($display === true)) {
+	if (($user->get_access() > 0) && ($display == true)) {
 		$ajax->set('loggedin', true);
 
 		switch($request) {
@@ -158,10 +147,11 @@ if (libs\Core::$ajax_loaded === true) {
 }
 
 
-/**
- * PAGE LOADED NORMALLY
- * If page was not loaded asynchronously display admin template.
- */
+# ==================================================================================
+# PAGE LOADED NORMALLY
+#
+# If page was not loaded asynchronously display admin template.
+# ==================================================================================
 
 else {
 	if ($user->get_access() > 0) {

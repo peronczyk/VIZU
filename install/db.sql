@@ -1,8 +1,9 @@
+
 --
 -- `fields` table structure
 --
 
-CREATE TABLE IF NOT EXISTS `fields` (
+CREATE TABLE `fields` (
 	`num` int NOT NULL AUTO_INCREMENT,
 	`template` varchar(50) NOT NULL,
 	`language` varchar(2) NOT NULL,
@@ -22,12 +23,15 @@ CREATE TABLE IF NOT EXISTS `fields` (
 -- `config` table structure
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE `users` (
 	`id` int NOT NULL AUTO_INCREMENT,
 	`email` varchar(250) NOT NULL,
 	`password` text,
 	PRIMARY KEY (`id`)
 ) CHARSET=utf8;
+
+INSERT INTO `users` VALUES
+	(NULL, 'admin@website.com', '0a5b5d819b8a9d2e90843df535516e41e41330140acb2bb69a29092d3cb49993');
 
 
 -- --------------------------------------------------------
@@ -37,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- `languages` table structure
 --
 
-CREATE TABLE IF NOT EXISTS `languages` (
+CREATE TABLE `languages` (
 	`code` varchar(2) NOT NULL,
 	`short_name` varchar(3) NOT NULL,
 	`name` varchar(30),

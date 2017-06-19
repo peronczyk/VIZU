@@ -1,14 +1,5 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Lib: Template
-#
-# ==================================================================================
-
-namespace libs;
-
 class Template {
 
 	// Assignement storage. This values will be parsed in to the template
@@ -25,59 +16,39 @@ class Template {
 	private $tpl_ext = '.html';
 
 
-	/**
-	 * SETTER : Theme direcory name
-	 */
+	# ==============================================================================
+	# SETTING UP THEME DIRECTORY NAME
+	# ==============================================================================
 
 	public function set_theme($theme_name) {
 		$this->theme = $theme_name;
 	}
 
 
-	/**
-	 * Check if template exists
-	 *
-	 * @return string|false - Return template path or false if not found
-	 */
+	# ==============================================================================
+	# CHECK IF TEMPLATE EXISTS AND RETURN IT'S PATH OR FALSE
+	# ==============================================================================
 
 	public function get_template_path($file) {
 		if (empty($this->theme)) {
-			Core::error('Theme not set', __FILE__, __LINE__, debug_backtrace());
+			Core::error('Nie zdefiniowano żadnego szablonu', __FILE__, __LINE__, debug_backtrace());
 		}
 
-		$file_path = \Config::$THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
+		$file_path = Config::THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
 		if (!file_exists($file_path)) return false;
 		return $file_path;
 	}
 
 
-	/**
-	 * Load field class
-	 */
-
-	public function load_field_class($field_name) {
-		$class_file = 'app/fields/' . $field_name . '.php';
-		if (file_exists($class_file)) {
-			require_once($class_file);
-			$class_name = 'fields\\' . $field_name;
-			if (class_exists($class_name)) {
-				return new $class_name();
-			}
-			else return 'Template field handling file does not have proper class: "' . $field_name . '"';
-		}
-		else return 'Template field handling file does not exist: "' . $class_file . '"';
-	}
-
-
-	/**
-	 * Get contents of template file
-	 */
+	# ==============================================================================
+	# GET CONTENTS OF TEMPLATE FILE
+	# ==============================================================================
 
 	public function get_content($file) {
 		$file_path = $this->get_template_path($file);
 
 		if (!$file_path) {
-			Core::error('Template file does not exist: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
+			Core::error('Plik szablonu nie istnieje: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
 			return false;
 		}
 
@@ -85,13 +56,13 @@ class Template {
 	}
 
 
-	/**
-	 * Assign vars to parse
-	 */
+	# ==============================================================================
+	# ASSIGN VARS TO PARSE
+	# ==============================================================================
 
 	public function assign($array) {
 		if (!is_array($array)) {
-			Core::error('Variable passed to "assign" method is not an array', __FILE__, __LINE__, debug_backtrace());
+			Core::error('Nie przypisano żadnej tablicy do parsowania', __FILE__, __LINE__, debug_backtrace());
 		}
 		foreach($array as $key => $val) {
 			$this->vars[$key] = $val;
@@ -99,12 +70,9 @@ class Template {
 	}
 
 
-	/**
-	 * Prepare array of fields found in content
-	 *
-	 * @param string $content
-	 * @return array
-	 */
+	# ==============================================================================
+	# PREPARE ARRAY OF FIELDS FOUND IN CONTENT
+	# ==============================================================================
 
 	public function get_fields($content) {
 		$num_matches = preg_match_all('/{{(.*?)}}/', $content, $matches);
@@ -115,7 +83,7 @@ class Template {
 			$chunks	= array_filter(explode(' ', $val));
 			$field	= array();
 
-			if (in_array($chunks[0], \Config::$FIELD_CATEGORIES['content']) or in_array($chunks[0], \Config::$FIELD_CATEGORIES['other'])) {
+			if (in_array($chunks[0], Config::$_FIELD_CATEGORIES['content']) or in_array($chunks[0], Config::$_FIELD_CATEGORIES['other'])) {
 				$field['category'] = $chunks[0];
 
 				// Get params of the field
@@ -140,13 +108,11 @@ class Template {
 	}
 
 
-	/**
-	 * Parse template
-	 *
-	 * @param string - HTML code with template tags: {{ something }}
-	 * @param array $fields
-	 * @param array $translations
-	 */
+	# ==============================================================================
+	# PARSING TEMPLATE
+	#
+	# $content - string containing html code with template codes: {{ something }}
+	# ==============================================================================
 
 	public function parse($content, $fields, $translations = array()) {
 
@@ -212,7 +178,7 @@ class Template {
 			}
 			else $preg_status_text = $preg_status;
 
-			Core::error('Unable to display template becouse of error in parsing function. Returned error:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
+			Core::error('Nie udało się wyświetlić szablonu strony ponieważ w funkcji parsującej wystąpił błąd o następującym kodzie:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
 		}
 	}
 }
