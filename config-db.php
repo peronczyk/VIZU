@@ -13,7 +13,7 @@
 return array(
 
 	// Database host name
-	'host' => 'usdhfsoiuhf',
+	'host' => '',
 
 	// Database name
 	'name' => '',

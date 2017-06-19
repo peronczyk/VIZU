@@ -21,15 +21,6 @@ class Config {
 
 
 	# ------------------------------------------------------------------------------
-	# DATABASE CONNECTION
-
-	static $DB_HOST = 'localhost';
-	static $DB_NAME = 'vizu';
-	static $DB_USER = 'root';
-	static $DB_PASS = '';
-
-
-	# ------------------------------------------------------------------------------
 	# DIRECTORIES
 
 	static $APP_DIR		= 'app/';
