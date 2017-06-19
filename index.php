@@ -10,12 +10,14 @@
 
 define('VIZU_VERSION', '1.1.0');
 
+
 /**
  * Load configuration
  */
 
 if (!file_exists('config-app.php')) die('Configuration file does not exist');
 require_once('config-app.php');
+
 
 /**
  * Load class autoloader
@@ -65,6 +67,7 @@ $lang = new libs\Language($db);
 $lang_set_by_request = $lang->set(@$router->request[0]);
 if ($lang_set_by_request) $router->request_shift();
 $lang->load_theme_translations();
+
 
 /**
  * Load the module based on the page address

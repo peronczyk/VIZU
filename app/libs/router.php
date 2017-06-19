@@ -36,20 +36,25 @@ class Router {
 		$this->domain = $_SERVER['HTTP_HOST'];
 
 		// Create website URL, eg.: http://domain.com/website
-		$this->site_path = $this->protocol . $_SERVER['SERVER_NAME'] . dirname($_SERVER["SCRIPT_NAME"]);
+		$this->site_path = $this->protocol . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']);
 
-		$dirname = basename($this->site_path); // Return string after domain from physical URL, eg.: 'website' from http://domain.com/website/request
-		$requested_str = $_SERVER["REQUEST_URI"];
+		// Return string after domain from physical URL
+		// eg.: 'website' from http://domain.com/website/request
+		$dirname = basename($this->site_path);
+		$requested_str = $_SERVER['REQUEST_URI'];
 
 		// Check if website is in subdirectory.
 		// If yes remove everything from start to occurence of subfolder name
-		$pos = strpos($requested_str, $dirname); // Return occurence of 'website' in requested URI
+		$pos = strpos(strtolower($requested_str), strtolower($dirname)); // Return occurence of 'website' in requested URI
 		if ($pos !== false) {
 			$requested_str = substr($requested_str, $pos + strlen($dirname));
 		}
 
+		// Divide string into params chunk and query string chunk
 		$requested_str = explode('?', $requested_str);
-		$this->request = array_values(array_filter(explode('/', $requested_str[0]))); // Get request params
+
+		// Get request params
+		$this->request = array_values(array_filter(explode('/', $requested_str[0])));
 
 		// Get query params
 		if (isset($requested_str[1])) parse_str($requested_str[1], $this->query);
