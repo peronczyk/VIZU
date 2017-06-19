@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="{{ lang id='lang' }}">
+<html lang="{{ lang_code }}">
 
 <head>
 
-	<base href="{{ site_path }}/">
+	<base href="{{ site_path }}">
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<meta name="description" content="{{ setting type='simple' id='site_description' name='Site description' max='160' }}">
+	<meta name="description" content="{{ setting type='simple' id='site_description' name='Site description' desc='This could be edited in admin panel' max='160' }}">
 
 	<title>{{ setting type='simple' id='site_title' name='Site name' }}</title>
 
-	<link rel="stylesheet" href="{{ theme_path }}css/theme-basic.min.css" type="text/css">
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700">
+	<link rel="stylesheet" type="text/css" href="{{ theme_path }}css/default.css">
 
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 	<link rel="icon" sizes="32x32" href="{{ theme_path }}images/favicon32.png" type="image/png">
@@ -26,22 +27,37 @@
 
 <body>
 
-	<header class="c-Header">
-		<a href="#top" class="c-Header__logo">{{ setting id='site_title' }}</a>
-		<nav class="c-Header__menu">
-			<ul>
-				<li><a href="#sec01">{{ lang id='start' }}</a></li>
-				<li><a href="#sec02">{{ lang id='about' }}</a></li>
-				<li><a href="#sec03">{{ lang id='contact' }}</a></li>
-			</ul>
-		</nav>
+	<header class="Header">
+		<div class="Inner">
+			<hgroup class="Header__text">
+				<h1>Welcome to <span>VISU</span></h1>
+				<h2>Simple, modern, dependency-free CMS system that allows for quick implementation of one-page websites.</h2>
+				<p>This theme is only for presentation purpose. View it's source to see how themes are made and then... delete it! Nobody likes crap.</p>
+				<p>&mdash; &nbsp; <a href="https://github.com/peronczyk/vizu">View documentation on Github</a></p>
+				<p>&mdash; &nbsp; <a href="#main">Scroll down</a>
+			</hgroup>
+		</div>
 	</header>
 
-	<section class="u-Hero">
-		<h1>{{ text type='simple' id='slogan' name='Slogan' }}</h1>
-	</section>
+	<main class="Main" id="main">
+		<div class="Inner">
+			<h2>The following fields are editable in the administration panel</h2>
+			<h3>{{ text type='simple' id='editable_header' name='Editable header' desc='Edit this in admin panel' }}</h3>
 
-	<footer>
+			<article>{{ text type='rich' id='editable_article' name='Editable article' desc='This text could be edited also' }}</article>
+
+			<ul>
+				<li>Current language: {{ lang_code }}</li>
+				<li>Connected to database: {{ db_connected }}</li>
+				<li>Queries made: {{ db_queries }}</li>
+			</ul>
+		</div>
+	</main>
+
+	<footer class="Footer">
+		<div class="Inner">
+			Created with keyboard by <a href="http://peronczyk.com/" target="_blank">Bartosz Perończyk</a>
+		</div>
 	</footer>
 
 </body>

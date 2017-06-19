@@ -1,19 +1,19 @@
-# VIZU 1.0.0 beta
+# VIZU 1.1.0
 Simple, dependency-free CMS system that allows for quick implementation of simple Web pages without having to configure anything in the administration panel.
 
 
 ## Installation
-1. Import file `install/db.sql` in to your MySQL database.
-2. Provide database connection credentials in `config.php` file.
-3. Remove `install/` directory.
-4. Head to administration panel _yourwebsite.com/**admin/**_ and change default user credentials. Login data: 'admin@website.com' / 'admin'.
+1. Provide database connection credentials in `config-db.php` file located in main direcory.
+2. Adjust website configuration in `config-app.php` file.
+3. Start installation process by heading to _yourwebsite.com/**install**/_ and follow instructions.
+3. After succesfull installation you can access administration panel by heading to _yourwebsite.com/**admin**/_ address.
 
 ## Creating theme
 
-1. Create directory in themes/ - it will be your theme name.
+1. Start with creating theme directory in _themes/_.
 2. Create direcory "templates" inside your theme directory.
 3. HTML code should be put in "home.html" in "templates" directory.
-4. Avery other aspect of your theme depends on your preferences.
+4. Every other aspect of your theme depends on your preferences.
 
 ### Adding editable Field
 
