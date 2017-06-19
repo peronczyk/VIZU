@@ -117,13 +117,13 @@ class Mailer {
 
 	public function send($message) {
 		if (empty($message)) {
-			throw new Exception('Pusta wiadomość');
+			throw new \Exception('Pusta wiadomość');
 		}
 		if (empty($this->topic)) {
-			throw new Exception('Nie ustawiono tematu');
+			throw new \Exception('Nie ustawiono tematu');
 		}
 		if (count($this->recipients) < 1) {
-			throw new Exception('Brak odbiorców');
+			throw new \Exception('Brak odbiorców');
 		}
 
 		$topic = $this->topic;
@@ -174,7 +174,7 @@ class Mailer {
 
 		if (@mail($recipients, $topic, $content, $headers)) return true;
 		else {
-			throw new Exception('Nie udało się wysłać wiadomości. Spróbuj ponownie lub skontaktuj się z nami telefonicznie.');
+			throw new \Exception('Nie udało się wysłać wiadomości. Spróbuj ponownie lub skontaktuj się z nami telefonicznie.');
 		}
 	}
 
