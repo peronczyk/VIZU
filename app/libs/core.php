@@ -53,9 +53,9 @@ class Core {
 			header('Content-type: application/json');
 			echo json_encode(array(
 				'error' => array(
-					'str'	=> $msg,
-					'file'	=> $file,
-					'line'	=> $line
+					'str'  => $msg,
+					'file' => $file,
+					'line' => $line
 				)
 			));
 		}
@@ -99,7 +99,7 @@ class Core {
 		if (is_array($arr)) {
 			echo('<pre>');
 			print_r($arr);
-			echo("</pre>");
+			echo('</pre>');
 		}
 		else echo('<pre>This is not a array</pre>');
 	}
@@ -110,7 +110,7 @@ class Core {
 	 */
 
 	public static function get_mtime() {
-		list($usec, $sec) = explode (" ", microtime());
+		list($usec, $sec) = explode (' ', microtime());
 		return((float)$usec + (float)$sec);
 	}
 
