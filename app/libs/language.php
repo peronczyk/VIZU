@@ -35,7 +35,7 @@ class Language {
 	 */
 
 	public function get_list() {
-		if (!$lang_list) {
+		if (!$this->lang_list) {
 			$result = $this->_db->query('SELECT * FROM `languages`', true);
 			$this->lang_list = $this->_db->fetch($result);
 		}
