@@ -14,9 +14,6 @@ class Core {
 	// Check if script is run as request by AJAX
 	public static $ajax_loaded = false;
 
-	// Stores list of loaded libraries
-	private $loaded_libs = array();
-
 
 	/**
 	 * Constructor
@@ -86,7 +83,9 @@ class Core {
 
 	public function is_dev() {
 		$default_dev_ip = array('127.0.0.1', '0.0.0.0', '::1');
-		if ($_SERVER['REMOTE_ADDR'] === \Config::$DEV_IP || in_array($_SERVER['REMOTE_ADDR'], $default_dev_ip)) return true;
+		if ($_SERVER['REMOTE_ADDR'] === \Config::$DEV_IP || in_array($_SERVER['REMOTE_ADDR'], $default_dev_ip)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -111,7 +110,7 @@ class Core {
 
 	public static function get_mtime() {
 		list($usec, $sec) = explode (' ', microtime());
-		return((float)$usec + (float)$sec);
+		return (float)$usec + (float)$sec;
 	}
 
 
