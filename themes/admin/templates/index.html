@@ -2,12 +2,12 @@
 <html>
 
 	<head>
-		<base url="{{ site_path }}">
+		<base href="{{ site_path }}/">
 
 		<meta charset="utf-8">
-		<title>Administracja serwisem</title>
+		<title>Administration panel</title>
 
-		<link rel="stylesheet" type="text/css" href="{{ site_path }}/themes/admin/style/style.css">
+		<link rel="stylesheet" type="text/css" href="{{ theme_path }}/style/style.css">
 		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto:400,700,300,400italic,700italic">
 
 		<script type="text/javascript">
@@ -19,24 +19,24 @@
 		<div id="loadbar"></div>
 
 		<nav>
-			<a href="{{ site_path }}/admin" class="logo logo-big">VIZU</a>
+			<a href="admin" class="logo logo-big">VIZU</a>
 
 			<ul id="main-menu">
 				<li><a href="admin/edit?field_category=text">
 					<svg class="icon-24"><use xlink:href="#icon-24_document"></use></svg>
-					Zawartość
+					Contents
 				</a></li>
 				<li><a href="admin/edit?field_category=setting">
 					<svg class="icon-24"><use xlink:href="#icon-24_gearwheel"></use></svg>
-					Ustawienia
+					Settings
 				</a></li>
 				<li><a href="admin/user">
 					<svg class="icon-24"><use xlink:href="#icon-24_user"></use></svg>
-					Użytkownicy
+					Users
 				</a></li>
 				<li><a href="admin/history">
 					<svg class="icon-24"><use xlink:href="#icon-24_history"></use></svg>
-					Historia
+					Activity log
 					</a></li>
 				<!-- Hide unfinished option
 				<li><a href="admin/backup">
@@ -46,14 +46,14 @@
 				-->
 				<li><a href="./" data-noajax>
 					<svg class="icon-24"><use xlink:href="#icon-24_table"></use></svg>
-					Strona
+					Website
 				</a></li>
 			</ul>
 
 			<div id="toolbar">
-				<a href="{{ site_path }}/admin/logout">
+				<a href="admin/logout">
 					<svg class="icon-16"><use xlink:href="#icon-16_sign-out"></use></svg>
-					Wyloguj
+					Logout
 				</a>
 			</div>
 		</nav>
@@ -62,7 +62,7 @@
 
 		<div id="login">
 			<div class="box pad-double toleft" style="width: 360px; margin-top: 100px">
-				<form action="{{ site_path }}/admin/login" method="post" class="login">
+				<form action="admin/login" method="post" class="login">
 					<a href="" class="logo logo-big">VIZU</a>
 					<h3>Zaloguj się</h3>
 					<input type="text" name="email" placeholder="Email" novalidate>
@@ -70,18 +70,17 @@
 					<div class="buttons">
 						<button type="submit" class="accept">
 							<svg class="icon-16"><use xlink:href="#icon-16_sign-in"></use></svg>
-							Zaloguj
+							Login
 						</button>
 					</div>
 					<div class="errorbox"></div>
-					<p><a href="user/passrec">Nie pamiętam hasła</a></p>
+					<p><a href="user/passrec">Password recovery</a></p>
 				</form>
 			</div>
 		</div>
 
 		<div id="msgbox">
 			<p></p>
-			<a href="">Cofnij</a>
 		</div>
 
 		<script type="text/javascript" src="{{ theme_path }}/js/jquery-3.2.1.min.js"></script>

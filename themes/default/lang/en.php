@@ -3,9 +3,12 @@
 	# ------------------------------------------------------------------------------
 	# Page : HOME
 
-	'start'		=> 'Start',
-	'about'		=> 'About',
-	'contact'	=> 'Contact',
+	'welcome'		=> 'Welcome to <span>VIZU</span>',
+	'about'				=> 'Simple, modern, dependency-free CMS system that allows for quick implementation of one-page websites.',
+	'theme_info'		=> 'This theme is only for presentation purpose. View it\'s source to see how themes are made and then... delete it! Nobody likes crap.',
+	'github_view'		=> 'View documentation on Github',
+	'scroll_down'		=> 'Scroll down',
+	'editable_fields'	=> 'The following fields are editable in the <a href="admin/">administration panel</a>',
 
 
 	# ------------------------------------------------------------------------------

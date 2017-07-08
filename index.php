@@ -63,29 +63,9 @@ unset($db_config);
  * Start language library and set active language
  */
 
-$lang = new libs\Language($db);
 
-if (!empty($router->request[0]) && $lang->exists($router->request[0])) {
-
-	// Prevent accessing default language from two different URLs
-	if ($router->request[0] == \Config::$DEFAULT_LANG) {
-		header('location: ' . $router->site_path);
-	}
-
-	$lang->set($router->request[0]);
-	$router->request_shift();
-}
-else {
-	if (\Config::$DETECT_LANG) {
-		$user_lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-		if ($user_lang != \Config::$DEFAULT_LANG && $lang->exists($user_lang)) {
-			header('location: ' . $router->site_path . '/' . $user_lang);
-		}
-	}
-
-	$lang->set(); // Set language to default one
-}
-
+$lang = new libs\Language($router, $db);
+$lang->set();
 $lang->load_theme_translations();
 
 
