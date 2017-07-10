@@ -86,16 +86,34 @@ class Router {
 
 	/**
 	 * Request shift
-	 * Moves requests array forward
+	 * Remove first request from array
 	 */
 
 	public function request_shift() {
-		if (count($this->request) > 1) {
-			$this->request = array_shift($this->request);
-		}
-		else $this->request = null;
-
+		array_shift($this->request);
 		return $this->request;
+	}
+
+
+	/**
+	 * Redirect to specified module
+	 *
+	 * @param boolean $add_request
+	 * @param boolean $add_query
+	 */
+
+	public function redirect($path, $add_request = false, $add_query = false) {
+		$redirect_url = $this->site_path . '/' . $path;
+
+		if ($add_request && count($this->request) > 0) {
+			if (substr($redirect_url, -1) != '/') $redirect_url .= '/';
+			$redirect_url .= implode('/', $this->request);
+		}
+		if ($add_query && !empty($_SERVER['QUERY_STRING'])) {
+			$redirect_url .= '?' . $_SERVER['QUERY_STRING'];
+		}
+
+		header('location: ' . $redirect_url);
 	}
 
 

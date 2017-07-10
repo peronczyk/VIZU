@@ -16,6 +16,11 @@ class Config {
 	// Language that will be set by default when entering the website.
 	static $DEFAULT_LANG = 'en';
 
+	// Decide whether the app should detect user system language or not.
+	// If set to true user will be redirected to url with language that matches his
+	// system/browser language - only if this language exists and is active.
+	static $DETECT_LANG = true;
+
 	// This is the name of direcory of your theme. Default: "default".
 	static $THEME_NAME = 'default';
 
@@ -35,6 +40,9 @@ class Config {
 
 	// Set this to true if you want to send messages to all other users as BCC.
 	static $CONTACT_ALL = true;
+
+	// Form fields that are required to send message
+	static $CONTACT_REQUIRED_INPUTS = array('message');
 
 
 	# ------------------------------------------------------------------------------

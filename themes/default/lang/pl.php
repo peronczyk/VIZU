@@ -3,9 +3,12 @@
 	# ------------------------------------------------------------------------------
 	# Page : HOME
 
-	'start'		=> 'Start',
-	'about'		=> 'O nas',
-	'contact'	=> 'Kontakt',
+	'welcome'			=> 'Witaj w <span>VIZU</span>',
+	'about'				=> 'Prosty, nowoczesny i wolny od zewnętrznych bibliotek system CMS pozwalający na szybkie wdrażanie prostych stron one-page.',
+	'theme_info'		=> 'Ten szablon istnieje tylko w celach pokazowych. Zapoznaj się z jego źródłem aby dowiedzieć się jak tworzyć własne szablony a później... usuń go! Nikt nie lubi zbędnego szitu.',
+	'github_view'		=> 'Zobacz dokumentację w Github',
+	'scroll_down'		=> 'Przewiń w dół',
+	'editable_fields'	=> 'Poniższe pola są edytowalne z poziomu <a href="admin/">panelu administratora.</a>',
 
 
 	# ------------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 # ==================================================================================
 
 
-define('VIZU_VERSION', '1.1.0');
+define('VIZU_VERSION', '1.1.1');
 
 
 /**
@@ -63,9 +63,9 @@ unset($db_config);
  * Start language library and set active language
  */
 
-$lang = new libs\Language($db);
-$lang_set_by_request = $lang->set(@$router->request[0]);
-if ($lang_set_by_request) $router->request_shift();
+
+$lang = new libs\Language($router, $db);
+$lang->set();
 $lang->load_theme_translations();
 
 

@@ -3,8 +3,6 @@
 
 <head>
 
-	<base href="{{ site_path }}">
-
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="description" content="{{ setting type='simple' id='site_description' name='Site description' desc='This could be edited in admin panel' max='160' }}">
@@ -30,18 +28,18 @@
 	<header class="Header">
 		<div class="Inner">
 			<hgroup class="Header__text">
-				<h1>Welcome to <span>VISU</span></h1>
-				<h2>Simple, modern, dependency-free CMS system that allows for quick implementation of one-page websites.</h2>
-				<p>This theme is only for presentation purpose. View it's source to see how themes are made and then... delete it! Nobody likes crap.</p>
-				<p>&mdash; &nbsp; <a href="https://github.com/peronczyk/vizu">View documentation on Github</a></p>
-				<p>&mdash; &nbsp; <a href="#main">Scroll down</a>
+				<h1>{{ lang id='welcome' }}</h1>
+				<h2>{{ lang id='about' }}</h2>
+				<p>{{ lang id='theme_info' }}</p>
+				<p>&mdash; &nbsp; <a href="https://github.com/peronczyk/vizu">{{ lang id='github_view' }}</a></p>
+				<p>&mdash; &nbsp; <a href="#main">{{ lang id='scroll_down' }}</a>
 			</hgroup>
 		</div>
 	</header>
 
 	<main class="Main" id="main">
 		<div class="Inner">
-			<h2>The following fields are editable in the administration panel</h2>
+			<h2>{{ lang id='editable_fields' }}</h2>
 			<h3>{{ text type='simple' id='editable_header' name='Editable header' desc='Edit this in admin panel' }}</h3>
 
 			<article>{{ text type='rich' id='editable_article' name='Editable article' desc='This text could be edited also' }}</article>

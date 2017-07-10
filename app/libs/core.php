@@ -14,9 +14,6 @@ class Core {
 	// Check if script is run as request by AJAX
 	public static $ajax_loaded = false;
 
-	// Stores list of loaded libraries
-	private $loaded_libs = array();
-
 
 	/**
 	 * Constructor
@@ -26,7 +23,6 @@ class Core {
 		error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) session_start();
-		//ob_start();
 
 		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') self::$ajax_loaded = true;
 	}
@@ -42,8 +38,6 @@ class Core {
 	 */
 
 	public static function error($msg, $file = null, $line = null, $debug = null) {
-		$headers_sent = headers_sent();
-		if ($headers_sent) ob_clean();
 
 		// Hide server document root from file path
 		$document_root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
@@ -86,7 +80,9 @@ class Core {
 
 	public function is_dev() {
 		$default_dev_ip = array('127.0.0.1', '0.0.0.0', '::1');
-		if ($_SERVER['REMOTE_ADDR'] === \Config::$DEV_IP || in_array($_SERVER['REMOTE_ADDR'], $default_dev_ip)) return true;
+		if ($_SERVER['REMOTE_ADDR'] === \Config::$DEV_IP || in_array($_SERVER['REMOTE_ADDR'], $default_dev_ip)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -111,7 +107,7 @@ class Core {
 
 	public static function get_mtime() {
 		list($usec, $sec) = explode (' ', microtime());
-		return((float)$usec + (float)$sec);
+		return (float)$usec + (float)$sec;
 	}
 
 
