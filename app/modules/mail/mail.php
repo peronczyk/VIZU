@@ -13,7 +13,7 @@ $ajax = new libs\Ajax();
 
 // Validate sended form
 
-$inputs_required = Config::$CF_REQUIRED_INPUTS;
+$inputs_required = Config::$CONTACT_REQUIRED_INPUTS;
 $inputs_with_errors = array();
 
 foreach($inputs_required as $input_name) {

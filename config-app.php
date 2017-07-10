@@ -41,6 +41,9 @@ class Config {
 	// Set this to true if you want to send messages to all other users as BCC.
 	static $CONTACT_ALL = true;
 
+	// Form fields that are required to send message
+	static $CONTACT_REQUIRED_INPUTS = array('message');
+
 
 	# ------------------------------------------------------------------------------
 	# DEV OPTIONS
