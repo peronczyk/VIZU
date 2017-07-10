@@ -23,7 +23,6 @@ class Core {
 		error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) session_start();
-		//ob_start();
 
 		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') self::$ajax_loaded = true;
 	}
@@ -39,8 +38,6 @@ class Core {
 	 */
 
 	public static function error($msg, $file = null, $line = null, $debug = null) {
-		$headers_sent = headers_sent();
-		if ($headers_sent) ob_clean();
 
 		// Hide server document root from file path
 		$document_root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
