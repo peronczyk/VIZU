@@ -46,8 +46,8 @@ foreach($fields_data_simple as $key => $val) {
 
 	$date = explode(' ', $val);
 	switch($template_fields[$key]['category']) {
-		case 'text':	$category = 'Zawartość'; break;
-		case 'setting':	$category = 'Ustawienia'; break;
+		case 'text':	$category = 'Content'; break;
+		case 'setting':	$category = 'Setting'; break;
 		default:		$category = null; break;
 	}
 	$display_str .= '<tr><td>' . $category . '</td><td>' . $template_fields[$key]['name'] . '</td><td>' . $date[0] . '</td><td>' . $date[1] . '</td></tr>';

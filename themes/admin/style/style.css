@@ -175,6 +175,8 @@ a.nav {
 
 .hidden		{ display: none; }
 
+.rotate-180	{ transform: rotate(180deg); }
+
 
 .box {
 	margin-bottom: 10px;

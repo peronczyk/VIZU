@@ -11,20 +11,25 @@ namespace libs;
 
 class Language {
 
-	private $lang_code;
 	public $translations = array();
+
+	private $lang_code;
 	private $lang_list;
-	private $_db; // Handle to database controller
+
+	private $_router; // Handle to router class
+	private $_db; // Handle to database class
 
 
 	/**
 	 * Constructor & dependency injection
+	 *
+	 * @param object $router - Router class
+	 * @param object $db - Database handling class
 	 */
 
-	public function __construct($db) {
-		// Check if variable passed to this class is database controller
-		if ($db && is_object($db) && is_a($db, __NAMESPACE__ . '\Database')) $this->_db = $db;
-		else Core::error('Variable passed to class "Language" is not correct "Database" object', __FILE__, __LINE__, debug_backtrace());
+	public function __construct($router, $db) {
+		$this->_router = $router;
+		$this->_db = $db;
 	}
 
 
@@ -55,21 +60,54 @@ class Language {
 
 
 	/**
-	 * SETTER : Active language
+	 * Set active language
 	 *
 	 * @return boolean - Returns false if language was set to default
 	 */
 
-	public function set($requested = null) {
-		if ($requested) $lang_code = $requested;
-		else $lang_code = \Config::$DEFAULT_LANG;
+	public function set() {
 
-		if ($this->exists($lang_code)) {
-			$this->lang_code = $lang_code;
-			return true;
+		// Check if first chunk of request is valid language definition
+		$lang_requested = (isset($this->_router->request[0]) && strlen($this->_router->request[0]) == 2);
+
+		// Lang detection mechanism
+		// This code checks if user language was not detected before
+		// and if language was not requested in url.
+
+		if (\Config::$DETECT_LANG && !$_SESSION['lang_detected'] && !$lang_requested) {
+			$user_lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+			if ($user_lang != \Config::$DEFAULT_LANG && $this->exists($user_lang)) {
+				$_SESSION['lang_detected'] = $user_lang;
+				$this->_router->redirect($user_lang, true, true);
+			}
 		}
 
-		return false;
+		// Check if first request chunk is a existing and active language
+
+		if ($lang_requested && $this->exists($this->_router->request[0])) {
+
+			// Prevent accessing default language from two different URLs
+			if ($this->_router->request[0] == \Config::$DEFAULT_LANG) {
+				$_SESSION['lang_detected'] = \Config::$DEFAULT_LANG;
+				$this->_router->request_shift();
+				$this->_router->redirect('', true, true);
+			}
+
+			// Set requested language as active and shift requests
+			else {
+				$this->lang_code = $this->_router->request[0];
+				$this->_router->request_shift();
+				return true;
+			}
+		}
+
+		if ($this->exists(\Config::$DEFAULT_LANG)) {
+			$this->lang_code = \Config::$DEFAULT_LANG;
+			return false;
+		}
+		else {
+			\Core::error('Configured default page language does not exist in database or it is inactive.', __FILE__, __LINE__, debug_backtrace());
+		}
 	}
 
 
@@ -94,16 +132,22 @@ class Language {
 
 	/**
 	 * Load theme translations
+	 *
+	 * @return boolean
 	 */
 
 	public function load_theme_translations() {
 		if (!$this->lang_code) return false;
 
 		$lang_file = \Config::$THEMES_DIR . \Config::$THEME_NAME . '/lang/' . $this->lang_code . '.php';
-		if (!file_exists($lang_file)) {
-			Core::error('Theme translations file not found at this location: ' . $lang_file, __FILE__, __LINE__, debug_backtrace());
+
+		if (file_exists($lang_file)) {
+			$this->translations = include $lang_file;
+			return true;
 		}
-		$this->translations = include $lang_file;
+		else {
+			Core::error('Theme translations file not found at location: ' . $lang_file, __FILE__, __LINE__, debug_backtrace());
+		}
 	}
 
 
