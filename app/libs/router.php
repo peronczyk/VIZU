@@ -36,7 +36,9 @@ class Router {
 		$this->domain = $_SERVER['HTTP_HOST'];
 
 		// Create website URL, eg.: http://domain.com/website
-		$this->site_path = $this->protocol . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']);
+		$this->site_path = $this->protocol . $_SERVER['SERVER_NAME'];
+		$script_dirname = dirname($_SERVER['SCRIPT_NAME']);
+		if ($script_dirname != '/') $this->site_path .= $script_dirname;
 
 		// Return string after domain from physical URL
 		// eg.: 'website' from http://domain.com/website/request
