@@ -1,4 +1,4 @@
-# VIZU 1.1.1
+# VIZU 1.1.2
 Simple, dependency-free CMS system that allows for quick implementation of simple Web pages without having to configure anything in the administration panel.
 
 
