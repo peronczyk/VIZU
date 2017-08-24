@@ -61,12 +61,14 @@ unset($db_config);
 
 /**
  * Start language library and set active language
+ * if user is not in installation process
  */
 
-
-$lang = new libs\Language($router, $db);
-$lang->set();
-$lang->load_theme_translations();
+if ($router->request[0] !== 'install') {
+	$lang = new libs\Language($router, $db);
+	$lang->set();
+	$lang->load_theme_translations();
+}
 
 
 /**
