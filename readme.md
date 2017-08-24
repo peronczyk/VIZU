@@ -1,6 +1,5 @@
-# VIZU 1.1.2
-Simple, dependency-free CMS system that allows for quick implementation of simple Web pages without having to configure anything in the administration panel.
-
+# VIZU 1.1.3
+Simple, dependency-free CMS system that allows for quick implementation of simple Web pages without having to configure anything in the administration panel. VIZU have native multi-language support.
 
 ## Installation
 1. Provide database connection credentials in `config-db.php` file located in main direcory.
