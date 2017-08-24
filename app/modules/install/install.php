@@ -24,24 +24,34 @@ $user = new libs\User($db);
 
 
 /**
- * Display errors after actions are made
+ * Display error after performing action that fails
  */
 
 if ($router->request[1] === 'error') {
 	echo libs\Core::common_html_header('VIZU Installer: Error');
 	echo '<h3>Error occured</h3><hr>';
 
-	switch (@$_SESSION['vizu_installation_error']) {
+	switch (@$_SESSION['vizu']['install']['error']) {
 		case 1:
 			echo '<h1>Installation process error</h1>';
-			echo '<h2>Try again. If problem will repeat contact your administrator.</h2>';
+			echo '<h2>Creation of database tables and their content failed.</h2>';
+			break;
+
+		case 2:
+			echo '<h1>Administrator creation error</h1>';
+			echo '<h2>Application culdn\'t insert user to database table.</h2>';
+			echo '<p>Probably provided e-mail or password didn\' match the requirements.</p>';
 			break;
 
 		default:
 			echo '<h1>Unknown error occured</h1>';
+			echo '<p>Error code: <strong>' . $_SESSION['vizu_installation_error'] . '</strong></p>';
 	}
 
-	echo '<a href="./">&lsaquo; &nbsp; Back</a>';
+	if (!empty ($_SESSION['vizu']['install']['message'])) {
+		echo '<p>Returned error message:<br>' . $_SESSION['vizu']['install']['message'] . '</p>';
+	}
+	echo '<p><a href="./">&lsaquo; &nbsp; Back</a></p>';
 	echo libs\Core::common_html_footer();
 
 	$_SESSION['vizu_installation_error'] = false;
@@ -80,13 +90,16 @@ elseif ($install->check_db_tables()) {
 		if ($_POST['op'] === 'add_user') {
 			$status = false;
 			if ($user->verify_password($_POST['password']) && $user->verify_username($_POST['email'])) {
-				$result = $db->query("INSERT INTO `users` VALUES ('', '" . $_POST['email'] . "', '" . $user->password_encode($_POST['password']) . "');");
+				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('" . $_POST['email'] . "', '" . $user->password_encode($_POST['password']) . "');");
 				if ($result) $status = true;
 			}
 
 			if ($status) header('location: ' . $router->site_path . '/install');
 			else {
-				$_SESSION['vizu_installation_error'] = 2;
+				$_SESSION['vizu']['install'] = array(
+					'error' => 2,
+					'message' => $db->get_conn()->error
+				);
 				header('location: ' . $router->site_path . '/install/error');
 			}
 		}
@@ -126,7 +139,10 @@ else {
 
 		if ($status) header('location: ' . $router->site_path . '/install');
 		else {
-			$_SESSION['vizu_installation_error'] = 1;
+			$_SESSION['vizu']['install'] = array(
+				'error' => 1,
+				'message' => $db->get_conn()->error
+			);
 			header('location: ' . $router->site_path . '/install/error');
 		}
 	}
@@ -139,7 +155,7 @@ else {
 			<hr>
 			<h1>VIZU is <u>not</u> installed</h1>
 			<h2>Proceed installation?</h2>
-			<p>All data will be inserted to database "<?php echo Config::$DB_NAME; ?>".</p>
+			<p>All data will be inserted to database "<?php echo $db->get_db_name(); ?>".</p>
 
 			<form action="" method="post">
 				<input type="hidden" name="op" value="install">

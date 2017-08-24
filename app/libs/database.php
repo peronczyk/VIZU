@@ -130,6 +130,15 @@ class Database {
 
 
 	/**
+	 * GETTER : Database name
+	 */
+
+	public function get_db_name() {
+		return $this->name;
+	}
+
+
+	/**
 	 * Import file
 	 */
 

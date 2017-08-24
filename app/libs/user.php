@@ -88,7 +88,7 @@ class User {
 	 */
 
 	public function verify_username($username) {
-		return filter_var($username, FILTER_VALIDATE_EMAIL);
+		return (filter_var($username, FILTER_VALIDATE_EMAIL) !== false) ? true : false;
 	}
 
 
