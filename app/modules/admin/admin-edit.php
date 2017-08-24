@@ -24,7 +24,7 @@ if (!empty($router->query['field_category'])) {
 	}
 	else {
 		$ajax->set('error', array(
-			'str' => 'Wybrany typ pola nie może być edytowany z poziomu panelu administracji lub nie istnieje w ustawieniach',
+			'str' => 'Selected field type could not be edited from the admin panel or does not exist in the settings.',
 			'file' => __FILE__,
 			'line' => __LINE__));
 		return;
@@ -32,7 +32,7 @@ if (!empty($router->query['field_category'])) {
 }
 else {
 	$ajax->set('error', array(
-		'str' => 'Nie wybrano typu pola jakiego chce się edytować',
+		'str' => 'The type of field you want to edit is not selected.',
 		'file' => __FILE__,
 		'line' => __LINE__));
 	return;
@@ -82,9 +82,15 @@ if ($router->request[count($router->request) - 1] == 'save') {
 		// If field doesn't exist create it
 		if (!isset($fields_data[$post_key])) {
 
-			$result = $db->query("INSERT INTO `fields` VALUES ('', 'home', '" . $active_lang . "', '" . $post_key . "', '" . $post_val . "', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1');");
-			$ajax->add('log', 'Try to create field: ' . $post_key . '. Result: ' . $result);
-			if ($result) $num_changes++;
+			$result = $db->query("INSERT INTO `fields` (template, language, id, content, created, modified, version) VALUES ('home', '" . $active_lang . "', '" . $post_key . "', '" . $post_val . "', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1');");
+
+			if ($result) {
+				$ajax->add('log', 'Field "' . $post_key . '" created');
+				$num_changes++;
+			}
+			else {
+				$ajax->add('log', 'Field "' . $post_key . '" creation failed. Query error: ' . $db->get_conn()->error);
+			}
 		}
 
 		// If field exists in database
@@ -100,12 +106,12 @@ if ($router->request[count($router->request) - 1] == 'save') {
 	}
 
 	if ($num_changes == 0) {
-		$ajax->add('log', 'No changes was made');
-		$ajax->set('message', 'Nie dokonano żadnych zmian w formularzu.');
+		$ajax->add('log', 'No changes have been made');
+		$ajax->set('message', 'No changes have been made in the form.');
 	}
 	else {
 		$ajax->add('log', 'Changes made: ' . $num_changes);
-		$ajax->set('message', 'Zmiany zostały poprawnie zapisane');
+		$ajax->set('message', 'Changes saved.');
 	}
 }
 
@@ -122,11 +128,11 @@ else {
 	$lang_str = '';
 	if (count($languages) < 1) {
 		$ajax->set('error', array(
-			'str' => 'Brak języków w bazie danych',
+			'str' => 'There is no languages set in the database.',
 			'file' => __FILE__,
 			'line' => __LINE__
 		));
-		break;
+		return;
 	}
 
 	// Loop over languages received from DB and set the active
@@ -229,7 +235,7 @@ else {
 	$parsed_html		= $tpl->parse($template_content, $template_fields);
 
 	if (empty($parsed_html)) $json->set('error', array(
-		'str'	=> 'Funkcja parsująca szablon nie zwróciła żadnej wartości.',
+		'str'	=> 'Parsing function does not return any value.',
 		'file'	=> __FILE__,
 		'line'	=> __LINE__
 	));

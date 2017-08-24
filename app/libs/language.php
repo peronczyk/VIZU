@@ -42,6 +42,9 @@ class Language {
 	public function get_list() {
 		if (!$this->lang_list) {
 			$result = $this->_db->query('SELECT * FROM `languages`', true);
+			if (!$result) {
+				\libs\Core::error('Language database table does not exist. Probably application was not installed properly. Please run <a href="install/">installation</a> process.', __FILE__, __LINE__, debug_backtrace());
+			}
 			$this->lang_list = $this->_db->fetch($result);
 		}
 		return $this->lang_list;
@@ -106,7 +109,7 @@ class Language {
 			return false;
 		}
 		else {
-			\Core::error('Configured default page language does not exist in database or it is inactive.', __FILE__, __LINE__, debug_backtrace());
+			\libs\Core::error('Configured default page language does not exist in database or it is inactive.', __FILE__, __LINE__, debug_backtrace());
 		}
 	}
 
@@ -119,7 +122,7 @@ class Language {
 
 	public function exists($lang_code) {
 		$lang_list = $this->get_list();
-		if (count($lang_list) > 0) {
+		if ($lang_list && count($lang_list) > 0) {
 			foreach($lang_list as $lang) {
 				if ($lang['code'] == $lang_code && (bool)$lang['active'] === true) {
 					return true;
@@ -146,7 +149,7 @@ class Language {
 			return true;
 		}
 		else {
-			Core::error('Theme translations file not found at location: ' . $lang_file, __FILE__, __LINE__, debug_backtrace());
+			\libs\Core::error('Theme translations file not found at location: ' . $lang_file, __FILE__, __LINE__);
 		}
 	}
 
