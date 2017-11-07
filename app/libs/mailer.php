@@ -11,20 +11,62 @@ namespace libs;
 
 class Mailer {
 
-	private $recipients = array();
-	private $list_data = array();
-	private $cc = array();
-	private $bcc = array();
+	// Headers newline. Should be wrapped in double quotes.
+	const NL = "\r\n";
+
+	const ERR_SERVER = 1;
+	const ERR_NO_MESSAGE = 2;
+	const ERR_NO_TOPIC = 3;
+	const ERR_NO_RECIPIENTS = 4;
+	const ERR_ANTIFLOOD = 5;
+
+	private $recipients = [];
+	private $list_data = [];
+	private $cc = [];
+	private $bcc = [];
 	private $reply_to;
 	private $from;
 	private $topic;
+	private $antiflood = false;
+
+
+	/**
+	 * Sanitise email
+	 */
+
+	public function sanitise_email($email) {
+		return filter_var($email, FILTER_SANITIZE_EMAIL);
+	}
+
+
+	/**
+	 * Sanitise string
+	 */
+
+	public function sanitise_string($str) {
+		return preg_replace('/\r|\n/', '', strip_tags(trim($str)));
+	}
+
+
+	/**
+	 * Sanitise block of text (message)
+	 */
+
+	public function sanitise_text($text) {
+		return preg_replace('/\r|\n/', '', nl2br(strip_tags(trim($text)), false));
+	}
 
 
 	/**
 	 * SETTER : Topic
+	 *
+	 * @param string $topic
+	 * @param string $domain
 	 */
 
-	public function set_topic($topic) {
+	public function set_topic($topic, $domain = null) {
+		$topic = $this->sanitise_string($topic);
+		if ($domain) $topic = '[' . $domain . '] ' . $topic;
 		$this->topic = $topic;
 		return $this;
 	}
@@ -34,8 +76,11 @@ class Mailer {
 	 * SETTER : Add recipient
 	 */
 
-	public function add_recipient($mail, $name = '') {
-		$this->recipients[] = array($mail, $name);
+	public function add_recipient($email, $name = '') {
+		$this->recipients[] = [
+			'email' => $this->sanitise_email($email),
+			'name' => $this->sanitise_string($name)
+		];
 		return $this;
 	}
 
@@ -44,8 +89,11 @@ class Mailer {
 	 * SETTER : Add BCC email
 	 */
 
-	public function add_bcc($mail, $name = '') {
-		$this->bcc[] = array($mail, $name);
+	public function add_bcc($email, $name = '') {
+		$this->bcc[] = [
+			'email' => $this->sanitise_email($email),
+			'name' => $this->sanitise_string($name)
+		];
 		return $this;
 	}
 
@@ -59,7 +107,10 @@ class Mailer {
 	 */
 
 	public function add_list_data($name, $value) {
-		$this->list_data[] = array($name, $value);
+		$this->list_data[] = [
+			'name' => $name,
+			'value' => $this->sanitise_string($value)
+		];
 		return $this;
 	}
 
@@ -68,8 +119,8 @@ class Mailer {
 	 * SETTER : "reply-to" header
 	 */
 
-	public function set_reply_to($mail) {
-		$this->reply_to = $mail;
+	public function set_reply_to($email) {
+		$this->reply_to = $this->sanitise_email($email);
 		return $this;
 	}
 
@@ -78,8 +129,8 @@ class Mailer {
 	 * SETTER : "from" header
 	 */
 
-	public function set_from($mail) {
-		$this->from = $mail;
+	public function set_from($email) {
+		$this->from = $this->sanitise_email($email);
 		return $this;
 	}
 
@@ -97,10 +148,10 @@ class Mailer {
 		if (is_array($emails)) {
 			$num = count($emails);
 			for($i = 0; $i < $num; $i++) {
-				if (empty($emails[$i][1])) {
-					$str .= $emails[$i][0];
+				if (empty($emails[$i]['name'])) {
+					$str .= $emails[$i]['email'];
 				}
-				else $str .= $emails[$i][1] . '<' . $emails[$i][0] . '>';
+				else $str .= $emails[$i]['name'] . '<' . $emails[$i]['email'] . '>';
 
 				if (($i + 1) < $num) $str .= ', ';
 			}
@@ -110,20 +161,40 @@ class Mailer {
 
 
 	/**
-	 * ACTION : Send email
+	 * Antiflood toggle
 	 *
-	 * @param string $message
+	 * @param int|bool $delay
 	 */
 
-	public function send($message) {
+	public function antiflood($delay = 120) {
+		$this->antiflood = $delay;
+		return $this;
+	}
+
+
+	/**
+	 * Prepare email
+	 * This method can be used to view complete email before sending it
+	 */
+
+	public function prepare($message) {
 		if (empty($message)) {
-			throw new \Exception('Pusta wiadomość');
+			throw new \Exception(
+				'Empty message',
+				self::ERR_NO_MESSAGE
+			);
 		}
 		if (empty($this->topic)) {
-			throw new \Exception('Nie ustawiono tematu');
+			throw new \Exception(
+				'Topic was not set',
+				self::ERR_NO_TOPIC
+			);
 		}
 		if (count($this->recipients) < 1) {
-			throw new \Exception('Brak odbiorców');
+			throw new \Exception(
+				'Recipients not set',
+				self::ERR_NO_RECIPIENTS
+			);
 		}
 
 		$topic = $this->topic;
@@ -134,13 +205,13 @@ class Mailer {
 		 * The content
 		 */
 
-		$content .= '<html><body><h3>Kontakt z witryny</h3>';
-		$content .= '<p>' . $message . '</p>';
+		$content .= '<html><body><h3>Contact message from website</h3>';
+		$content .= '<p>' . $this->sanitise_text($message) . '</p>';
 
 		if (count($this->list_data) > 0) {
 			$content .= '<br><hr style="border:0;border-bottom:1px solid #e3e3e3;"><table style="border-collapse:collapse;"><tbody>';
-			foreach($this->list_data as $val) {
-				$content .= '<tr><td style="padding:5px;"><strong>' . $val[0] . ':</strong></td><td style="padding:5px;">' . $val[1] . '</td></tr>';
+			foreach($this->list_data as $entry) {
+				$content .= '<tr><td style="padding:5px;"><strong>' . $entry['name'] . ':</strong></td><td style="padding:5px;">' . $entry['value'] . '</td></tr>';
 			}
 			$content .= '</tbody></table><hr style="border:0;border-bottom:1px solid #e3e3e3;">';
 		}
@@ -151,31 +222,60 @@ class Mailer {
 		 * Headers
 		 */
 
-		$headers  = "X-Mailer: PHP/" . phpversion() . "\r\n";
-		$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-		$headers .= "MIME-Version: 1.0";
+		$headers  = 'X-Mailer: PHP/' . phpversion() . self::NL;
+		$headers .= 'Content-Type: text/html; charset=UTF-8' . self::NL;
+		$headers .= 'MIME-Version: 1.0' . self::NL;
 
 		if (!empty($this->reply_to)) {
-			$headers .= "\r\nReply-To: " . $this->reply_to;
+			$headers .= 'Reply-To: ' . $this->reply_to . self::NL;
 		}
 		if (!empty($this->from)) {
-			$headers .= "\r\nFrom: " . $this->from;
+			$headers .= 'From: ' . $this->from . self::NL;
 		}
 		if (!empty($this->cc)) {
-			$headers .= "\r\nCc: " . $this->emails2string($this->cc);
+			$headers .= 'Cc: ' . $this->emails2string($this->cc) . self::NL;
 		}
 		if (!empty($this->bcc)) {
-			$headers .= "\r\nBcc: " . $this->emails2string($this->bcc);
+			$headers .= 'Bcc: ' . $this->emails2string($this->bcc) . self::NL;
 		}
 
-		/**
-		 * The action
-		 */
+		return [$recipients, $topic, $content, $headers];
+	}
 
-		if (@mail($recipients, $topic, $content, $headers)) return true;
-		else {
-			throw new \Exception('Nie udało się wysłać wiadomości. Spróbuj ponownie lub skontaktuj się z nami telefonicznie.');
+
+	/**
+	 * ACTION : Send email
+	 *
+	 * @param string $message
+	 */
+
+	public function send($message) {
+		if ($this->antiflood && isset($_SESSION['mailer_sended']) && (date('U') - $_SESSION['mailer_sended']) < $this->antiflood) {
+			throw new \Exception(
+				'You can not send messages so often',
+				self::ERR_ANTIFLOOD
+			);
 		}
+
+		list($recipients, $topic, $content, $headers) = $this->prepare($message);
+
+		$last_error = error_get_last();
+		if (@mail($recipients, $topic, $content, $headers)) {
+			$_SESSION['mailer_sended'] = date('U');
+			return true;
+		}
+		$actual_error = error_get_last();
+
+		// Detect if running mail() function gave error
+		// This is the only way to handle errors with this primitive function
+		if ($actual_error['message'] && $actual_error['message'] != $last_error['message']) {
+			throw new \Exception(
+				str_replace('mail(): ', '', $actual_error['message']),
+				self::ERR_SERVER
+			);
+		}
+
+		return false;
 	}
 
 }

@@ -7,110 +7,121 @@
 #
 # ==================================================================================
 
-if ($_POST['op'] !== 'send') die(); // Security check
+if ($_POST['op'] !== 'send') die('Module unavailable this way you accessed it'); // Security check
 
 $ajax = new libs\Ajax();
 
-// Validate sended form
+/**
+ * Form validation
+ */
 
 $inputs_required = Config::$CONTACT_REQUIRED_INPUTS;
-$inputs_with_errors = array();
+$inputs_with_errors = [];
 
 foreach($inputs_required as $input_name) {
 	if (!isset($_POST[$input_name]) || strlen($_POST[$input_name]) < 3) {
-		array_push($inputs_with_errors, array(
+		array_push($inputs_with_errors, [
 			'inputName' => $input_name,
 			'errorMessage' => $lang->_t('mailer-field-required', 'This field is required')
-		));
+		]);
 	}
 }
 
 if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-	array_push($inputs_with_errors, array(
+	array_push($inputs_with_errors, [
 		'inputName' => 'email',
 		'errorMessage' => $lang->_t('mailer-email-wrong', 'Incorrect email address')
-	));
+	]);
 }
 
-
 // If errors occurred
-
 if (count($inputs_with_errors) > 0) {
 	$ajax->set('formErrors', $inputs_with_errors);
 }
 
 
-// Flood blockade
-
-elseif (isset($_SESSION['email_sended']) && (date('U') - $_SESSION['email_sended']) < 3600) {
-	$ajax->set('message',
-		$lang->_t('mailer-flood', 'You can not send messages so often')
-	);
-}
-
-
-// Try to send email
+/**
+ * Message sending
+ */
 
 else {
-
 	$mail = new libs\Mailer();
 
-	$main_recipient = false;
+	if (!$core->is_dev()) $mail->antiflood();
 
-	$result = $db->query("SELECT `id`, `email` FROM `users`");
-	$result = $db->fetch($result);
+	$sending_error = false;
+	$main_recipient = null;
+	$topic = $_POST['topic'] ? ucfirst(trim(preg_replace('/\s\s+/', ' ', strip_tags($_POST['topic'])))) : 'Contact message';
 
-	if (count($result) > 0) {
-		foreach($result as $user) {
+	$result = $db->query('SELECT `id`, `email` FROM `users`');
+	$users = $db->fetch($result);
+
+	if (count($users) > 0) {
+		foreach($users as $user) {
 			if ($user['id'] == Config::$CONTACT_USER) {
 				$main_recipient = $user['email'];
 				if (Config::$CONTACT_ALL !== true) break;
 			}
-			elseif (Config::$CONTACT_ALL === true) $mail->add_bcc($user['email']);
+			elseif (Config::$CONTACT_ALL === true) {
+				$mail->add_bcc($user['email']);
+			}
 		}
 	}
 
 	if ($main_recipient) {
-
 		try {
-			$result = $mail
+			$sending_result = $mail
 				->add_recipient($main_recipient)
-				->set_topic('[' . $router->domain . '] ' . ucfirst($_POST['topic']))
+				->set_topic(($_POST['topic'] ? $_POST['topic'] : 'Contact message'), $router->domain)
 				->set_reply_to($_POST['email'])
 
-				// Need to be an e-mail that exists on hosting account becouse some
-				// services only send it like that
+				// Some hosting services require this e-mail to exist on the same
+				// hosting account.
 				->set_from($main_recipient)
 
 				// Add sender data
-				->add_list_data('Temat', trim(strip_tags($_POST['topic'])))
-				->add_list_data('Firma', trim(strip_tags($_POST['company'])))
-				->add_list_data('Autor', trim(strip_tags($_POST['name'])))
-				->add_list_data('Email', trim(strip_tags($_POST['email'])))
-				->add_list_data('Kiedy', date('j-n-Y') . " o godzinie " . date('H:i'))
+				->add_list_data('Company', $_POST['company'])
+				->add_list_data('Name', $_POST['name'])
+				->add_list_data('Email', $_POST['email'])
+				->add_list_data('Time', date('j-n-Y') . ', ' . date('H:i'))
 				->add_list_data('Host', gethostbyaddr($_SERVER['REMOTE_ADDR']) . ' (' . $_SERVER['REMOTE_ADDR'] . ')')
-				->add_list_data('Język', LANG_CODE)
+				->add_list_data('Language', $lang->get())
 
 				// Send email
 				->send($_POST['message']);
 		}
 		catch (\Exception $e) {
-			$ajax->set('message', $result);
+			switch($e->getCode()) {
+				case 1:
+					$message = $lang->_t('mailer-error', 'Error while sending message:') . ' ' . $e->getMessage();
+					break;
+
+				case 5:
+					$message = $lang->_t('mailer-flood', $e->getMessage());
+					break;
+
+				default:
+					$message = $e->getMessage();
+			}
+			$ajax->set('message', $message);
+			$ajax->add('log', 'Error code: ' . $e->getCode());
+
+			$sending_error = true;
 		}
 
-		if ($result === true) {
-			$ajax->set('message', $lang->_t('mailer-sent', 'Message sent'));
-			$_SESSION['email_sended'] = date('U');
+		if (!$sending_error) {
+			if ($sending_result === true) {
+				$ajax->set('message', $lang->_t('mailer-sent', 'Message sent'));
+			}
+			else {
+				$ajax->set('message', $lang->_t('mailer-not-sent', 'Unknown error'));
+			}
 		}
-		else $ajax->set('message', $result);
 	}
 
 	else {
-		$ajax->set('message',
-			$lang->_t('mailer-recipient-error', 'Message recipient not configured')
-		);
+		$ajax->set('message', $lang->_t('mailer-recipient-error', 'Message recipient not configured'));
 	}
-
 }
 
 $ajax->send();
