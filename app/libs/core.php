@@ -79,8 +79,7 @@ class Core {
 	 */
 
 	public function is_dev() {
-		$default_dev_ip = array('127.0.0.1', '0.0.0.0', '::1');
-		if ($_SERVER['REMOTE_ADDR'] === \Config::$DEV_IP || in_array($_SERVER['REMOTE_ADDR'], $default_dev_ip)) {
+		if (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)) {
 			return true;
 		}
 		return false;
