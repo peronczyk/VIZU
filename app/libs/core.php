@@ -11,7 +11,7 @@ namespace libs;
 
 class Core {
 
-	// Check if script is run as request by AJAX
+	// Check if script is running as AJAX request
 	public static $ajax_loaded = false;
 
 
@@ -24,7 +24,9 @@ class Core {
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) session_start();
 
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') self::$ajax_loaded = true;
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+			self::$ajax_loaded = true;
+		}
 	}
 
 
@@ -91,12 +93,10 @@ class Core {
 	 */
 
 	public static function print_arr($arr) {
-		if (is_array($arr)) {
-			echo('<pre>');
-			print_r($arr);
-			echo('</pre>');
-		}
-		else echo('<pre>This is not a array</pre>');
+		echo '<pre>';
+		if (is_array($arr)) print_r($arr);
+		else echo 'This is not a array';
+		echo '</pre>';
 	}
 
 
@@ -111,7 +111,7 @@ class Core {
 
 
 	/**
-	 * Changes default keys in array to $key_name values taken from inside the array
+	 * Change default keys in array to $key_name values taken from inside the array
 	 *
 	 * @param array $array
 	 * @param string $key_name
