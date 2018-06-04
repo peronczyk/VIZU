@@ -202,11 +202,11 @@ class Mailer {
 		$content .= '<html><body>';
 
 		if (count($this->content) > 0) {
-			$content .= '<br><hr style="border:0;border-bottom:1px solid #e3e3e3;"><table style="border-collapse:collapse;"><tbody>';
+			$content .= '<table style="border-collapse:collapse;"><tbody>';
 			foreach($this->content as $entry) {
 				$content .= '<tr><td style="padding:5px;"><strong>' . $entry['name'] . ':</strong></td><td style="padding:5px;">' . $entry['value'] . '</td></tr>';
 			}
-			$content .= '</tbody></table><hr style="border:0;border-bottom:1px solid #e3e3e3;">';
+			$content .= '</tbody></table>';
 		}
 
 		$content .= '</body></html>';

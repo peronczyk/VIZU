@@ -26,6 +26,7 @@
 	'form-send'              => 'Prześlij wiadomość',
 	'form-label-email'       => 'Twój adres e-mail',
 	'form-label-message'     => 'Twoja wiadomość',
+	'form-label-agreement'   => 'Przykładowa zgoda',
 
 
 	# ------------------------------------------------------------------------------

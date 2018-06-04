@@ -1,8 +1,6 @@
 $(function() {
 	$('#contact-form').on('submit', function(event) {
 		event.preventDefault();
-		//console.log(event);
-		//console.log($(this));
 
 		$form = $(this);
 		$infoWrapper = $('#contact-form-info');
@@ -27,7 +25,6 @@ $(function() {
 				if (result['form-errors']) {
 					for (var i = 0; i < result['form-errors'].length; i++) {
 						var $input = $('[name=' + result['form-errors'][i]['input-name'] + ']');
-						console.log($input);
 						$input.addClass('is-Error')
 					}
 				}

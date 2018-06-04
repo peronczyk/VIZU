@@ -102,10 +102,19 @@ textarea {
 	font-family: 'Roboto', Arial, Helvetica, sans-serif;
 }
 
+input[type='checkbox'] {
+	margin: 10px;
+}
+
 	input[type='text'].is-Error,
 	input[type='email'].is-Error,
 	textarea.is-Error {
 		border-color: red;
+	}
+
+	input[type='checkbox'].is-Error {
+		background-color: red;
+		box-shadow: 0 2px 20px red;
 	}
 
 button {

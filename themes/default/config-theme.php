@@ -21,6 +21,12 @@
 				'label'    => 'form-label-message',
 				'required' => true
 			],
+			[
+				'type'     => 'checkbox',
+				'name'     => 'agreement',
+				'label'    => 'form-label-agreement',
+				'required' => true
+			],
 		]
 	],
 ];

@@ -26,6 +26,7 @@
 	'form-send'              => 'Send message',
 	'form-label-email'       => 'Your e-mail address',
 	'form-label-message'     => 'Your message',
+	'form-label-agreement'   => 'Some example agreement',
 
 
 	# ------------------------------------------------------------------------------
