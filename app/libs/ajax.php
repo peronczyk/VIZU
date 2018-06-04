@@ -24,6 +24,7 @@ class Ajax {
 
 	public function set($varname, $value) {
 		$this->$varname = $value;
+		return $this;
 	}
 
 
@@ -33,6 +34,7 @@ class Ajax {
 
 	public function add($varname, $value) {
 		array_push($this->$varname, $value);
+		return $this;
 	}
 
 
@@ -41,6 +43,8 @@ class Ajax {
 	 */
 
 	public function send() {
+		header('Content-type: application/json');
 		echo json_encode($this);
+		exit;
 	}
 }

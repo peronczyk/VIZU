@@ -9,6 +9,7 @@
 	'github-view'            => 'Zobacz dokumentację w Github',
 	'scroll-down'            => 'Przewiń w dół',
 	'editable-fields'        => 'Poniższe pola są edytowalne z poziomu <a href="admin/">panelu administratora.</a>',
+	'example-form'           => 'Przykładowy formularz kontaktowy',
 
 
 	# ------------------------------------------------------------------------------
@@ -22,6 +23,7 @@
 	# ------------------------------------------------------------------------------
 	# Forms labels
 
+	'form-send'              => 'Prześlij wiadomość',
 	'form-label-email'       => 'Twój adres e-mail',
 	'form-label-message'     => 'Twoja wiadomość',
 

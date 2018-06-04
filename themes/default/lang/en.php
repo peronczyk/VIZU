@@ -9,6 +9,7 @@
 	'github-view'            => 'View documentation on Github',
 	'scroll-down'            => 'Scroll down',
 	'editable-fields'        => 'The following fields are editable in the <a href="admin/">administration panel</a>',
+	'example-form'           => 'Example contact form',
 
 
 	# ------------------------------------------------------------------------------
@@ -22,6 +23,7 @@
 	# ------------------------------------------------------------------------------
 	# Forms labels
 
+	'form-send'              => 'Send message',
 	'form-label-email'       => 'Your e-mail address',
 	'form-label-message'     => 'Your message',
 

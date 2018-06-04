@@ -3,6 +3,8 @@
 
 <head>
 
+	<base href="{{ site_path }}">
+
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="description" content="{{ setting type='simple' id='site-description' name='Site description' desc='This could be edited in admin panel' max='160' }}">
@@ -27,6 +29,11 @@
 
 	<header class="Header">
 		<div class="Inner">
+			<ul class="Header__lang">
+				<li><a href="./en/">EN</a></li>
+				<li><a href="./pl/">PL</a></li>
+			</ul>
+
 			<hgroup class="Header__text">
 				<h1>{{ lang id='welcome' }}</h1>
 				<h2>{{ lang id='about' }}</h2>
@@ -39,16 +46,38 @@
 
 	<main class="Main" id="main">
 		<div class="Inner">
-			<h2>{{ lang id='editable-fields' }}</h2>
-			<h3>{{ text type='simple' id='editable-header' name='Editable header' desc='Edit this in admin panel' }}</h3>
+			<div class="Main__content">
+				<h2>{{ lang id='editable-fields' }}</h2>
+				<h3>{{ text type='simple' id='editable-header' name='Editable header' desc='Edit this in admin panel' }}</h3>
 
-			<article>{{ text type='rich' id='editable-article' name='Editable article' desc='This text could also be edited' }}</article>
+				<article>{{ text type='rich' id='editable-article' name='Editable article' desc='This text could also be edited' }}</article>
 
-			<ul>
-				<li>Current language: {{ lang_code }}</li>
-				<li>Connected to database: {{ db_connected }}</li>
-				<li>Queries made: {{ db_queries }}</li>
-			</ul>
+				<ul>
+					<li>Current language: {{ lang_code }}</li>
+					<li>Connected to database: {{ db_connected }}</li>
+					<li>Queries made: {{ db_queries }}</li>
+				</ul>
+			</div>
+
+			<div class="Main__form">
+				<h2>{{ lang id='example-form' }}</h2>
+
+				<form id="contact-form" method="post" action="{{ lang_code }}/contact">
+					<label>
+						{{ lang id='form-label-email' }}:
+						<input type="email" name="email">
+					</label>
+
+					<label>
+						{{ lang id='form-label-message' }}:
+						<textarea name="message"></textarea>
+					</label>
+
+					<button type="submit">{{ lang id='form-send' }}</button>
+
+					<p id="contact-form-info"></p>
+				</form>
+			</div>
 		</div>
 	</main>
 
@@ -57,6 +86,9 @@
 			Created with keyboard by <a href="http://peronczyk.com/" target="_blank">Bartosz Perończyk</a>
 		</div>
 	</footer>
+
+	<script src="{{ theme_path }}scripts/jquery-3.3.1.min.js"></script>
+	<script src="{{ theme_path }}scripts/custom.js"></script>
 
 </body>
 

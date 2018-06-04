@@ -81,12 +81,63 @@ ul {
 		margin-left: 40px;
 	}
 
+form {
+	display: block;
+	margin: 30px 0;
+}
+
+label {
+	display: block;
+	margin: 0 0 30px 0;
+	font-size: 15px;
+}
+
+input[type='text'],
+input[type='email'],
+textarea {
+	margin-top: 10px;
+	padding: 10px 16px;
+	width: 100%;
+	border: 1px solid #ccccc9;
+	font-family: 'Roboto', Arial, Helvetica, sans-serif;
+}
+
+	input[type='text'].is-Error,
+	input[type='email'].is-Error,
+	textarea.is-Error {
+		border-color: red;
+	}
+
+button {
+	display: inline-flex;
+	padding: 10px 20px;
+	font-family: 'Roboto', Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 14px;
+	letter-spacing: .02em;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #00a8ff;
+	cursor: pointer;
+}
+
 .Header {
 	display: flex;
 	align-items: center;
 	height: 100vh;
 	border-top: 2px solid #00a8ff;
 }
+
+	.Header__lang {
+		position: absolute;
+		top: 2vw;
+		right: 2vw;
+		list-style-type: none;
+	}
+
+		.Header__lang li {
+			float: left;
+		}
 
 	.Header__text {
 		max-width: 500px;
@@ -99,6 +150,20 @@ ul {
 	padding-bottom: 80px;
 	border-top: 1px solid #dcdcd9;
 }
+
+	.Main .Inner {
+		display: flex;
+	}
+
+	.Main__content {
+		padding-right: 40px;
+		width: 50%;
+	}
+
+	.Main__form {
+		padding-left: 40px;
+		width: 50%;
+	}
 
 .Footer {
 	padding-top: 40px;
