@@ -7,13 +7,28 @@
 #
 # ==================================================================================
 
-if ($_POST['op'] !== 'send') die('Module unavailable this way you accessed it'); // Security check
+if ($_POST['op'] !== 'send') {
+	die('Module unavailable the way you accessed it'); // Security check
+}
 
 $ajax = new libs\Ajax();
+
+$tpl = new libs\Template();
+$tpl->set_theme(Config::$THEME_NAME);
+$theme_config = $tpl->get_theme_config();
+
 
 /**
  * Form validation
  */
+
+if ($theme_config['contact']['fields']) {
+	foreach ($theme_config['contact']['fields'] as $form_field) {
+		if ($form_field['required']) && () {
+
+		}
+	}
+}
 
 $inputs_required = Config::$CONTACT_REQUIRED_INPUTS;
 $inputs_with_errors = [];

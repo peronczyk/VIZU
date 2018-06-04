@@ -10,8 +10,9 @@
 $tpl = new libs\Template();
 $tpl->set_theme(Config::$THEME_NAME);
 
-$template_content	= $tpl->get_content('home');
-$template_fields	= $tpl->get_fields($template_content);
+$template_content = $tpl->get_content('home');
+$template_fields  = $tpl->get_fields($template_content);
+$theme_config     = $tpl->get_theme_config();
 
 
 /**
@@ -41,13 +42,13 @@ if (count($template_fields) > 0) {
  */
 
 $tpl->assign(array(
-	'site_path'		=> $router->site_path . '/',
-	'theme_path'	=> 'themes/' . Config::$THEME_NAME . '/',
-	'app_path'		=> Config::$APP_DIR,
-	'lang_code'		=> $lang->get(),
-	'db_connected'	=> (int)$db->is_connected(),
-	'db_queries'	=> (int)$db->get_queries_count(),
-	'fields'		=> print_r($template_fields, true), // For debug purposes
+	'site_path'    => $router->site_path . '/',
+	'theme_path'   => 'themes/' . Config::$THEME_NAME . '/',
+	'app_path'     => Config::$APP_DIR,
+	'lang_code'    => $lang->get(),
+	'db_connected' => (int)$db->is_connected(),
+	'db_queries'   => (int)$db->get_queries_count(),
+	'fields'       => print_r($template_fields, true), // For debug purposes
 ));
 
 

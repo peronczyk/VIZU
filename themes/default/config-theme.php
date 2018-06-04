@@ -22,4 +22,5 @@
 				'required' => true
 			],
 		]
+	],
 ];

@@ -18,6 +18,9 @@ class Template {
 	// Stores theme name (folder)
 	private $theme;
 
+	// Stores theme config
+	private $theme_config;
+
 	// Templates direcotory name that is inside each theme
 	private $tpl_dir = 'templates/';
 
@@ -31,6 +34,20 @@ class Template {
 
 	public function set_theme($theme_name) {
 		$this->theme = $theme_name;
+	}
+
+
+	/**
+	 * GETTER : Theme config
+	 */
+
+	public function get_theme_config() {
+		if (!$this->theme_config) {
+			$file_path = \Config::$THEMES_DIR . $this->theme . '/config-theme.php';
+			if (!file_exists($file_path)) return false;
+			$this->theme_config = include $file_path;
+		}
+		return $this->theme_config;
 	}
 
 
