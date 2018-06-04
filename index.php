@@ -35,6 +35,17 @@ $router = new libs\Router();
 
 
 /**
+ * Load theme configuration
+ */
+
+$theme_configuration_file = \Config::$THEMES_DIR . \Config::$THEME_NAME . '/config-theme.php';
+if (!file_exists($theme_configuration_file)) {
+	Core::error('Theme configuration file is missing', __FILE__, __LINE__, debug_backtrace());
+}
+$theme_config = include $theme_configuration_file;
+
+
+/**
  * Redirects based on configuration and enviroment
  */
 

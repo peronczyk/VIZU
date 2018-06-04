@@ -12,7 +12,6 @@ $mailer = new libs\Mailer();
 $tpl    = new libs\Template();
 
 $tpl->set_theme(Config::$THEME_NAME);
-$theme_config = $tpl->get_theme_config();
 
 
 if (!is_array($theme_config['contact']['fields'])) {

@@ -12,7 +12,6 @@ $tpl->set_theme(Config::$THEME_NAME);
 
 $template_content = $tpl->get_content('home');
 $template_fields  = $tpl->get_fields($template_content);
-$theme_config     = $tpl->get_theme_config();
 
 
 /**

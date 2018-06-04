@@ -194,12 +194,12 @@ class Mailer {
 		$recipients = $this->emails2string($this->recipients);
 		$content = '';
 
+
 		/**
 		 * The content
 		 */
 
-		$content .= '<html><body><h3>Contact message from website</h3>';
-		$content .= '<p>' . $this->sanitise_text($message) . '</p>';
+		$content .= '<html><body>';
 
 		if (count($this->content) > 0) {
 			$content .= '<br><hr style="border:0;border-bottom:1px solid #e3e3e3;"><table style="border-collapse:collapse;"><tbody>';
@@ -210,6 +210,7 @@ class Mailer {
 		}
 
 		$content .= '</body></html>';
+
 
 		/**
 		 * Headers

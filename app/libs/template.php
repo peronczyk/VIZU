@@ -38,20 +38,6 @@ class Template {
 
 
 	/**
-	 * GETTER : Theme config
-	 */
-
-	public function get_theme_config() {
-		if (!$this->theme_config) {
-			$file_path = \Config::$THEMES_DIR . $this->theme . '/config-theme.php';
-			if (!file_exists($file_path)) return false;
-			$this->theme_config = include $file_path;
-		}
-		return $this->theme_config;
-	}
-
-
-	/**
 	 * Check if template exists
 	 *
 	 * @return string|false - Return template path or false if not found
