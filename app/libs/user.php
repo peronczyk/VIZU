@@ -29,9 +29,9 @@ class User {
 		// Set up access level by checking if user is logged in
 
 		if (!empty($_SESSION['id']) && !empty($_SESSION['password'])) {
-			$result = $this->_db->query_param('SELECT `email`, `password` FROM `users` WHERE `id` = ? LIMIT 1', "i", array((int)$_SESSION['id']), true);
+			$result = $this->_db->query('SELECT `email`, `password` FROM `users` WHERE `id` = "' . (int)$_SESSION['id'] . '" LIMIT 1', true);
 			$user_data = $this->_db->fetch($result);
-			
+
 			if (count($user_data) > 0) {
 				if ($_SESSION['password'] === $user_data[0]['password']) {
 					$this->set_access(1);
@@ -125,8 +125,9 @@ class User {
 		if (empty($password)) return 'Account password not provided';
 		if (!$this->verify_username($email)) return 'Provided email address is not correct';
 
-		$result = $this->_db->query_param('SELECT `id`, `password` FROM `users` WHERE `email` = ? LIMIT 1', "s", array($email) );
+		$result = $this->_db->query('SELECT `id`, `password` FROM `users` WHERE `email` = "' . $email . '" LIMIT 1');
 		$user_data = $this->_db->fetch($result);
+
 		if (count($user_data) > 0 && $this->password_encode($password) === $user_data[0]['password']) {
 			$this->set_access(1);
 			$_SESSION['id'] = $user_data[0]['id'];

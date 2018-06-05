@@ -36,7 +36,7 @@ switch($router->request[count($router->request) - 1]) {
 
 		// Check if entered actual password is correct
 
-		$result = $db->query_param("SELECT `password` FROM `users` WHERE `id` = ? LIMIT 1", "i", array((int)$user->get_id()) );
+		$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '" . $user->get_id() . "' LIMIT 1");
 		$user_data = $db->fetch($result);
 
 		if ($user_data[0]['password'] && $user_data[0]['password'] !== $user->password_encode($_POST['password_actual'])) {
@@ -48,7 +48,7 @@ switch($router->request[count($router->request) - 1]) {
 		// Save new password
 
 		$new_password = $user->password_encode($_POST['password_new1']);
-		$result = $db->query_param("UPDATE `users` SET `password` = ? WHERE `id` = ? LIMIT 1", "si", [$new_password, (int)$user->get_id()] );
+		$result = $db->query("UPDATE `users` SET `password` = '" . $new_password . "' WHERE `id` = '" . $user->get_id() . "' LIMIT 1");
 
 		if ($result) {
 			$ajax->set('message', 'Pomyślnie zmieniono hasło');
@@ -72,7 +72,7 @@ switch($router->request[count($router->request) - 1]) {
 		}
 
 		// Check if email address already exists
-		$result = $db->query_param('SELECT * FROM `users` WHERE `email` = ?', "s", array($_POST['email']) );
+		$result = $db->query('SELECT * FROM `users` WHERE `email` = "' . $_POST['email'] . '"');
 		$user_found = $db->fetch($result);
 		if ($user_found) {
 			$ajax->set('message', 'Podany adres e-mail istnieje już w bazie danych');
@@ -80,7 +80,7 @@ switch($router->request[count($router->request) - 1]) {
 		}
 
 		// Get email addres of contact user that was set in configuration
-		$result = $db->query_param('SELECT `email` FROM `users` WHERE `id` = ?', "i", array((int)Config::$CONTACT_USER) );
+		$result = $db->query('SELECT `email` FROM `users` WHERE `id` = "' . Config::$CONTACT_USER . '"');
 		$fetched = $db->fetch($result);
 
 		if (!$fetched) {
@@ -109,7 +109,7 @@ switch($router->request[count($router->request) - 1]) {
 		}
 
 		// Add user to database
-		$query = $db->query_param('INSERT INTO `users` VALUES ("", ?, ?)', "ss", [$_POST['email'], $user->password_encode($generated_password)] );
+		$query = $db->query('INSERT INTO `users` VALUES ("", "' . $_POST['email'] . '", "' . $user->password_encode($generated_password) . '")');
 
 		$ajax->set('message', 'Konto użytkownika o adresie e-mail ' . $_POST['email'] . ' zostało założone.');
 		break;

@@ -48,7 +48,7 @@ $ajax->add('log', 'Active language: ' . $active_lang);
 
 // Get data from database for all fields
 
-$result = $db->query_param("SELECT * FROM `fields` WHERE `template` = 'home' AND `language` = ?", "s", array($active_lang) );
+$result = $db->query("SELECT * FROM `fields` WHERE `template` = 'home' AND `language` = '" . $active_lang . "'");
 $fields_data = $core->process_array($db->fetch($result), 'id');
 
 
@@ -82,7 +82,7 @@ if ($router->request[count($router->request) - 1] == 'save') {
 		// If field doesn't exist create it
 		if (!isset($fields_data[$post_key])) {
 
-			$result = $db->query_param("INSERT INTO `fields` (template, language, id, content, created, modified, version) VALUES ('home', ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1');", "sis", [$active_lang, $post_key, $post_val]);
+			$result = $db->query("INSERT INTO `fields` (template, language, id, content, created, modified, version) VALUES ('home', '" . $active_lang . "', '" . $post_key . "', '" . $post_val . "', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1');");
 
 			if ($result) {
 				$ajax->add('log', 'Field "' . $post_key . '" created');
@@ -96,10 +96,10 @@ if ($router->request[count($router->request) - 1] == 'save') {
 		// If field exists in database
 		elseif ($fields_data[$post_key]['content'] != $post_val) {
 
-			$result = $db->query_param("UPDATE `fields` SET
-				`content` = ?, `modified` = CURRENT_TIMESTAMP WHERE `template` = 'home' AND 
-				`language` = ? AND `id` = ?", "ssi", [$post_val, $active_lang, $post_key]);
-
+			$result = $db->query("UPDATE `fields` SET
+				`content` = '" . $post_val . "',
+				`modified` = CURRENT_TIMESTAMP
+				WHERE " . $query_common_where . " AND `id` = '" . $post_key . "'");
 			$ajax->add('log', 'Try to modify field: ' . $post_key . '. Result: ' . $result);
 			if ($result) $num_changes++;
 		}
@@ -144,7 +144,7 @@ else {
 
 	$form_fields	= null;		// Stores html of form elements - fields
 	$field_class	= array();	// Stores array of loaded field's classes
-	$field_num	= array();	// Stores numbers of each field types
+	$field_num		= array();	// Stores numbers of each field types
 	$skiped_fields	= 0;		// Stores number of skiped fields (not editable fields or with errors)
 
 	/**
