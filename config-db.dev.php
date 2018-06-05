@@ -21,5 +21,5 @@ return array(
 	'user' => 'root',
 
 	// Database password
-	'pass' => ''
+	'pass' => 'root'
 );
