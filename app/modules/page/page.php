@@ -21,7 +21,7 @@ $template_fields	= $tpl->get_fields($template_content);
 if (count($template_fields) > 0) {
 
 	// Get data from database for all fields
-	$result = $db->query("SELECT `id`, `content` FROM `fields` WHERE `template` = 'home' AND `language` = '" . $lang->get() . "'");
+	$result = $db->query_param("SELECT `id`, `content` FROM `fields` WHERE `template` = 'home' AND `language` = ?", "s", array($lang->get()) );
 	$fields_data = $core->process_array($db->fetch($result), 'id');
 
 	if (is_array($fields_data) && count($fields_data) > 0) {
