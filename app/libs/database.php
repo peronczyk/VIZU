@@ -86,6 +86,52 @@ class Database {
 
 
 	/**
+	 * Query parameterized
+	 *
+	 * @param string $query - MySQL query
+	 * @param string $format - values format
+	 * @param array $values - values
+	 * @param boolean $is_silent - if true this method will not throw errors
+	 *	on failure.
+	 *
+	 * @return object - MySQL result
+	 */
+
+	public function query_param($query, $format="", $values=[], $is_silent = false) {
+		if (!$this->connection) $this->connect();
+
+		$stmt = $this->connection->prepare($query);
+		if ($stmt === false) {
+			return false;
+		}
+		if (count($values) != 0) {
+			
+			foreach($values as $key => $value){ 
+        		$values[$key] = &$values[$key];  
+      		} 
+			array_unshift($values, $format);
+			
+			$method = new \ReflectionMethod($stmt, "bind_param");
+			$method->invokeArgs($stmt, $values);
+		}
+
+		if ( $stmt->execute()) {
+			$result = $stmt->get_result();
+			if ($result === false) $result = true;
+		}
+		else {
+			$result = false;
+		}
+		$this->queries_count++;
+
+		// Display critical error if queried table doesn't exist
+		if (!$is_silent && !$result && mysqli_errno($this->connection) === 1146) {
+			Core::error('<strong>Queried database table does not exist</strong>. Returned error: ' . mysqli_error($this->connection) . '. Probably the application is not installed. Navigate to "install/" to start installation process.', __FILE__, __LINE__, debug_backtrace());
+		}
+
+		return $result;
+	}
+	/**
 	 * Fetch results
 	 *
 	 * @return array|false
