@@ -18,9 +18,6 @@ class Template {
 	// Stores theme name (folder)
 	private $theme;
 
-	// Stores theme config
-	private $theme_config;
-
 	// Templates direcotory name that is inside each theme
 	private $tpl_dir = 'templates/';
 
