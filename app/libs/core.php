@@ -89,18 +89,6 @@ class Core {
 
 
 	/**
-	 * Print out eye-friendly array
-	 */
-
-	public static function print_arr($arr) {
-		echo '<pre>';
-		if (is_array($arr)) print_r($arr);
-		else echo 'This is not a array';
-		echo '</pre>';
-	}
-
-
-	/**
 	 * GETTER : Mtime
 	 */
 

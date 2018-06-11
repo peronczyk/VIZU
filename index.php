@@ -64,7 +64,9 @@ if ($core->is_dev() && file_exists('config-db.dev.php')) {
 elseif (file_exists('config-db.php')) {
 	$db_config = include('config-db.php');
 }
-else Core::error('Database configuration file is missing', __FILE__, __LINE__, debug_backtrace());
+else {
+	libs\Core::error('Database configuration file is missing', __FILE__, __LINE__, debug_backtrace());
+}
 
 $db = new libs\Database($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
 unset($db_config);
