@@ -40,7 +40,7 @@ $router = new libs\Router();
 
 $theme_configuration_file = \Config::$THEMES_DIR . \Config::$THEME_NAME . '/config-theme.php';
 if (!file_exists($theme_configuration_file)) {
-	Core::error('Theme configuration file is missing', __FILE__, __LINE__, debug_backtrace());
+	libs\Core::error('Theme configuration file is missing', __FILE__, __LINE__, debug_backtrace());
 }
 $theme_config = include $theme_configuration_file;
 
@@ -59,13 +59,13 @@ if (Config::$REDIRECT_TO_WWW === true) $router->redirect_to_www();
  */
 
 if ($core->is_dev() && file_exists('config-db.dev.php')) {
-	$db_config = include('config-db.dev.php');
+	$db_config = include 'config-db.dev.php';
 }
 elseif (file_exists('config-db.php')) {
-	$db_config = include('config-db.php');
+	$db_config = include 'config-db.php';
 }
 else {
-	libs\Core::error('Database configuration file is missing', __FILE__, __LINE__, debug_backtrace());
+	libs\Core::error('Database configuration file (config-db.php) is missing. You can copy this file from <a href="https://raw.githubusercontent.com/peronczyk/VIZU/master/config-db.php">this</a> location. Be sure to set database connection credentials.', __FILE__, __LINE__, debug_backtrace());
 }
 
 $db = new libs\Database($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
