@@ -13,7 +13,7 @@ class Template {
 
 	// Assignement storage. This values will be parsed in to the template
 	// eg.: {{ text id='foo'}} will be changed with 'foo' => 'Bar'
-	public $vars = array();
+	public $vars = [];
 
 	// Stores theme name (folder)
 	private $theme;
@@ -46,7 +46,10 @@ class Template {
 		}
 
 		$file_path = \Config::$THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
-		if (!file_exists($file_path)) return false;
+		if (!file_exists($file_path)) {
+			return false;
+		}
+
 		return $file_path;
 	}
 
@@ -58,14 +61,18 @@ class Template {
 	public function load_field_class($field_name) {
 		$class_file = 'app/fields/' . $field_name . '.php';
 		if (file_exists($class_file)) {
-			require_once($class_file);
+			require_once $class_file;
 			$class_name = 'fields\\' . $field_name;
 			if (class_exists($class_name)) {
 				return new $class_name();
 			}
-			else return 'Template field handling file does not have proper class: "' . $field_name . '"';
+			else {
+				return 'Template field handling file does not have proper class: "' . $field_name . '"';
+			}
 		}
-		else return 'Template field handling file does not exist: "' . $class_file . '"';
+		else {
+			return 'Template field handling file does not exist: "' . $class_file . '"';
+		}
 	}
 
 
@@ -108,12 +115,12 @@ class Template {
 
 	public function get_fields($content) {
 		$num_matches = preg_match_all('/{{(.*?)}}/', $content, $matches);
-		$fields = array();
+		$fields = [];
 
 		foreach($matches[1] as $key => $val) {
-			$val	= trim($val); // Remove spaces from beggining and the end
-			$chunks	= array_filter(explode(' ', $val));
-			$field	= array();
+			$val    = trim($val); // Remove spaces from beggining and the end
+			$chunks = array_filter(explode(' ', $val));
+			$field  = [];
 
 			if (in_array($chunks[0], \Config::$FIELD_CATEGORIES['content']) or in_array($chunks[0], \Config::$FIELD_CATEGORIES['other'])) {
 				$field['category'] = $chunks[0];
@@ -148,27 +155,25 @@ class Template {
 	 * @param array $translations
 	 */
 
-	public function parse($content, $fields, $translations = array()) {
+	public function parse($content, $fields, $translations = []) {
 
 		// Prepare all fields
 		// @TODO: needed to be replaced
 		// http://stackoverflow.com/questions/5017582/php-looping-template-engine-from-scratch
 
-		$patterns		= array();
-		$replacements	= array();
+		$patterns     = [];
+		$replacements = [];
 		$n = 0;
 
 		foreach($fields as $id => $field) {
 
 			// Match anything like {{ category something='something' id='id' somethin='something' }}
-			// (*UTF8)	- selves problem with non latin characters in values
-			// \p{L}	- searches any character from unicode.
-			// /u		- allow searching for all unicode characters
-
+			// (*UTF8) - selves problem with non latin characters in values
+			// \p{L}   - searches any character from unicode.
+			// /u      - allow searching for all unicode characters
 			$patterns[$n] = '/{{ ' . $field['category'] . '[\p{L}0-9\'=\-_\:\.\(\)\s]+id=\'' . $id . '\'[\p{L}0-9\'=\-_\:\.\(\)\s]+}}/u';
 
 			switch($field['category']) {
-
 				case 'lang':
 					if (isset($translations[$id])) $replacements[$n] = $translations[$id];
 					else $replacements[$n] = $id;
@@ -195,20 +200,23 @@ class Template {
 		$preg_status = preg_last_error();
 
 		// If regular expression was performed without errors
-		if (!$preg_status) return $parsed;
+		if (!$preg_status) {
+			return $parsed;
+		}
 
 		// If error eccured show error status
 		else {
 			if (is_numeric($preg_status)) {
-				$preg_status_list = array(
+				$preg_status_list = [
 					1 => 'PREG_INTERNAL_ERROR',
 					2 => 'PREG_BACKTRACK_LIMIT_ERROR',
 					3 => 'PREG_RECURSION_LIMIT_ERROR',
 					4 => 'PREG_BAD_UTF8_ERROR',
 					5 => 'PREG_BAD_UTF8_OFFSET_ERROR',
-				);
-				if (isset($preg_status_list[$preg_status])) $preg_status_text = $preg_status_list[$preg_status] . ' [' . $preg_status . ']';
-				else $preg_status_text = 'Unknown error' . ' [' . $preg_status . ']';
+				];
+				$preg_status_text = (isset($preg_status_list[$preg_status]))
+					? $preg_status_list[$preg_status] . ' [' . $preg_status . ']'
+					: 'Unknown error [' . $preg_status . ']';
 			}
 			else $preg_status_text = $preg_status;
 

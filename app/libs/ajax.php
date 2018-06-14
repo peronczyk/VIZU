@@ -11,7 +11,7 @@ namespace libs;
 
 class Ajax {
 
-	public $log = array(); // Array of values to log in console
+	public $log = []; // Array of values to log in console
 	public $error; // Errors
 	public $message; // Popup messages
 	public $html; // HTML to display
@@ -24,6 +24,7 @@ class Ajax {
 
 	public function set($varname, $value) {
 		$this->$varname = $value;
+		return $this;
 	}
 
 
@@ -33,6 +34,7 @@ class Ajax {
 
 	public function add($varname, $value) {
 		array_push($this->$varname, $value);
+		return $this;
 	}
 
 
@@ -41,6 +43,8 @@ class Ajax {
 	 */
 
 	public function send() {
+		header('Content-type: application/json');
 		echo json_encode($this);
+		exit;
 	}
 }

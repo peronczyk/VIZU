@@ -3,11 +3,13 @@
 
 <head>
 
+	<base href="{{ site_path }}">
+
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<meta name="description" content="{{ setting type='simple' id='site_description' name='Site description' desc='This could be edited in admin panel' max='160' }}">
+	<meta name="description" content="{{ setting type='simple' id='site-description' name='Site description' desc='This could be edited in admin panel' max='160' }}">
 
-	<title>{{ setting type='simple' id='site_title' name='Site name' }}</title>
+	<title>{{ setting type='simple' id='site-title' name='Site name' }}</title>
 
 	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700">
 	<link rel="stylesheet" type="text/css" href="{{ theme_path }}css/default.css">
@@ -16,10 +18,10 @@
 	<link rel="icon" sizes="32x32" href="{{ theme_path }}images/favicon32.png" type="image/png">
 	<link rel="icon" sizes="64x64" href="{{ theme_path }}images/favicon64.png" type="image/png">
 
-	<meta property="og:title" content="{{ setting id='site_title' }}">
+	<meta property="og:title" content="{{ setting id='site-title' }}">
 	<meta property="og:url" content="{{ site_path }}">
 	<meta property="og:image" content="{{ theme_path }}images/og-image.png">
-	<meta property="og:description" content="{{ setting id='site_description' }}">
+	<meta property="og:description" content="{{ setting id='site-description' }}">
 
 </head>
 
@@ -27,28 +29,60 @@
 
 	<header class="Header">
 		<div class="Inner">
+			<ul class="Header__lang is-Lang--{{ lang_code }}">
+				<li class="Header__lang__en"><a href="./en/">EN</a></li>
+				<li class="Header__lang__pl"><a href="./pl/">PL</a></li>
+			</ul>
+
 			<hgroup class="Header__text">
 				<h1>{{ lang id='welcome' }}</h1>
 				<h2>{{ lang id='about' }}</h2>
-				<p>{{ lang id='theme_info' }}</p>
-				<p>&mdash; &nbsp; <a href="https://github.com/peronczyk/vizu">{{ lang id='github_view' }}</a></p>
-				<p>&mdash; &nbsp; <a href="#main">{{ lang id='scroll_down' }}</a>
+				<p>{{ lang id='theme-info' }}</p>
+				<p>&mdash; &nbsp; <a href="https://github.com/peronczyk/vizu">{{ lang id='github-view' }}</a></p>
+				<p>&mdash; &nbsp; <a href="#main">{{ lang id='scroll-down' }}</a>
 			</hgroup>
 		</div>
 	</header>
 
 	<main class="Main" id="main">
 		<div class="Inner">
-			<h2>{{ lang id='editable_fields' }}</h2>
-			<h3>{{ text type='simple' id='editable_header' name='Editable header' desc='Edit this in admin panel' }}</h3>
+			<div class="Main__content">
+				<h2>{{ lang id='editable-fields' }}</h2>
+				<h3>{{ text type='simple' id='editable-header' name='Editable header' desc='Edit this in admin panel' }}</h3>
 
-			<article>{{ text type='rich' id='editable_article' name='Editable article' desc='This text could be edited also' }}</article>
+				<article>{{ text type='rich' id='editable-article' name='Editable article' desc='This text could also be edited' }}</article>
 
-			<ul>
-				<li>Current language: {{ lang_code }}</li>
-				<li>Connected to database: {{ db_connected }}</li>
-				<li>Queries made: {{ db_queries }}</li>
-			</ul>
+				<ul>
+					<li>Current language: {{ lang_code }}</li>
+					<li>Connected to database: {{ db_connected }}</li>
+					<li>Queries made: {{ db_queries }}</li>
+				</ul>
+			</div>
+
+			<div class="Main__form">
+				<h2>{{ lang id='example-form' }}</h2>
+
+				<form id="contact-form" method="post" action="{{ lang_code }}/contact">
+					<label>
+						{{ lang id='form-label-email' }}:
+						<input type="email" name="email">
+					</label>
+
+					<label>
+						{{ lang id='form-label-message' }}:
+						<textarea name="message"></textarea>
+					</label>
+
+					<label>
+						<input type="checkbox" name="agreement" value="{{ lang id='form-label-agreement' }}" checked>
+						{{ lang id='form-label-agreement' }}
+					</label>
+
+					<button type="submit">{{ lang id='form-send' }}</button>
+
+					<p id="contact-form-info"></p>
+				</form>
+			</div>
 		</div>
 	</main>
 
@@ -57,6 +91,9 @@
 			Created with keyboard by <a href="http://peronczyk.com/" target="_blank">Bartosz Perończyk</a>
 		</div>
 	</footer>
+
+	<script src="{{ theme_path }}scripts/jquery-3.3.1.min.js"></script>
+	<script src="{{ theme_path }}scripts/custom.js"></script>
 
 </body>
 

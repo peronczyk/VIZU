@@ -33,25 +33,12 @@ class Config {
 
 
 	# ------------------------------------------------------------------------------
-	# CONTACT SETTINGS
-
-	// ID of default user to send email via contact form.
-	static $CONTACT_USER = 1;
-
-	// Set this to true if you want to send messages to all other users as BCC.
-	static $CONTACT_ALL = true;
-
-	// Form fields that are required to send message
-	static $CONTACT_REQUIRED_INPUTS = array('message');
-
-
-	# ------------------------------------------------------------------------------
 	# DEV OPTIONS
 
 	// IP Address of development enviroment. After setting this debug mode will be
 	// set on this enviroment. By default localhost IPs are treated as DEV_IP
 	// so you don't need to add here IPs like 127.0.0.1.
-	static $DEV_IP = null;
+	static $DEV_IP = ['127.0.0.1', '0.0.0.0', '::1'];
 
 	// Forces debug mode for everybody.
 	static $DEBUG = false;
@@ -71,15 +58,15 @@ class Config {
 	# FIELDS
 
 	// Categories of fields that can be used in templates.
-	static $FIELD_CATEGORIES = array(
+	static $FIELD_CATEGORIES = [
 
 		// Fields, that can be edited in 'Content' CMS.
-		'content' => array('text', 'setting'),
+		'content' => ['text', 'setting'],
 
 		// Other fields.
-		'other' => array('lang'),
-	);
+		'other' => ['lang'],
+	];
 
 	// Determines how field can be edited in admin panel.
-	static $FIELD_TYPES = array('simple', 'rich');
+	static $FIELD_TYPES = ['simple', 'rich'];
 }

@@ -91,15 +91,19 @@ elseif ($install->check_db_tables()) {
 			$status = false;
 			if ($user->verify_password($_POST['password']) && $user->verify_username($_POST['email'])) {
 				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('" . $_POST['email'] . "', '" . $user->password_encode($_POST['password']) . "');");
-				if ($result) $status = true;
+				if ($result) {
+					$status = true;
+				}
 			}
 
-			if ($status) header('location: ' . $router->site_path . '/install');
+			if ($status) {
+				header('location: ' . $router->site_path . '/install');
+			}
 			else {
-				$_SESSION['vizu']['install'] = array(
+				$_SESSION['vizu']['install'] = [
 					'error' => 2,
 					'message' => $db->get_conn()->error
-				);
+				];
 				header('location: ' . $router->site_path . '/install/error');
 			}
 		}
@@ -139,10 +143,10 @@ else {
 
 		if ($status) header('location: ' . $router->site_path . '/install');
 		else {
-			$_SESSION['vizu']['install'] = array(
-				'error' => 1,
+			$_SESSION['vizu']['install'] = [
+				'error'   => 1,
 				'message' => $db->get_conn()->error
-			);
+			];
 			header('location: ' . $router->site_path . '/install/error');
 		}
 	}

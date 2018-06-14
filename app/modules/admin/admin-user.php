@@ -7,14 +7,16 @@
 #
 # ==================================================================================
 
-if (IN_ADMIN !== true) die('This file can be loaded only in admin module');
+if (IN_ADMIN !== true) {
+	die('This file can be loaded only in admin module');
+}
 
 
 switch($router->request[count($router->request) - 1]) {
 
 	/**
-	* Password change operation
-	*/
+	 * Password change operation
+	 */
 
 	case 'change_password';
 
@@ -22,11 +24,11 @@ switch($router->request[count($router->request) - 1]) {
 
 		$error_msg = null;
 
-		if (empty($_POST['password_actual']))							$error_msg = 'Nie podano aktualnego hasła';
-		elseif (empty($_POST['password_new1']))							$error_msg = 'Nie podano nowego hasła';
-		elseif ($_POST['password_new1'] !== $_POST['password_new2'])	$error_msg = 'Nowe hasło nie zgadza się z jego powtórzeniem';
-		elseif ($_POST['password_actual'] === $_POST['password_new1'])	$error_msg = 'Nowe hasło musi różnić się od starego aby zostało zmienione';
-		elseif (strlen($_POST['password_new1']) < 6)					$error_msg = 'Nowe hasło powinno mieć conajmniej 5 znaków';
+		if (empty($_POST['password_actual']))                          $error_msg = 'Nie podano aktualnego hasła';
+		elseif (empty($_POST['password_new1']))                        $error_msg = 'Nie podano nowego hasła';
+		elseif ($_POST['password_new1'] !== $_POST['password_new2'])   $error_msg = 'Nowe hasło nie zgadza się z jego powtórzeniem';
+		elseif ($_POST['password_actual'] === $_POST['password_new1']) $error_msg = 'Nowe hasło musi różnić się od starego aby zostało zmienione';
+		elseif (strlen($_POST['password_new1']) < 6)                   $error_msg = 'Nowe hasło powinno mieć conajmniej 5 znaków';
 
 		if ($error_msg) {
 			$ajax->set('message', $error_msg);
@@ -64,6 +66,7 @@ switch($router->request[count($router->request) - 1]) {
 	 */
 
 	case 'user_add':
+		$mailer = new libs\Mailer();
 
 		// Validate entered email address
 		if (empty($_POST['email']) || !$user->verify_username($_POST['email'])) {
@@ -79,29 +82,33 @@ switch($router->request[count($router->request) - 1]) {
 			break;
 		}
 
-		// Get email addres of contact user that was set in configuration
-		$result = $db->query('SELECT `email` FROM `users` WHERE `id` = "' . Config::$CONTACT_USER . '"');
-		$fetched = $db->fetch($result);
+		// Set sender email address as theme contact form main recipient
+		if ($theme_config['contact']['default_recipient']) {
+			$user_id = $theme_config['contact']['default_recipient'];
 
-		if (!$fetched) {
-			$ajax->set('message', 'Skonfigurowany domyślny odbiorca/nadawca [' . Config::$CONTACT_USER . '] nie istnieje w bazie danych. Nie udało się utworzyć konta administratora.');
-			break;
+			// Get email addres of contact user that was set in configuration
+			$result  = $db->query('SELECT `email` FROM `users` WHERE `id` = "' . $user_id . '"');
+			$fetched = $db->fetch($result);
+
+			if (!$fetched) {
+				$ajax->set('message', 'Skonfigurowany domyślny odbiorca/nadawca [' . $user_id . '] nie istnieje w bazie danych. Nie udało się utworzyć konta administratora.');
+				break;
+			}
+			$contact_user_email = $fetched[0]['email'];
+			$mailer->set_from($contact_user_email);
 		}
 
-		$contact_user_email = $fetched[0]['email'];
 		$generated_password = $user->generate_password();
-
-		$mailer = new libs\Mailer();
 
 		try {
 			$notify_result = $mailer
 				->set_topic('Rejestracja konta')
 				->add_recipient($_POST['email'])
-				->set_from($contact_user_email)
-				->add_list_data('Adres strony WWW', $router->site_path)
-				->add_list_data('Login', $_POST['email'])
-				->add_list_data('Hasło', $generated_password)
-				->send('Twoje konto administratora zostało utworzone. Dane logowania znajdziesz powyżej. Wskazane jest aby po zalogowaniu się zmienić swoje hasło.');
+				->add_content('Message', 'Twoje konto administratora zostało utworzone. Dane logowania znajdziesz powyżej. Wskazane jest aby po zalogowaniu się zmienić swoje hasło.')
+				->add_content('Adres strony WWW', $router->site_path)
+				->add_content('Login', $_POST['email'])
+				->add_content('Hasło', $generated_password)
+				->send();
 		}
 		catch (\Exception $e) {
 			$ajax->set('message', 'Nie udało się wysłać powiadomienia o utworzeniu konta administratora. Treść błędu: "' . $e->getMessage() . '". Konto administratora nie zostało założone.');
@@ -128,13 +135,13 @@ switch($router->request[count($router->request) - 1]) {
 			$users_list .= '<li>' . $user_data['email'] . '</li>';
 		}
 
-		$tpl->assign(array(
+		$tpl->assign([
 			'user_email' => $user->get_email(),
 			'users_list' => $users_list,
-		));
+		]);
 
-		$template_content	= $tpl->get_content('user');
-		$template_fields	= $tpl->get_fields($template_content);
+		$template_content = $tpl->get_content('user');
+		$template_fields  = $tpl->get_fields($template_content);
 
 		$ajax->set('html', $tpl->parse($template_content, $template_fields));
 }

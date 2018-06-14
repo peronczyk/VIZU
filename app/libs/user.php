@@ -162,8 +162,8 @@ class User {
 		// Make room for the two-digit number on the end
 		$length = $length - 2;
 
-		$conso = array('b','c','d','f','g','h','j','k','l','m','n','p','r','s','t','v','w','x','y','z');
-		$vocal = array('a','e','i','o','u');
+		$conso = ['b','c','d','f','g','h','j','k','l','m','n','p','r','s','t','v','w','x','y','z'];
+		$vocal = ['a','e','i','o','u'];
 
 		$password = '';
 		srand((double)microtime() * 1000000);

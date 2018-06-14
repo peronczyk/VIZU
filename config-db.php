@@ -6,11 +6,11 @@
 #	Production enviroment database configuration file.
 #	---
 #	If you want to use different database in development (QA) enviroment
-#	just duplicate this file and rename it to 'config.db-dev.php'.
+#	just duplicate this file and rename it to 'config-db.dev.php'.
 #
 # ==================================================================================
 
-return array(
+return [
 
 	// Database host name
 	'host' => '',
@@ -23,4 +23,4 @@ return array(
 
 	// Database password
 	'pass' => ''
-);
+];

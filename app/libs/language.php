@@ -11,7 +11,7 @@ namespace libs;
 
 class Language {
 
-	public $translations = array();
+	public $translations = [];
 
 	private $lang_code;
 	private $lang_list;
@@ -175,6 +175,6 @@ class Language {
 			if (is_array($additionals) && isset($additionals[$key])) return $additionals[$key];
 			else return $additionals;
 		}
-		else return false;
+		else return $key;
 	}
 }
