@@ -44,7 +44,6 @@ class Database {
 		}
 		catch(\Exception $e) {
 			Core::error('Unable to connect to MySQL database "' . $this->name . '". Returned error: ' . $e->getMessage() . ' [' . $e->getCode() . '].<br>Probably application is not installed propertly. Check configured database connection credentials and be sure that database exists.', __FILE__, __LINE__, debug_backtrace());
-			exit;
 		}
 
 		mysqli_set_charset($this->connection, 'utf8');
@@ -144,7 +143,7 @@ class Database {
 
 	public function import_file($file) {
 		if (!file_exists($file)) {
-			Core::error('Unable to import SQL file "' . $file . '" becouse it does not exists.', __FILE__, __LINE__, debug_backtrace());
+			Core::error('Unable to import SQL file "' . $file . '" because it does not exists.', __FILE__, __LINE__, debug_backtrace());
 		}
 
 		$errors = 0;

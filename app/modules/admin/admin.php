@@ -14,11 +14,11 @@ $tpl = new libs\Template();
 
 $tpl->set_theme('admin');
 $tpl->assign(array(
-	'app_path'			=> Config::$APP_DIR,
-	'site_path' 		=> $router->site_path,
-	'theme_path'		=> 'themes/admin',
-	'script_version'	=> VIZU_VERSION,
-	'phpversion'		=> phpversion(),
+	'app_path'       => Config::$APP_DIR,
+	'site_path'      => $router->site_path,
+	'theme_path'     => 'themes/admin',
+	'script_version' => VIZU_VERSION,
+	'phpversion'     => phpversion(),
 ));
 
 $user = new libs\User($db);

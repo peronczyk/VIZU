@@ -15,9 +15,9 @@ body {
 
 .Inner {
 	margin: auto;
-	padding: 0 60px;
+	padding: 0 7vw;
 	width: 100%;
-	max-width: 1000px;
+	max-width: 1200px;
 }
 
 h1 {
@@ -81,12 +81,81 @@ ul {
 		margin-left: 40px;
 	}
 
+form {
+	display: block;
+	margin: 30px 0;
+}
+
+label {
+	display: block;
+	margin: 0 0 30px 0;
+	font-size: 15px;
+}
+
+input[type='text'],
+input[type='email'],
+textarea {
+	margin-top: 10px;
+	padding: 10px 16px;
+	width: 100%;
+	border: 1px solid #ccccc9;
+	font-family: 'Roboto', Arial, Helvetica, sans-serif;
+}
+
+input[type='checkbox'] {
+	margin: 10px;
+}
+
+	input[type='text'].is-Error,
+	input[type='email'].is-Error,
+	textarea.is-Error {
+		border-color: red;
+	}
+
+	input[type='checkbox'].is-Error {
+		background-color: red;
+		box-shadow: 0 2px 20px red;
+	}
+
+button {
+	display: inline-flex;
+	padding: 10px 20px;
+	font-family: 'Roboto', Arial, Helvetica, sans-serif;
+	font-weight: 700;
+	font-size: 14px;
+	letter-spacing: .02em;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #00a8ff;
+	cursor: pointer;
+}
+
 .Header {
 	display: flex;
 	align-items: center;
+	padding: 8vh 0;
 	height: 100vh;
 	border-top: 2px solid #00a8ff;
 }
+
+	.Header__lang {
+		position: absolute;
+		top: 2vw;
+		right: 2vw;
+		list-style-type: none;
+	}
+
+		.Header__lang li {
+			float: left;
+		}
+
+		.is-Lang--en .Header__lang__en {
+			font-weight: 700;
+		}
+
+		.is-Lang--pl .Header__lang__pl {
+			font-weight: 700;
+		}
 
 	.Header__text {
 		max-width: 500px;
@@ -95,10 +164,24 @@ ul {
 	}
 
 .Main {
-	padding-top: 80px;
-	padding-bottom: 80px;
+	padding: 8vh 0;
 	border-top: 1px solid #dcdcd9;
 }
+
+	.Main .Inner {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.Main__content {
+		padding-right: 5vw;
+		width: 50%;
+	}
+
+	.Main__form {
+		padding-left: 5vw;
+		width: 50%;
+	}
 
 .Footer {
 	padding-top: 40px;
@@ -115,8 +198,14 @@ ul {
 }
 
 
-@media (max-width: 480px) {
-	.Inner {
-		padding: 0 30px;
+@media (max-width: 640px) {
+	.Header {
+		height: auto;
+	}
+
+	.Main__content,
+	.Main__form {
+		padding: 0;
+		width: 100%;
 	}
 }

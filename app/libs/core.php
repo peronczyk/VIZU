@@ -11,7 +11,7 @@ namespace libs;
 
 class Core {
 
-	// Check if script is run as request by AJAX
+	// Check if script is running as AJAX request
 	public static $ajax_loaded = false;
 
 
@@ -24,7 +24,9 @@ class Core {
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) session_start();
 
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') self::$ajax_loaded = true;
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+			self::$ajax_loaded = true;
+		}
 	}
 
 
@@ -79,25 +81,10 @@ class Core {
 	 */
 
 	public function is_dev() {
-		$default_dev_ip = array('127.0.0.1', '0.0.0.0', '::1');
-		if ($_SERVER['REMOTE_ADDR'] === \Config::$DEV_IP || in_array($_SERVER['REMOTE_ADDR'], $default_dev_ip)) {
+		if (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)) {
 			return true;
 		}
 		return false;
-	}
-
-
-	/**
-	 * Print out eye-friendly array
-	 */
-
-	public static function print_arr($arr) {
-		if (is_array($arr)) {
-			echo('<pre>');
-			print_r($arr);
-			echo('</pre>');
-		}
-		else echo('<pre>This is not a array</pre>');
 	}
 
 
@@ -112,7 +99,7 @@ class Core {
 
 
 	/**
-	 * Changes default keys in array to $key_name values taken from inside the array
+	 * Change default keys in array to $key_name values taken from inside the array
 	 *
 	 * @param array $array
 	 * @param string $key_name

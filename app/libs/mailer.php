@@ -15,13 +15,12 @@ class Mailer {
 	const NL = "\r\n";
 
 	const ERR_SERVER = 1;
-	const ERR_NO_MESSAGE = 2;
 	const ERR_NO_TOPIC = 3;
 	const ERR_NO_RECIPIENTS = 4;
 	const ERR_ANTIFLOOD = 5;
 
 	private $recipients = [];
-	private $list_data = [];
+	private $content = [];
 	private $cc = [];
 	private $bcc = [];
 	private $reply_to;
@@ -44,7 +43,7 @@ class Mailer {
 	 */
 
 	public function sanitise_string($str) {
-		return preg_replace('/\r|\n/', '', strip_tags(trim($str)));
+		return preg_replace('/\r|\n/', '', htmlentities(trim($str), ENT_QUOTES));
 	}
 
 
@@ -53,7 +52,7 @@ class Mailer {
 	 */
 
 	public function sanitise_text($text) {
-		return preg_replace('/\r|\n/', '', nl2br(strip_tags(trim($text)), false));
+		return preg_replace('/\r|\n/', '', nl2br(htmlentities(trim($text), ENT_QUOTES)));
 	}
 
 
@@ -79,7 +78,7 @@ class Mailer {
 	public function add_recipient($email, $name = '') {
 		$this->recipients[] = [
 			'email' => $this->sanitise_email($email),
-			'name' => $this->sanitise_string($name)
+			'name'  => $this->sanitise_string($name)
 		];
 		return $this;
 	}
@@ -92,7 +91,7 @@ class Mailer {
 	public function add_bcc($email, $name = '') {
 		$this->bcc[] = [
 			'email' => $this->sanitise_email($email),
-			'name' => $this->sanitise_string($name)
+			'name'  => $this->sanitise_string($name)
 		];
 		return $this;
 	}
@@ -106,10 +105,10 @@ class Mailer {
 	 * @param string $value
 	 */
 
-	public function add_list_data($name, $value) {
-		$this->list_data[] = [
-			'name' => $name,
-			'value' => $this->sanitise_string($value)
+	public function add_content($name, $value) {
+		$this->content[] = [
+			'name'  => $name,
+			'value' => $this->sanitise_text($value)
 		];
 		return $this;
 	}
@@ -166,7 +165,7 @@ class Mailer {
 	 * @param int|bool $delay
 	 */
 
-	public function antiflood($delay = 120) {
+	public function set_antiflood($delay = 120) {
 		$this->antiflood = $delay;
 		return $this;
 	}
@@ -177,13 +176,7 @@ class Mailer {
 	 * This method can be used to view complete email before sending it
 	 */
 
-	public function prepare($message) {
-		if (empty($message)) {
-			throw new \Exception(
-				'Empty message',
-				self::ERR_NO_MESSAGE
-			);
-		}
+	public function prepare() {
 		if (empty($this->topic)) {
 			throw new \Exception(
 				'Topic was not set',
@@ -201,22 +194,23 @@ class Mailer {
 		$recipients = $this->emails2string($this->recipients);
 		$content = '';
 
+
 		/**
 		 * The content
 		 */
 
-		$content .= '<html><body><h3>Contact message from website</h3>';
-		$content .= '<p>' . $this->sanitise_text($message) . '</p>';
+		$content .= '<html><body>';
 
-		if (count($this->list_data) > 0) {
-			$content .= '<br><hr style="border:0;border-bottom:1px solid #e3e3e3;"><table style="border-collapse:collapse;"><tbody>';
-			foreach($this->list_data as $entry) {
+		if (count($this->content) > 0) {
+			$content .= '<table style="border-collapse:collapse;"><tbody>';
+			foreach($this->content as $entry) {
 				$content .= '<tr><td style="padding:5px;"><strong>' . $entry['name'] . ':</strong></td><td style="padding:5px;">' . $entry['value'] . '</td></tr>';
 			}
-			$content .= '</tbody></table><hr style="border:0;border-bottom:1px solid #e3e3e3;">';
+			$content .= '</tbody></table>';
 		}
 
 		$content .= '</body></html>';
+
 
 		/**
 		 * Headers
@@ -245,11 +239,9 @@ class Mailer {
 
 	/**
 	 * ACTION : Send email
-	 *
-	 * @param string $message
 	 */
 
-	public function send($message) {
+	public function send() {
 		if ($this->antiflood && isset($_SESSION['mailer_sended']) && (date('U') - $_SESSION['mailer_sended']) < $this->antiflood) {
 			throw new \Exception(
 				'You can not send messages so often',
@@ -257,7 +249,7 @@ class Mailer {
 			);
 		}
 
-		list($recipients, $topic, $content, $headers) = $this->prepare($message);
+		list($recipients, $topic, $content, $headers) = $this->prepare();
 
 		$last_error = error_get_last();
 		if (@mail($recipients, $topic, $content, $headers)) {
@@ -266,7 +258,7 @@ class Mailer {
 		}
 		$actual_error = error_get_last();
 
-		// Detect if running mail() function gave error
+		// Detect if running mail() function thrown error.
 		// This is the only way to handle errors with this primitive function
 		if ($actual_error['message'] && $actual_error['message'] != $last_error['message']) {
 			throw new \Exception(
