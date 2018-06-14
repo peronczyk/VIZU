@@ -11,7 +11,7 @@ namespace libs;
 
 class Ajax {
 
-	public $log = array(); // Array of values to log in console
+	public $log = []; // Array of values to log in console
 	public $error; // Errors
 	public $message; // Popup messages
 	public $html; // HTML to display

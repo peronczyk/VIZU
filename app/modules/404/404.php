@@ -13,14 +13,14 @@ $tpl = new libs\Template();
 $tpl->set_theme(Config::$THEME_NAME);
 
 if ($tpl->get_template_path('404')) {
-	$template_content	= $tpl->get_content('404');
-	$template_fields	= $tpl->get_fields($template_content);
+	$template_content = $tpl->get_content('404');
+	$template_fields  = $tpl->get_fields($template_content);
 
-	$tpl->assign(array(
-		'site_path'		=> $router->site_path . '/',
-		'theme_path'	=> 'themes/' . Config::$THEME_NAME . '/',
-		'app_path'		=> Config::$APP_DIR
-	));
+	$tpl->assign([
+		'site_path'   => $router->site_path . '/',
+		'theme_path'  => 'themes/' . Config::$THEME_NAME . '/',
+		'app_path'    => Config::$APP_DIR
+	]);
 
 	echo $tpl->parse($template_content, $template_fields, $lang->translations);
 }

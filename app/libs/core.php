@@ -47,13 +47,13 @@ class Core {
 
 		if (self::$ajax_loaded === true) {
 			header('Content-type: application/json');
-			echo json_encode(array(
-				'error' => array(
+			echo json_encode([
+				'error' => [
 					'str'  => $msg,
 					'file' => $file,
 					'line' => $line
-				)
-			));
+				]
+			]);
 		}
 		else {
 			echo self::common_html_header('Critical error');
@@ -81,10 +81,9 @@ class Core {
 	 */
 
 	public function is_dev() {
-		if (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)) {
-			return true;
-		}
-		return false;
+		return (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP))
+			? true
+			: false;
 	}
 
 
@@ -110,7 +109,7 @@ class Core {
 	public function process_array($array, $key_name) {
 		if (!is_array($array)) return false;
 
-		$processed_array = array();
+		$processed_array = [];
 		foreach($array as $val) {
 			if (isset($val[$key_name])) {
 				$processed_array[$val[$key_name]] = $val;

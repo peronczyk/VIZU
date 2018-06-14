@@ -7,7 +7,9 @@
 #
 # ==================================================================================
 
-if (IN_ADMIN !== true) die('This file can be loaded only in admin module');
+if (IN_ADMIN !== true) {
+	die('This file can be loaded only in admin module');
+}
 
 
 // Get data from database for all fields
@@ -19,9 +21,9 @@ $fields_data = $core->process_array($db->fetch($result), 'id');
 // Get fields from home of user template
 
 $tpl->set_theme(Config::$THEME_NAME);
-$content			= $tpl->get_content('home');
-$template_fields	= $tpl->get_fields($content);
-$fields_data_simple	= array();
+$content            = $tpl->get_content('home');
+$template_fields    = $tpl->get_fields($content);
+$fields_data_simple = [];
 
 
 // Prepare arrays to sort them
@@ -42,27 +44,29 @@ arsort($fields_data_simple);
 $display_str = '';
 
 foreach($fields_data_simple as $key => $val) {
-	if (!isset($template_fields[$key]['name']) || !isset($template_fields[$key]['category'])) continue;
+	if (!isset($template_fields[$key]['name']) || !isset($template_fields[$key]['category'])) {
+		continue;
+	}
 
 	$date = explode(' ', $val);
 	switch($template_fields[$key]['category']) {
-		case 'text':	$category = 'Content'; break;
-		case 'setting':	$category = 'Setting'; break;
-		default:		$category = null; break;
+		case 'text':    $category = 'Content'; break;
+		case 'setting': $category = 'Setting'; break;
+		default:        $category = null; break;
 	}
 	$display_str .= '<tr><td>' . $category . '</td><td>' . $template_fields[$key]['name'] . '</td><td>' . $date[0] . '</td><td>' . $date[1] . '</td></tr>';
 }
 
 
-$tpl->assign(array(
+$tpl->assign([
 	'history' => $display_str
-));
+]);
 
 // Display layout
 
 $tpl->set_theme('admin');
 
-$template_content	= $tpl->get_content('history');
-$template_fields	= $tpl->get_fields($template_content);
+$template_content = $tpl->get_content('history');
+$template_fields  = $tpl->get_fields($template_content);
 
 $ajax->set('html', $tpl->parse($template_content, $template_fields));

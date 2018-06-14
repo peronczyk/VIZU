@@ -9,7 +9,7 @@
 #
 # ==================================================================================
 
-return array(
+return [
 
 	// Database host name
 	'host' => 'localhost',
@@ -22,4 +22,4 @@ return array(
 
 	// Database password
 	'pass' => 'root'
-);
+];

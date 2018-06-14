@@ -27,6 +27,8 @@ spl_autoload_register(function($lib_name) {
 				break;
 		}
 
-		if (file_exists($lib_file_path)) require_once($lib_file_path);
+		if (file_exists($lib_file_path)) {
+			require_once $lib_file_path;
+		}
 	}
 });

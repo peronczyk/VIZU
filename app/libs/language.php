@@ -11,7 +11,7 @@ namespace libs;
 
 class Language {
 
-	public $translations = array();
+	public $translations = [];
 
 	private $lang_code;
 	private $lang_list;

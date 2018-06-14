@@ -92,8 +92,10 @@ class Database {
 
 	public function fetch($result) {
 		if (is_object($result) && method_exists($result, 'fetch_assoc')) {
-			$arr = array();
-			while ($row = $result->fetch_assoc()) $arr[] = $row;
+			$arr = [];
+			while ($row = $result->fetch_assoc()) {
+				$arr[] = $row;
+			}
 			return $arr;
 		}
 		else return false;
@@ -105,7 +107,9 @@ class Database {
 	 */
 
 	public function get_version() {
-		if (!$this->connection) $this->connect();
+		if (!$this->connection) {
+			$this->connect();
+		}
 		return $connection->server_version;
 	}
 

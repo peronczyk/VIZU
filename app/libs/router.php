@@ -126,7 +126,7 @@ class Router {
 
 	public function redirect_to_www() {
 		$domain = explode('.', $this->domain);
-		if (!in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1')) && $domain[0] != 'www') {
+		if (!in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']) && $domain[0] != 'www') {
 			header('location: ' . str_replace($this->protocol, $this->protocol . 'www.', $this->url));
 		}
 	}

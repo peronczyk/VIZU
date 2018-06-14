@@ -58,15 +58,15 @@ class Config {
 	# FIELDS
 
 	// Categories of fields that can be used in templates.
-	static $FIELD_CATEGORIES = array(
+	static $FIELD_CATEGORIES = [
 
 		// Fields, that can be edited in 'Content' CMS.
-		'content' => array('text', 'setting'),
+		'content' => ['text', 'setting'],
 
 		// Other fields.
-		'other' => array('lang'),
-	);
+		'other' => ['lang'],
+	];
 
 	// Determines how field can be edited in admin panel.
-	static $FIELD_TYPES = array('simple', 'rich');
+	static $FIELD_TYPES = ['simple', 'rich'];
 }

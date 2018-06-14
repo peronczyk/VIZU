@@ -7,14 +7,16 @@
 #
 # ==================================================================================
 
-if (IN_ADMIN !== true) die('This file can be loaded only in admin module');
+if (IN_ADMIN !== true) {
+	die('This file can be loaded only in admin module');
+}
 
 
 switch($router->request[count($router->request) - 1]) {
 
 	/**
-	* Password change operation
-	*/
+	 * Password change operation
+	 */
 
 	case 'change_password';
 
@@ -22,11 +24,11 @@ switch($router->request[count($router->request) - 1]) {
 
 		$error_msg = null;
 
-		if (empty($_POST['password_actual']))							$error_msg = 'Nie podano aktualnego hasła';
-		elseif (empty($_POST['password_new1']))							$error_msg = 'Nie podano nowego hasła';
-		elseif ($_POST['password_new1'] !== $_POST['password_new2'])	$error_msg = 'Nowe hasło nie zgadza się z jego powtórzeniem';
-		elseif ($_POST['password_actual'] === $_POST['password_new1'])	$error_msg = 'Nowe hasło musi różnić się od starego aby zostało zmienione';
-		elseif (strlen($_POST['password_new1']) < 6)					$error_msg = 'Nowe hasło powinno mieć conajmniej 5 znaków';
+		if (empty($_POST['password_actual']))                          $error_msg = 'Nie podano aktualnego hasła';
+		elseif (empty($_POST['password_new1']))                        $error_msg = 'Nie podano nowego hasła';
+		elseif ($_POST['password_new1'] !== $_POST['password_new2'])   $error_msg = 'Nowe hasło nie zgadza się z jego powtórzeniem';
+		elseif ($_POST['password_actual'] === $_POST['password_new1']) $error_msg = 'Nowe hasło musi różnić się od starego aby zostało zmienione';
+		elseif (strlen($_POST['password_new1']) < 6)                   $error_msg = 'Nowe hasło powinno mieć conajmniej 5 znaków';
 
 		if ($error_msg) {
 			$ajax->set('message', $error_msg);
@@ -85,7 +87,7 @@ switch($router->request[count($router->request) - 1]) {
 			$user_id = $theme_config['contact']['default_recipient'];
 
 			// Get email addres of contact user that was set in configuration
-			$result = $db->query('SELECT `email` FROM `users` WHERE `id` = "' . $user_id . '"');
+			$result  = $db->query('SELECT `email` FROM `users` WHERE `id` = "' . $user_id . '"');
 			$fetched = $db->fetch($result);
 
 			if (!$fetched) {
@@ -133,13 +135,13 @@ switch($router->request[count($router->request) - 1]) {
 			$users_list .= '<li>' . $user_data['email'] . '</li>';
 		}
 
-		$tpl->assign(array(
+		$tpl->assign([
 			'user_email' => $user->get_email(),
 			'users_list' => $users_list,
-		));
+		]);
 
-		$template_content	= $tpl->get_content('user');
-		$template_fields	= $tpl->get_fields($template_content);
+		$template_content = $tpl->get_content('user');
+		$template_fields  = $tpl->get_fields($template_content);
 
 		$ajax->set('html', $tpl->parse($template_content, $template_fields));
 }

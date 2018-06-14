@@ -19,7 +19,6 @@ class Install {
 	 */
 
 	public function __construct($db) {
-
 		// Check if variable passed to this class is database controller
 		if ($db && is_object($db) && is_a($db, 'libs\Database')) $this->_db = $db;
 		else \libs\Core::error('Variable passed to class "Install" is not correct "Database" object', __FILE__, __LINE__, debug_backtrace());
@@ -32,8 +31,8 @@ class Install {
 
 	public function check_db_tables() {
 		$table_fields = $this->_db->query('SELECT 1 FROM `fields` LIMIT 1', true);
-		$table_users = $this->_db->query('SELECT 1 FROM `users` LIMIT 1', true);
-		return $table_fields && $table_users;
+		$table_users  = $this->_db->query('SELECT 1 FROM `users` LIMIT 1', true);
+		return ($table_fields && $table_users);
 	}
 
 

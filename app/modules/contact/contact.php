@@ -128,7 +128,6 @@ $mailer
 $sending_error = false;
 
 try {
-	// Send email
 	$sending_result = $mailer->send();
 }
 catch (\Exception $e) {
