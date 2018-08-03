@@ -63,6 +63,8 @@
 				<h2>{{ lang id='example-form' }}</h2>
 
 				<form id="contact-form" method="post" action="{{ lang_code }}/contact">
+					<input type="hidden" name="recaptcha_token">
+
 					<label>
 						{{ lang id='form-label-email' }}:
 						<input type="email" name="email">
@@ -92,6 +94,7 @@
 		</div>
 	</footer>
 
+	<script src="https://www.google.com/recaptcha/api.js?render=6LcKGmgUAAAAAJp1huktDQhKHsFiq0DEF1uxZTdv"></script>
 	<script src="{{ theme_path }}scripts/jquery-3.3.1.min.js"></script>
 	<script src="{{ theme_path }}scripts/custom.js"></script>
 

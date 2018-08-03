@@ -1,4 +1,9 @@
 $(function() {
+
+	/**
+	 * Simple contact form handler.
+	 * Sends form asynchronously and display the results.
+	 */
 	$('#contact-form').on('submit', function(event) {
 		event.preventDefault();
 
@@ -36,5 +41,19 @@ $(function() {
 			}
 		});
 	});
+
+
+	/**
+	 * reCAPTCHA v3 code
+	 */
+	grecaptcha.ready(function() {
+		grecaptcha
+			.execute('6LcKGmgUAAAAAJp1huktDQhKHsFiq0DEF1uxZTdv', {action: 'homepage'})
+			.then(function(token) {
+				console.log('reCAPTCHA v3 running...');
+				$('input[name="recaptcha_token"]').val(token);
+			});
+	});
+
 
 });
