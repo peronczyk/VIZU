@@ -36,6 +36,7 @@
 	'mailer-email-wrong'     => 'Podano niepoprawny adres email',
 	'mailer-flood'           => '<strong>Wiadomość nie została wysłana</strong><br>Nie możesz tak często przesyłać wiadomości',
 	'mailer-recipient-error' => '<strong>Wiadomość nie została wysłana</strong><br>Brak skonfigurowanego poprawnie odbiorcy.',
+	'mailer-captcha-invalid' => '<strong>Wiadomość nie została wysłana</strong><br>Zostałeś uznany za internetowego bota.',
 	'mailer-sent'            => '<strong>Wiadomość została wysłana</strong><br>Dziękujemy za kontakt!<br>Postaramy się odpowiedzieć na nią jak najszybciej.',
 
 ];

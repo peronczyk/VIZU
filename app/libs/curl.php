@@ -1,71 +1,100 @@
 <?php
 
+namespace libs;
 
 class Curl {
 
 	private $handle; // cURL handle
-
-
-	public function __construct() {
-		$this->handle = curl_init();
-	}
-
-
-	/**
-	 * Disable SSL verification
-	 */
-
-	public function disable_ssl() {
-		curl_setopt($this->handle, CURLOPT_SSL_VERIFYHOST, false);
-		curl_setopt($this->handle, CURLOPT_SSL_VERIFYPEER, false);
-	}
+	private $response = []; // Last cal result data
+	private $default_options = [
+		CURLOPT_HEADER         => 0,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_VERBOSE        => true,
+		CURLOPT_TIMEOUT        => 10,
+	];
 
 
 	/**
 	 * @param string $url
 	 * @param string $method
 	 * @param array $data
+	 * @param array $options
 	 */
 
-	public function call(string $url, string $method = 'GET', $data = false) {
+	public function call(string $url, string $method = 'GET', array $data = [], array $options = []) {
+		$this->handle = curl_init();
+		$options = $options + $this->default_options;
+
 		// Prepare call based on method
 		switch ($method) {
 			case 'POST':
-				curl_setopt($this->handle, CURLOPT_POST, true);
-				curl_setopt($this->handle, CURLOPT_HTTPHEADER, [
+				$options[CURLOPT_POST] = true;
+				$options[CURLOPT_HTTPHEADER] = [
 					'Content-Type: application/x-www-form-urlencoded'
-				]);
+				];
 
 				if (is_array($data)) {
 					$query = http_build_query($data);
-					curl_setopt($this->handle, CURLOPT_POSTFIELDS, $query);
+					$options[CURLOPT_POSTFIELDS] = $query;
 				}
 				break;
 
 			case 'PUT':
-				curl_setopt($this->handle, CURLOPT_PUT, 1);
+				$options[CURLOPT_PUT] = true;
+				break;
+
+			case 'HEAD':
+				$options[CURLOPT_NOBODY] = true;
 				break;
 
 			default:
-				if ($data) {
-					$url = sprintf("%s?%s", $url, http_build_query($data));
+				if (!empty($data)) {
+					$url = $url . (strpos($url, '?') === false ? '?' : '') . http_build_query($data);
 				}
 		}
 
-		curl_setopt($this->handle, CURLOPT_URL, $url);
-		curl_setopt($this->handle, CURLOPT_RETURNTRANSFER, true);
+		// Set options
+		$options[CURLOPT_URL] = $url;
+		curl_setopt_array($this->handle, $options);
 
-		try {
-			$exec_response = curl_exec($this->handle);
-			$status_code = curl_getinfo($this->handle, CURLINFO_HTTP_CODE);
-		}
-		catch (Exception $e) {
-			echo 'Error [' . $e->getCode() . ']: ' . $e->getMessage();
-		}
+		$exec_response = curl_exec($this->handle);
+		$exec_error = curl_error($this->handle);
+
+		$this->response = [
+			'body' => $exec_response,
+			'errno' => curl_errno($this->handle),
+			'error' => curl_error($this->handle),
+			'response_code' => curl_getinfo($this->handle, CURLINFO_RESPONSE_CODE),
+			'time' => curl_getinfo($this->handle, CURLINFO_TOTAL_TIME),
+		];
 
 		curl_close($this->handle);
 
-		$parsed_response = json_decode($exec_response);
-		return $parsed_response;
+		return $this;
+	}
+
+
+	public function getBody() {
+		return $this->response['body'];
+	}
+
+
+	public function getErrno() {
+		return $this->response['errno'];
+	}
+
+
+	public function getError() {
+		return $this->response['error'];
+	}
+
+
+	public function getResponseCode() {
+		return $this->response['response_code'];
+	}
+
+
+	public function getTime() {
+		return $this->response['time'];
 	}
 }

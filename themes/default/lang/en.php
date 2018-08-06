@@ -36,6 +36,7 @@
 	'mailer-email-wrong'     => 'Provided email address is not correct',
 	'mailer-flood'           => '<strong>Message not sent</strong><br>You cannot send messages so often.',
 	'mailer-recipient-error' => '<strong>Message not sent</strong><br>There is no recipient configured.',
+	'mailer-captcha-invalid' => '<strong>Message not sent</strong><br>You have been recognized as an internet bot.',
 	'mailer-sent'            => '<strong>Message was sent</strong><br>Thank you for contact!<br>We\'ll try to respond as soon as possible.',
 
 ];

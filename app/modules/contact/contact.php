@@ -13,7 +13,6 @@ $tpl    = new libs\Template();
 
 $tpl->set_theme(Config::$THEME_NAME);
 
-
 if (!is_array($theme_config['contact']['fields'])) {
 	$ajax
 		->set('message', 'Theme configuration file not found or does not contain contact form configuration')
@@ -53,6 +52,11 @@ foreach ($theme_config['contact']['fields'] as $form_field) {
 	}
 }
 
+
+/**
+ * Stop code execution and output error if validations failed
+ */
+
 if (count($contact_fields_errors) > 0) {
 	$ajax
 		->set('form-errors', $contact_fields_errors)
@@ -61,9 +65,54 @@ if (count($contact_fields_errors) > 0) {
 
 
 /**
- * Prepare mail data
+ * reCAPTCHA validation
  */
 
+if (!empty($theme_config['contact']['recaptcha_secret'])) {
+	$recaptcha_validation = new libs\Curl();
+	$recaptcha_validation->call('https://www.google.com/recaptcha/api/siteverify', 'POST', [
+		// POST params required by reCAPTCHA verifier
+		'secret'   => $theme_config['contact']['recaptcha_secret'],
+		'response' => $mailer->sanitise_string($_POST['recaptcha_token'] | ''),
+		'remoteip' => $_SERVER['HTTP_CLIENT_IP'] | $_SERVER['HTTP_X_FORWARDED_FOR'] | $_SERVER['REMOTE_ADDR']
+	], [
+		// Disable SSL verification on development envrionments
+		CURLOPT_SSL_VERIFYPEER => !$core->is_dev()
+	]);
+
+	if ($recaptcha_validation->getErrno()) {
+		return $ajax
+			->set('success', false)
+			->set('message', 'Error occured while trying to verify user with reCAPTCHA v3 mechanism: [' . $recaptcha_validation->getErrno() . '] ' . $e->getMessage())
+			->send();
+	}
+
+	$recaptcha_validation_result = json_decode($recaptcha_validation->getBody(), true);
+
+	if (!is_numeric($recaptcha_validation_result['score'])) {
+		if ($recaptcha_validation_result['error-codes']) {
+			$ajax->set('error', $recaptcha_validation_result['error-codes']);
+		}
+		else {
+			$ajax->set('message', $recaptcha_validation_result);
+		}
+
+		return $ajax
+			->set('success', false)
+			->send();
+	}
+	elseif ($recaptcha_validation_result['score'] < $theme_config['contact']['recaptcha_min_score']) {
+		return $ajax
+			->set('success', false)
+			->set('message', $lang->_t('mailer-captcha-invalid', 'You have been recognized as an internet bot'))
+			->send();
+	}
+}
+
+
+/**
+ * Prepare mail data
+ */
 
 if (!$core->is_dev()) {
 	$mailer->set_antiflood();
@@ -87,7 +136,8 @@ if (count($users) > 0) {
 }
 
 if (!$main_recipient) {
-	$ajax
+	return $ajax
+		->set('success', false)
 		->set('message', $lang->_t('mailer-recipient-error', 'Message recipient not configured'))
 		->send();
 }
@@ -144,6 +194,7 @@ catch (\Exception $e) {
 			$message = $e->getMessage();
 	}
 
+	$ajax->set('success', false);
 	$ajax->set('message', $message);
 	$ajax->add('log', 'Error code: ' . $e->getCode());
 
@@ -152,9 +203,11 @@ catch (\Exception $e) {
 
 if (!$sending_error) {
 	if ($sending_result === true) {
+		$ajax->set('success', true);
 		$ajax->set('message', $lang->_t('mailer-sent', 'Message sent'));
 	}
 	else {
+		$ajax->set('success', false);
 		$ajax->set('message', $lang->_t('mailer-not-sent', 'Unknown error'));
 	}
 }
