@@ -56,7 +56,7 @@ class Core {
 			]);
 		}
 		else {
-			echo self::common_html_header('Critical error');
+			echo self::commonHtmlHeader('Critical error');
 			echo '<figure>;(</figure><h1>Something went<br>terribly wrong</h1><hr><p>' . $msg . '</p><ul>';
 
 			if (empty($debug)) {
@@ -69,7 +69,7 @@ class Core {
 			}
 
 			echo '</ul>';
-			echo self::common_html_footer();
+			echo self::commonHtmlFooter();
 		}
 		if ($headers_sent) ob_end_flush();
 		exit;
@@ -80,7 +80,7 @@ class Core {
 	 * Check if application is in development mode
 	 */
 
-	public function is_dev() {
+	public function isDev() {
 		return (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP))
 			? true
 			: false;
@@ -91,7 +91,7 @@ class Core {
 	 * GETTER : Mtime
 	 */
 
-	public static function get_mtime() {
+	public static function getMtime() {
 		list($usec, $sec) = explode (' ', microtime());
 		return (float)$usec + (float)$sec;
 	}
@@ -106,7 +106,7 @@ class Core {
 	 * @return array
 	 */
 
-	public function process_array($array, $key_name) {
+	public function processArray($array, $key_name) {
 		if (!is_array($array)) return false;
 
 		$processed_array = [];
@@ -126,7 +126,7 @@ class Core {
 	 * @return string
 	 */
 
-	public static function common_html_header($title = 'VIZU') {
+	public static function commonHtmlHeader($title = 'VIZU') {
 		return '<!DOCTYPE html><html>
 			<head>
 				<meta charset="utf-8">
@@ -176,7 +176,7 @@ class Core {
 	 * @return string
 	 */
 
-	public static function common_html_footer() {
+	public static function commonHtmlFooter() {
 		return '</div></main></body></html>';
 	}
 

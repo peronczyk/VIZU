@@ -11,10 +11,10 @@ namespace libs;
 
 class User {
 
-	private $_db;			// Handle to database controller
-	private $access = 0;	// User access level. 0 = no access to admin panel
-	private $id;			// Logged in user ID
-	private $email;			// Logged in user email adress (login)
+	private $_db;        // Handle to database controller
+	private $access = 0; // User access level. 0 = no access to admin panel
+	private $id;         // Logged in user ID
+	private $email;      // Logged in user email adress (login)
 
 
 	/**
@@ -34,7 +34,7 @@ class User {
 
 			if (count($user_data) > 0) {
 				if ($_SESSION['password'] === $user_data[0]['password']) {
-					$this->set_access(1);
+					$this->setAccess(1);
 					$this->id = $_SESSION['id'];
 					$this->email = $user_data[0]['email'];
 				}
@@ -47,7 +47,7 @@ class User {
 	 * SETTER : Access level
 	 */
 
-	public function set_access($lvl) {
+	public function setAccess($lvl) {
 		if (is_int($lvl) && $lvl > -1) {
 			$this->access = $lvl;
 			return true;
@@ -60,7 +60,7 @@ class User {
 	 * GETTER : User access level
 	 */
 
-	public function get_access() {
+	public function getAccess() {
 		return $this->access;
 	}
 
@@ -69,7 +69,7 @@ class User {
 	 * GETTER : Logged in user email (login)
 	 */
 
-	public function get_email() {
+	public function getEmail() {
 		return $this->email;
 	}
 
@@ -78,7 +78,7 @@ class User {
 	 * GETTER : Logged in user ID
 	 */
 
-	public function get_id() {
+	public function getId() {
 		return $this->id;
 	}
 
@@ -87,7 +87,7 @@ class User {
 	 * Verify login (email address)
 	 */
 
-	public function verify_username($username) {
+	public function verifyUsername($username) {
 		return (filter_var($username, FILTER_VALIDATE_EMAIL) !== false) ? true : false;
 	}
 
@@ -96,7 +96,7 @@ class User {
 	 * Verify password
 	 */
 
-	public function verify_password($password) {
+	public function verifyPassword($password) {
 		return strlen($password) > 6;
 	}
 
@@ -107,7 +107,7 @@ class User {
 	 * @return {string} salted password hash
 	 */
 
-	public function password_encode($password) {
+	public function passwordEncode($password) {
 		return hash('sha256', $password . \Config::$PASSWORD_SALT);
 	}
 
@@ -123,13 +123,13 @@ class User {
 	public function login($email, $password) {
 		if (empty($email)) return 'Account login (email) not provided';
 		if (empty($password)) return 'Account password not provided';
-		if (!$this->verify_username($email)) return 'Provided email address is not correct';
+		if (!$this->verifyUsername($email)) return 'Provided email address is not correct';
 
 		$result = $this->_db->query('SELECT `id`, `password` FROM `users` WHERE `email` = "' . $email . '" LIMIT 1');
 		$user_data = $this->_db->fetch($result);
 
-		if (count($user_data) > 0 && $this->password_encode($password) === $user_data[0]['password']) {
-			$this->set_access(1);
+		if (count($user_data) > 0 && $this->passwordEncode($password) === $user_data[0]['password']) {
+			$this->setAccess(1);
 			$_SESSION['id'] = $user_data[0]['id'];
 			$_SESSION['password'] = $user_data[0]['password'];
 			return true;
@@ -144,7 +144,7 @@ class User {
 
 	public function logout() {
 		unset($_SESSION['id'], $_SESSION['password']);
-		$this->set_access(0);
+		$this->setAccess(0);
 		return false;
 	}
 
@@ -155,7 +155,7 @@ class User {
 	 * letters and 2 digits at the end. One of the letters are uppercase.
 	 */
 
-	public function generate_password($length = 10) {
+	public function generatePassword($length = 10) {
 		// Length paramenter must be a multiple of 2
 		if (($length % 2) !== 0) $length++;
 

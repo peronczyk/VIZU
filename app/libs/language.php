@@ -92,7 +92,7 @@ class Language {
 
 			// Prevent accessing default language from two different URLs
 			if ($this->_router->request[0] == \Config::$DEFAULT_LANG) {
-				$this->_router->request_shift();
+				$this->_router->requestShift();
 
 				if (count($_POST) < 1) {
 					$_SESSION['lang_detected'] = \Config::$DEFAULT_LANG;
@@ -103,7 +103,7 @@ class Language {
 			// Set requested language as active and shift requests
 			else {
 				$this->lang_code = $this->_router->request[0];
-				$this->_router->request_shift();
+				$this->_router->requestShift();
 				return true;
 			}
 		}

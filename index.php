@@ -52,7 +52,7 @@ $theme_config = require_once $theme_configuration_file;
  */
 
 if (Config::$REDIRECT_TO_WWW === true) {
-	$router->redirect_to_www();
+	$router->redirectToWww();
 }
 
 
@@ -62,7 +62,7 @@ if (Config::$REDIRECT_TO_WWW === true) {
  * Connection configuration depends on enviroment - development or production.
  */
 
-if ($core->is_dev() && file_exists('config-db.dev.php')) {
+if ($core->isDev() && file_exists('config-db.dev.php')) {
 	$db_config = require_once 'config-db.dev.php';
 }
 elseif (file_exists('config-db.php')) {
@@ -92,7 +92,7 @@ if ($router->request[0] !== 'install') {
  * Load the module based on the page address
  */
 
-$module_to_load = $router->get_module_to_load();
+$module_to_load = $router->getModuleToLoad();
 if ($module_to_load) {
 	require_once $module_to_load;
 }

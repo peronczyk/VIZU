@@ -12,6 +12,7 @@ class Curl {
 		CURLOPT_VERBOSE        => true,
 		CURLOPT_TIMEOUT        => 10,
 	];
+	private $ssl_enabled = true;
 
 
 	/**
@@ -54,6 +55,7 @@ class Curl {
 		}
 
 		// Set options
+		$options[CURLOPT_SSL_VERIFYPEER] = $this->ssl_enabled;
 		$options[CURLOPT_URL] = $url;
 		curl_setopt_array($this->handle, $options);
 
@@ -71,6 +73,16 @@ class Curl {
 		curl_close($this->handle);
 
 		return $this;
+	}
+
+
+	public function disableSsl() {
+		$this->ssl_enabled = false;
+	}
+
+
+	public function enableSsl() {
+		$this->ssl_enabled = true;
 	}
 
 

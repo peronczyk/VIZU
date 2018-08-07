@@ -67,7 +67,7 @@ class Router {
 	 * Load module
 	 */
 
-	public function get_module_to_load() {
+	public function getModuleToLoad() {
 		if (!empty($this->request[0])) {
 			$module_file = \Config::$APP_DIR . 'modules/' . $this->request[0] . '/' . $this->request[0] . '.php';
 			if (file_exists($module_file)) return $module_file;
@@ -91,7 +91,7 @@ class Router {
 	 * Remove first request from array
 	 */
 
-	public function request_shift() {
+	public function requestShift() {
 		array_shift($this->request);
 		return $this->request;
 	}
@@ -124,7 +124,7 @@ class Router {
 	 * if configuration requires it.
 	 */
 
-	public function redirect_to_www() {
+	public function redirectToWww() {
 		$domain = explode('.', $this->domain);
 		if (!in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']) && $domain[0] != 'www') {
 			header('location: ' . str_replace($this->protocol, $this->protocol . 'www.', $this->url));

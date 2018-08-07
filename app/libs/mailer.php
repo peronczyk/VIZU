@@ -33,7 +33,7 @@ class Mailer {
 	 * Sanitise email
 	 */
 
-	public function sanitise_email($email) {
+	public function sanitiseEmail($email) {
 		return filter_var($email, FILTER_SANITIZE_EMAIL);
 	}
 
@@ -42,7 +42,7 @@ class Mailer {
 	 * Sanitise string
 	 */
 
-	public function sanitise_string($str) {
+	public function sanitiseString($str) {
 		return preg_replace('/\r|\n/', '', htmlentities(trim($str), ENT_QUOTES));
 	}
 
@@ -51,7 +51,7 @@ class Mailer {
 	 * Sanitise block of text (message)
 	 */
 
-	public function sanitise_text($text) {
+	public function sanitiseText($text) {
 		return preg_replace('/\r|\n/', '', nl2br(htmlentities(trim($text), ENT_QUOTES)));
 	}
 
@@ -63,8 +63,8 @@ class Mailer {
 	 * @param string $domain
 	 */
 
-	public function set_topic($topic, $domain = null) {
-		$topic = $this->sanitise_string($topic);
+	public function setTopic($topic, $domain = null) {
+		$topic = $this->sanitiseString($topic);
 		if ($domain) $topic = '[' . $domain . '] ' . $topic;
 		$this->topic = $topic;
 		return $this;
@@ -75,10 +75,10 @@ class Mailer {
 	 * SETTER : Add recipient
 	 */
 
-	public function add_recipient($email, $name = '') {
+	public function addRecipient(string $email, string $name = '') {
 		$this->recipients[] = [
-			'email' => $this->sanitise_email($email),
-			'name'  => $this->sanitise_string($name)
+			'email' => $this->sanitiseEmail($email),
+			'name'  => $this->sanitiseString($name)
 		];
 		return $this;
 	}
@@ -88,10 +88,10 @@ class Mailer {
 	 * SETTER : Add BCC email
 	 */
 
-	public function add_bcc($email, $name = '') {
+	public function addBcc(string $email, string $name = '') {
 		$this->bcc[] = [
-			'email' => $this->sanitise_email($email),
-			'name'  => $this->sanitise_string($name)
+			'email' => $this->sanitiseEmail($email),
+			'name'  => $this->sanitiseString($name)
 		];
 		return $this;
 	}
@@ -105,10 +105,10 @@ class Mailer {
 	 * @param string $value
 	 */
 
-	public function add_content($name, $value) {
+	public function addContent(string $name, string $value) {
 		$this->content[] = [
 			'name'  => $name,
-			'value' => $this->sanitise_text($value)
+			'value' => $this->sanitiseText($value)
 		];
 		return $this;
 	}
@@ -118,8 +118,8 @@ class Mailer {
 	 * SETTER : "reply-to" header
 	 */
 
-	public function set_reply_to($email) {
-		$this->reply_to = $this->sanitise_email($email);
+	public function setReplyTo(string $email) {
+		$this->reply_to = $this->sanitiseEmail($email);
 		return $this;
 	}
 
@@ -128,8 +128,8 @@ class Mailer {
 	 * SETTER : "from" header
 	 */
 
-	public function set_from($email) {
-		$this->from = $this->sanitise_email($email);
+	public function setFrom(string $email) {
+		$this->from = $this->sanitiseEmail($email);
 		return $this;
 	}
 
@@ -142,18 +142,16 @@ class Mailer {
 	 * @param array $emails
 	 */
 
-	private function emails2string($emails) {
+	private function emailsToString(array $emails) {
 		$str = '';
-		if (is_array($emails)) {
-			$num = count($emails);
-			for($i = 0; $i < $num; $i++) {
-				if (empty($emails[$i]['name'])) {
-					$str .= $emails[$i]['email'];
-				}
-				else $str .= $emails[$i]['name'] . '<' . $emails[$i]['email'] . '>';
-
-				if (($i + 1) < $num) $str .= ', ';
+		$num = count($emails);
+		for ($i = 0; $i < $num; $i++) {
+			if (empty($emails[$i]['name'])) {
+				$str .= $emails[$i]['email'];
 			}
+			else $str .= $emails[$i]['name'] . '<' . $emails[$i]['email'] . '>';
+
+			if (($i + 1) < $num) $str .= ', ';
 		}
 		return $str;
 	}
@@ -165,7 +163,7 @@ class Mailer {
 	 * @param int|bool $delay
 	 */
 
-	public function set_antiflood($delay = 120) {
+	public function setAntiflood($delay = 120) {
 		$this->antiflood = $delay;
 		return $this;
 	}
@@ -191,7 +189,7 @@ class Mailer {
 		}
 
 		$topic = $this->topic;
-		$recipients = $this->emails2string($this->recipients);
+		$recipients = $this->emailsToString($this->recipients);
 		$content = '';
 
 
@@ -227,10 +225,10 @@ class Mailer {
 			$headers .= 'From: ' . $this->from . self::NL;
 		}
 		if (!empty($this->cc)) {
-			$headers .= 'Cc: ' . $this->emails2string($this->cc) . self::NL;
+			$headers .= 'Cc: ' . $this->emailsToString($this->cc) . self::NL;
 		}
 		if (!empty($this->bcc)) {
-			$headers .= 'Bcc: ' . $this->emails2string($this->bcc) . self::NL;
+			$headers .= 'Bcc: ' . $this->emailsToString($this->bcc) . self::NL;
 		}
 
 		return [$recipients, $topic, $content, $headers];
