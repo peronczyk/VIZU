@@ -20,13 +20,28 @@ class Core {
 	 */
 
 	public function __construct() {
-		error_reporting(E_ERROR | E_WARNING | E_PARSE);
+		if ($this->isDev()) {
+			$this->forceDisplayPhpErrors();
+		}
 
-		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) session_start();
+		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) {
+			session_start();
+		}
 
 		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			self::$ajax_loaded = true;
 		}
+	}
+
+
+	/**
+	 * Force display PHP errors
+	 */
+
+	public function forceDisplayPhpErrors() : void {
+		ini_set('display_errors', '1');
+		ini_set('display_startup_errors', '1');
+		error_reporting(E_ALL);
 	}
 
 

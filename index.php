@@ -32,7 +32,7 @@ require_once Config::$APP_DIR . 'autoload.php';
  * Start core libraries
  */
 
-$core = new libs\Core();
+$core   = new libs\Core();
 $router = new libs\Router();
 
 
@@ -81,7 +81,7 @@ unset($db_config);
  * if user is not in installation process
  */
 
-if ($router->request[0] !== 'install') {
+if ($router->getFirstRequest() !== 'install') {
 	$lang = new libs\Language($router, $db);
 	$lang->set();
 	$lang->load_theme_translations();

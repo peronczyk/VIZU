@@ -42,7 +42,7 @@ class Mailer {
 	 * Sanitise string
 	 */
 
-	public function sanitiseString($str) {
+	public function sanitiseString(string $str) {
 		return preg_replace('/\r|\n/', '', htmlentities(trim($str), ENT_QUOTES));
 	}
 
@@ -51,7 +51,7 @@ class Mailer {
 	 * Sanitise block of text (message)
 	 */
 
-	public function sanitiseText($text) {
+	public function sanitiseText(string $text) {
 		return preg_replace('/\r|\n/', '', nl2br(htmlentities(trim($text), ENT_QUOTES)));
 	}
 
@@ -63,9 +63,11 @@ class Mailer {
 	 * @param string $domain
 	 */
 
-	public function setTopic($topic, $domain = null) {
+	public function setTopic(string $topic, $domain = null) {
 		$topic = $this->sanitiseString($topic);
-		if ($domain) $topic = '[' . $domain . '] ' . $topic;
+		if ($domain) {
+			$topic = '[' . $domain . '] ' . $topic;
+		}
 		$this->topic = $topic;
 		return $this;
 	}

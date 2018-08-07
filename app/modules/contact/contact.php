@@ -32,7 +32,7 @@ foreach ($theme_config['contact']['fields'] as $form_field) {
 
 			// Email validation
 			case 'email':
-				if ($mailer->sanitiseEmail($_POST[$form_field['name']]) == false) {
+				if ($mailer->sanitiseEmail($_POST[$form_field['name']] ?? '') == false) {
 					array_push($contact_fields_errors, [
 						'input-name'    => $form_field['name'],
 						'error-message' => $lang->_t('mailer-email-wrong', 'Incorrect email address')
@@ -57,11 +57,11 @@ foreach ($theme_config['contact']['fields'] as $form_field) {
  * Stop code execution and output error if validations failed
  */
 
-// if (count($contact_fields_errors) > 0) {
-// 	$ajax
-// 		->set('form-errors', $contact_fields_errors)
-// 		->send();
-// }
+if (count($contact_fields_errors) > 0) {
+	$ajax
+		->set('form-errors', $contact_fields_errors)
+		->send();
+}
 
 
 /**
@@ -74,8 +74,8 @@ if (!empty($theme_config['contact']['recaptcha_secret'])) {
 		$curl->disableSsl();
 	}
 
-	$recaptcha3 = new libs\Recaptcha3($curl, $theme_config['contact']['recaptcha_secret']);
-	$token = $mailer->sanitiseString($_POST['recaptcha_token'] | '');
+	$recaptcha3 = new libs\Recaptcha3($curl, $mailer, $theme_config['contact']['recaptcha_secret']);
+	$token = $mailer->sanitiseString($_POST['recaptcha_token'] ?? '');
 
 	try {
 		$recaptcha_result = $recaptcha3->validate($token);
@@ -83,7 +83,7 @@ if (!empty($theme_config['contact']['recaptcha_secret'])) {
 	catch (Exception $e) {
 		return $ajax
 			->set('success', false)
-			->set('message', 'Error occured while trying to verify user with reCAPTCHA v3 mechanism. Please refresh the page. ' . $e->getMessage())
+			->set('message', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-error', 'Anti-spam system error.') . ' ' . $e->getMessage())
 			->send();
 	}
 
@@ -91,7 +91,7 @@ if (!empty($theme_config['contact']['recaptcha_secret'])) {
 	if ($recaptcha_result === false) {
 		return $ajax
 			->set('success', false)
-			->set('message', $lang->_t('mailer-captcha-invalid', 'You have been recognized as an internet bot'))
+			->set('message', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-invalid', 'You have been recognized as spammer.'))
 			->send();
 	}
 }
@@ -125,7 +125,7 @@ if (count($users) > 0) {
 if (!$main_recipient) {
 	return $ajax
 		->set('success', false)
-		->set('message', $lang->_t('mailer-recipient-error', 'Message recipient not configured'))
+		->set('message', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-recipient-error', 'Error in form configuration'))
 		->send();
 }
 
@@ -170,11 +170,11 @@ try {
 catch (\Exception $e) {
 	switch($e->getCode()) {
 		case 1:
-			$message = $lang->_t('mailer-error', 'Error while sending message:') . ' ' . $e->getMessage();
+			$message = $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-error', 'Error occured while sending the message.') . ' ' . $e->getMessage();
 			break;
 
 		case 5:
-			$message = $lang->_t('mailer-flood', $e->getMessage());
+			$message = $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-flood', $e->getMessage());
 			break;
 
 		default:
@@ -195,7 +195,7 @@ if (!$sending_error) {
 	}
 	else {
 		$ajax->set('success', false);
-		$ajax->set('message', $lang->_t('mailer-not-sent', 'Unknown error'));
+		$ajax->set('message', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-error', 'Unknown error occured.'));
 	}
 }
 
