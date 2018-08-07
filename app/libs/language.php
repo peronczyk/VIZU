@@ -79,7 +79,7 @@ class Language {
 		// This code checks if user language was not detected before
 		// and if language was not requested in url.
 
-		if (!$lang_requested && \Config::$DETECT_LANG && !$_SESSION['lang_detected']) {
+		if (!$lang_requested && \Config::$DETECT_LANG && (empty($_SESSION['lang_detected']) || !$_SESSION['lang_detected'])) {
 			if ($user_lang != \Config::$DEFAULT_LANG && $this->exists($user_lang) && count($_POST) < 1) {
 				$_SESSION['lang_detected'] = $user_lang;
 				$this->_router->redirect($user_lang, true, true);

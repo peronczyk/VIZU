@@ -27,7 +27,7 @@ if (!is_array($theme_config['contact']['fields'])) {
 $contact_fields_errors = [];
 
 foreach ($theme_config['contact']['fields'] as $form_field) {
-	if ($form_field['required']) {
+	if (isset($form_field['required']) && $form_field['required'] == true) {
 		switch ($form_field['type']) {
 
 			// Email validation

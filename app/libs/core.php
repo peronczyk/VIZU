@@ -96,9 +96,7 @@ class Core {
 	 */
 
 	public function isDev() {
-		return (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP))
-			? true
-			: false;
+		return (\Config::$DEBUG === true || (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)));
 	}
 
 
