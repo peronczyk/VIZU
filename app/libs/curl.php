@@ -1,5 +1,12 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Lib: Curl
+#
+# ==================================================================================
+
 namespace libs;
 
 class Curl {
@@ -16,6 +23,8 @@ class Curl {
 
 
 	/**
+	 * Execute a call to defined url
+	 *
 	 * @param string $url
 	 * @param string $method
 	 * @param array $data

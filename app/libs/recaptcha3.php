@@ -1,9 +1,16 @@
 <?php
 
+# ==================================================================================
+#
+#	VIZU CMS
+#	Lib: reCAPTCHA v3
+#
+# ==================================================================================
+
 namespace libs;
 
 class Recaptcha3 {
-	const MIN_SCORE = 0.5;
+	const MIN_SCORE = 0.5; // Default minimal score
 	const VERIFY_API_URL = 'https://www.google.com/recaptcha/api/siteverify';
 
 	private $curl;
@@ -15,6 +22,16 @@ class Recaptcha3 {
 		$this->mailer = $mailer;
 		$this->secret = $secret;
 	}
+
+
+	/**
+	 * Validate user token by comparing minimal required score
+	 * with score returned by Google reCAPTCHA siteverify API
+	 *
+	 * @param $token - received from front-end reCAPTCHA code
+	 * @param $min_score - score that user should have to be recognised
+	 *   as not a spammer (0.0 - 1.0)
+	 */
 
 	public function validate(string $token, int $min_score = self::MIN_SCORE) {
 		$validation = $this->curl->call(self::VERIFY_API_URL, 'POST', [
