@@ -7,6 +7,14 @@
 		// Set this to true if you want to send messages to all other users as BCC.
 		'inform_all' => true,
 
+		// Place reCAPTCHA v3 'Secret key' code here. It is available in your
+		// recaptcha admin: https://www.google.com/recaptcha/admin
+		// If you don't want to use reCAPTCHA please leave this option empty.
+		'recaptcha_secret' => '',
+
+		// Decide how big should be the score for form to be sent (0.0 - 1.0)
+		'recaptcha_min_score' => '0.5',
+
 		// Form fields
 		'fields' => [
 			[

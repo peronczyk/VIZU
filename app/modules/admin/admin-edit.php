@@ -55,14 +55,14 @@ $ajax->add('log', 'Active language: ' . $active_lang);
 // Get data from database for all fields
 
 $result = $db->query("SELECT * FROM `fields` WHERE `template` = 'home' AND `language` = '" . $active_lang . "'");
-$fields_data = $core->process_array($db->fetch($result), 'id');
+$fields_data = $core->processArray($db->fetch($result), 'id');
 
 
 // Get fields from home of user template
 
-$tpl->set_theme(Config::$THEME_NAME);
-$content         = $tpl->get_content('home');
-$template_fields = $tpl->get_fields($content);
+$tpl->setTheme(Config::$THEME_NAME);
+$content         = $tpl->getContent('home');
+$template_fields = $tpl->getFields($content);
 
 
 /**
@@ -93,7 +93,7 @@ if ($router->request[count($router->request) - 1] == 'save') {
 				$num_changes++;
 			}
 			else {
-				$ajax->add('log', 'Field "' . $post_key . '" creation failed. Query error: ' . $db->get_conn()->error);
+				$ajax->add('log', 'Field "' . $post_key . '" creation failed. Query error: ' . $db->getConn()->error);
 			}
 		}
 
@@ -185,7 +185,7 @@ else {
 
 		// Setup field type class if i wasn't started before
 		if (!isset($field_class[$field['type']])) {
-			$field_class[$field['type']] = $tpl->load_field_class($field['type']);
+			$field_class[$field['type']] = $tpl->loadFieldClass($field['type']);
 
 			// If class of field failed to start
 			if (!is_object($field_class[$field['type']])) {
@@ -237,10 +237,10 @@ else {
 	 * Display layout
 	 */
 
-	$tpl->set_theme('admin');
+	$tpl->setTheme('admin');
 
-	$template_content = $tpl->get_content('edit');
-	$template_fields  = $tpl->get_fields($template_content);
+	$template_content = $tpl->getContent('edit');
+	$template_fields  = $tpl->getFields($template_content);
 	$parsed_html      = $tpl->parse($template_content, $template_fields);
 
 	if (empty($parsed_html)) $json->set('error', [

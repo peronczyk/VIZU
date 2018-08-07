@@ -71,7 +71,7 @@ class Language {
 	public function set() {
 
 		// Check if first chunk of request is valid language definition
-		$lang_requested = (isset($this->_router->request[0]) && strlen($this->_router->request[0]) == 2);
+		$lang_requested = strlen($this->_router->getFirstRequest()) == 2;
 
 		$user_lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
 
@@ -79,7 +79,7 @@ class Language {
 		// This code checks if user language was not detected before
 		// and if language was not requested in url.
 
-		if (!$lang_requested && \Config::$DETECT_LANG && !$_SESSION['lang_detected']) {
+		if (!$lang_requested && \Config::$DETECT_LANG && (empty($_SESSION['lang_detected']) || !$_SESSION['lang_detected'])) {
 			if ($user_lang != \Config::$DEFAULT_LANG && $this->exists($user_lang) && count($_POST) < 1) {
 				$_SESSION['lang_detected'] = $user_lang;
 				$this->_router->redirect($user_lang, true, true);
@@ -88,11 +88,11 @@ class Language {
 
 		// Check if first request chunk is a existing and active language
 
-		if ($lang_requested && $this->exists($this->_router->request[0])) {
+		if ($lang_requested && $this->exists($this->_router->getFirstRequest())) {
 
 			// Prevent accessing default language from two different URLs
-			if ($this->_router->request[0] == \Config::$DEFAULT_LANG) {
-				$this->_router->request_shift();
+			if ($this->_router->getFirstRequest() == \Config::$DEFAULT_LANG) {
+				$this->_router->requestShift();
 
 				if (count($_POST) < 1) {
 					$_SESSION['lang_detected'] = \Config::$DEFAULT_LANG;
@@ -102,8 +102,8 @@ class Language {
 
 			// Set requested language as active and shift requests
 			else {
-				$this->lang_code = $this->_router->request[0];
-				$this->_router->request_shift();
+				$this->lang_code = $this->_router->getFirstRequest();
+				$this->_router->requestShift();
 				return true;
 			}
 		}

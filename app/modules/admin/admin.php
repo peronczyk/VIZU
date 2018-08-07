@@ -12,7 +12,7 @@ define('IN_ADMIN', true);
 
 $tpl = new libs\Template();
 
-$tpl->set_theme('admin');
+$tpl->setTheme('admin');
 $tpl->assign([
 	'app_path'       => Config::$APP_DIR,
 	'site_path'      => $router->site_path,
@@ -94,7 +94,7 @@ if (libs\Core::$ajax_loaded === true) {
 	 * Display results
 	 */
 
-	if (($user->get_access() > 0) && ($display === true)) {
+	if (($user->getAccess() > 0) && ($display === true)) {
 		$ajax->set('loggedin', true);
 
 		switch($request) {
@@ -103,8 +103,8 @@ if (libs\Core::$ajax_loaded === true) {
 
 			case 'home':
 			case 'login':
-				$template_content = $tpl->get_content('home');
-				$template_fields  = $tpl->get_fields($template_content);
+				$template_content = $tpl->getContent('home');
+				$template_fields  = $tpl->getFields($template_content);
 
 				$ajax->set('html', $tpl->parse($template_content, $template_fields));
 				break;
@@ -167,9 +167,9 @@ if (libs\Core::$ajax_loaded === true) {
  */
 
 else {
-	if ($user->get_access() > 0) {
-		$template_content = $tpl->get_content('home');
-		$template_fields  = $tpl->get_fields($template_content);
+	if ($user->getAccess() > 0) {
+		$template_content = $tpl->getContent('home');
+		$template_fields  = $tpl->getFields($template_content);
 
 		$tpl->assign([
 			'loggedin' => 'loggedin',
@@ -184,7 +184,7 @@ else {
 		]);
 	}
 
-	$template_content  = $tpl->get_content('index');
-	$template_fields   = $tpl->get_fields($template_content);
+	$template_content  = $tpl->getContent('index');
+	$template_fields   = $tpl->getFields($template_content);
 	echo $tpl->parse($template_content, $template_fields);
 }

@@ -28,7 +28,7 @@ $user = new libs\User($db);
  */
 
 if ($router->request[1] === 'error') {
-	echo libs\Core::common_html_header('VIZU Installer: Error');
+	echo libs\Core::commonHtmlHeader('VIZU Installer: Error');
 	echo '<h3>Error occured</h3><hr>';
 
 	switch (@$_SESSION['vizu']['install']['error']) {
@@ -52,7 +52,7 @@ if ($router->request[1] === 'error') {
 		echo '<p>Returned error message:<br>' . $_SESSION['vizu']['install']['message'] . '</p>';
 	}
 	echo '<p><a href="./">&lsaquo; &nbsp; Back</a></p>';
-	echo libs\Core::common_html_footer();
+	echo libs\Core::commonHtmlFooter();
 
 	$_SESSION['vizu_installation_error'] = false;
 }
@@ -69,14 +69,14 @@ elseif ($install->check_db_tables()) {
 	 */
 
 	if ($install->check_db_users()) {
-		echo libs\Core::common_html_header('VIZU Installer: OK');
+		echo libs\Core::commonHtmlHeader('VIZU Installer: OK');
 		?>
 			<h1>VIZU installed <u>correctly</u></h1>
 			<h2>Enjoy the simplicity</h2>
 			&mdash;&nbsp; <a href="./">Home page</a><br>
 			&mdash;&nbsp; <a href="./admin">Administration panel</a>
 		<?php
-		echo libs\Core::common_html_footer();
+		echo libs\Core::commonHtmlFooter();
 	}
 
 
@@ -89,8 +89,8 @@ elseif ($install->check_db_tables()) {
 		// Action: Add user to database
 		if ($_POST['op'] === 'add_user') {
 			$status = false;
-			if ($user->verify_password($_POST['password']) && $user->verify_username($_POST['email'])) {
-				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('" . $_POST['email'] . "', '" . $user->password_encode($_POST['password']) . "');");
+			if ($user->verifyPassword($_POST['password']) && $user->verifyUsername($_POST['email'])) {
+				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('" . $_POST['email'] . "', '" . $user->passwordEncode($_POST['password']) . "');");
 				if ($result) {
 					$status = true;
 				}
@@ -102,7 +102,7 @@ elseif ($install->check_db_tables()) {
 			else {
 				$_SESSION['vizu']['install'] = [
 					'error' => 2,
-					'message' => $db->get_conn()->error
+					'message' => $db->getConn()->error
 				];
 				header('location: ' . $router->site_path . '/install/error');
 			}
@@ -110,7 +110,7 @@ elseif ($install->check_db_tables()) {
 
 		// Show installation step : 2
 		else {
-			echo libs\Core::common_html_header('VIZU Installer: Set up administrator');
+			echo libs\Core::commonHtmlHeader('VIZU Installer: Set up administrator');
 			?>
 				<h3>Step 2/2</h3>
 				<hr>
@@ -124,7 +124,7 @@ elseif ($install->check_db_tables()) {
 					<button type="submit">Add &nbsp;&nbsp;&rsaquo;</button>
 				</form>
 			<?php
-			echo libs\Core::common_html_footer();
+			echo libs\Core::commonHtmlFooter();
 		}
 	}
 }
@@ -139,13 +139,13 @@ else {
 
 	// Action : Put data in to database
 	if ($_POST['op'] === 'install') {
-		$status = $db->import_file($module_path . 'db.sql');
+		$status = $db->importFile($module_path . 'db.sql');
 
 		if ($status) header('location: ' . $router->site_path . '/install');
 		else {
 			$_SESSION['vizu']['install'] = [
 				'error'   => 1,
-				'message' => $db->get_conn()->error
+				'message' => $db->getConn()->error
 			];
 			header('location: ' . $router->site_path . '/install/error');
 		}
@@ -153,19 +153,19 @@ else {
 
 	// Show installation step : 1
 	else {
-		echo libs\Core::common_html_header('VIZU Installer: Begin installation');
+		echo libs\Core::commonHtmlHeader('VIZU Installer: Begin installation');
 		?>
 			<h3>Step 1/2</h3>
 			<hr>
 			<h1>VIZU is <u>not</u> installed</h1>
 			<h2>Proceed installation?</h2>
-			<p>All data will be inserted to database "<?php echo $db->get_db_name(); ?>".</p>
+			<p>All data will be inserted to database "<?php echo $db->getDbName(); ?>".</p>
 
 			<form action="" method="post">
 				<input type="hidden" name="op" value="install">
 				<button type="submit">YES, please &nbsp;&nbsp;&rsaquo;</button>
 			</form>
 		<?php
-		echo libs\Core::common_html_footer();
+		echo libs\Core::commonHtmlFooter();
 	}
 }

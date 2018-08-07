@@ -24,7 +24,7 @@ class Database {
 	 * Constructor
 	 */
 
-	public function __construct($host, $user, $pass, $name) {
+	public function __construct(string $host, string $user, string $pass, string $name) {
 		$this->host = $host;
 		$this->user = $user;
 		$this->pass = $pass;
@@ -54,7 +54,7 @@ class Database {
 	 * GETTER : Database connection handle
 	 */
 
-	public function get_conn() {
+	public function getConn() {
 		return $this->connection;
 	}
 
@@ -69,7 +69,7 @@ class Database {
 	 * @return object - MySQL result
 	 */
 
-	public function query($query, $is_silent = false) {
+	public function query(string $query, $is_silent = false) {
 		if (!$this->connection) $this->connect();
 
 		$result = $this->connection->query($query);
@@ -90,7 +90,7 @@ class Database {
 	 * @return array|false
 	 */
 
-	public function fetch($result) {
+	public function fetch(object $result) {
 		if (is_object($result) && method_exists($result, 'fetch_assoc')) {
 			$arr = [];
 			while ($row = $result->fetch_assoc()) {
@@ -106,7 +106,7 @@ class Database {
 	 * GETTER : Database server version
 	 */
 
-	public function get_version() {
+	public function getVersion() {
 		if (!$this->connection) {
 			$this->connect();
 		}
@@ -118,8 +118,8 @@ class Database {
 	 * Check if application is connected to database
 	 */
 
-	public function is_connected() {
-		return $this->connection ? true : false;
+	public function isConnected() {
+		return ($this->connection) ? true : false;
 	}
 
 
@@ -127,7 +127,7 @@ class Database {
 	 * GETTER : Number of performed queries
 	 */
 
-	public function get_queries_count() {
+	public function getQueriesNumber() {
 		return $this->queries_count;
 	}
 
@@ -136,7 +136,7 @@ class Database {
 	 * GETTER : Database name
 	 */
 
-	public function get_db_name() {
+	public function getDbName() {
 		return $this->name;
 	}
 
@@ -145,7 +145,7 @@ class Database {
 	 * Import file
 	 */
 
-	public function import_file($file) {
+	public function importFile(string $file) {
 		if (!file_exists($file)) {
 			Core::error('Unable to import SQL file "' . $file . '" because it does not exists.', __FILE__, __LINE__, debug_backtrace());
 		}

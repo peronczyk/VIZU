@@ -15,14 +15,14 @@ if (IN_ADMIN !== true) {
 // Get data from database for all fields
 
 $result = $db->query("SELECT `id`, `modified` FROM `fields` WHERE `template` = 'home'");
-$fields_data = $core->process_array($db->fetch($result), 'id');
+$fields_data = $core->processArray($db->fetch($result), 'id');
 
 
 // Get fields from home of user template
 
-$tpl->set_theme(Config::$THEME_NAME);
-$content            = $tpl->get_content('home');
-$template_fields    = $tpl->get_fields($content);
+$tpl->setTheme(Config::$THEME_NAME);
+$content            = $tpl->getContent('home');
+$template_fields    = $tpl->getFields($content);
 $fields_data_simple = [];
 
 
@@ -64,9 +64,9 @@ $tpl->assign([
 
 // Display layout
 
-$tpl->set_theme('admin');
+$tpl->setTheme('admin');
 
-$template_content = $tpl->get_content('history');
-$template_fields  = $tpl->get_fields($template_content);
+$template_content = $tpl->getContent('history');
+$template_fields  = $tpl->getFields($template_content);
 
 $ajax->set('html', $tpl->parse($template_content, $template_fields));

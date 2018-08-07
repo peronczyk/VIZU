@@ -38,10 +38,10 @@ switch($router->request[count($router->request) - 1]) {
 
 		// Check if entered actual password is correct
 
-		$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '" . $user->get_id() . "' LIMIT 1");
+		$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '" . $user->getId() . "' LIMIT 1");
 		$user_data = $db->fetch($result);
 
-		if ($user_data[0]['password'] && $user_data[0]['password'] !== $user->password_encode($_POST['password_actual'])) {
+		if ($user_data[0]['password'] && $user_data[0]['password'] !== $user->passwordEncode($_POST['password_actual'])) {
 			$ajax->set('message', 'Podane aktualne hasło nie jest poprawne');
 			return;
 		}
@@ -49,8 +49,8 @@ switch($router->request[count($router->request) - 1]) {
 
 		// Save new password
 
-		$new_password = $user->password_encode($_POST['password_new1']);
-		$result = $db->query("UPDATE `users` SET `password` = '" . $new_password . "' WHERE `id` = '" . $user->get_id() . "' LIMIT 1");
+		$new_password = $user->passwordEncode($_POST['password_new1']);
+		$result = $db->query("UPDATE `users` SET `password` = '" . $new_password . "' WHERE `id` = '" . $user->getId() . "' LIMIT 1");
 
 		if ($result) {
 			$ajax->set('message', 'Pomyślnie zmieniono hasło');
@@ -69,7 +69,7 @@ switch($router->request[count($router->request) - 1]) {
 		$mailer = new libs\Mailer();
 
 		// Validate entered email address
-		if (empty($_POST['email']) || !$user->verify_username($_POST['email'])) {
+		if (empty($_POST['email']) || !$user->verifyUsername($_POST['email'])) {
 			$ajax->set('message', 'Nie podano poprawnego adresu e-mail');
 			break;
 		}
@@ -95,19 +95,19 @@ switch($router->request[count($router->request) - 1]) {
 				break;
 			}
 			$contact_user_email = $fetched[0]['email'];
-			$mailer->set_from($contact_user_email);
+			$mailer->setFrom($contact_user_email);
 		}
 
-		$generated_password = $user->generate_password();
+		$generated_password = $user->generatePassword();
 
 		try {
 			$notify_result = $mailer
-				->set_topic('Rejestracja konta')
-				->add_recipient($_POST['email'])
-				->add_content('Message', 'Twoje konto administratora zostało utworzone. Dane logowania znajdziesz powyżej. Wskazane jest aby po zalogowaniu się zmienić swoje hasło.')
-				->add_content('Adres strony WWW', $router->site_path)
-				->add_content('Login', $_POST['email'])
-				->add_content('Hasło', $generated_password)
+				->setTopic('Rejestracja konta')
+				->addRecipient($_POST['email'])
+				->addContent('Message', 'Twoje konto administratora zostało utworzone. Dane logowania znajdziesz powyżej. Wskazane jest aby po zalogowaniu się zmienić swoje hasło.')
+				->addContent('Adres strony WWW', $router->site_path)
+				->addContent('Login', $_POST['email'])
+				->addContent('Hasło', $generated_password)
 				->send();
 		}
 		catch (\Exception $e) {
@@ -116,7 +116,7 @@ switch($router->request[count($router->request) - 1]) {
 		}
 
 		// Add user to database
-		$query = $db->query('INSERT INTO `users` VALUES ("", "' . $_POST['email'] . '", "' . $user->password_encode($generated_password) . '")');
+		$query = $db->query('INSERT INTO `users` VALUES ("", "' . $_POST['email'] . '", "' . $user->passwordEncode($generated_password) . '")');
 
 		$ajax->set('message', 'Konto użytkownika o adresie e-mail ' . $_POST['email'] . ' zostało założone.');
 		break;
@@ -136,12 +136,12 @@ switch($router->request[count($router->request) - 1]) {
 		}
 
 		$tpl->assign([
-			'user_email' => $user->get_email(),
+			'user_email' => $user->getEmail(),
 			'users_list' => $users_list,
 		]);
 
-		$template_content = $tpl->get_content('user');
-		$template_fields  = $tpl->get_fields($template_content);
+		$template_content = $tpl->getContent('user');
+		$template_fields  = $tpl->getFields($template_content);
 
 		$ajax->set('html', $tpl->parse($template_content, $template_fields));
 }

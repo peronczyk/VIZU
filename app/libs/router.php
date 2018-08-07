@@ -11,12 +11,12 @@ namespace Libs;
 
 class Router {
 
-	public $protocol;	// Website protocol: http:// or https://
-	public $url;		// Full actual URL
-	public $domain;		// Domain, eg: domain.com
-	public $site_path;	// Website path, eg: http://www.domain.com/website
-	public $request;	// Array of reqested modules, eg: /admin/login
-	public $query;		// Array of requested query, eg: ?foo=bar&baz=lorem
+	public $protocol;   // Website protocol: http:// or https://
+	public $url;        // Full actual URL
+	public $domain;     // Domain, eg: domain.com
+	public $site_path;  // Website path, eg: http://www.domain.com/website
+	public $request;    // Array of reqested modules, eg: /admin/login
+	public $query;      // Array of requested query, eg: ?foo=bar&baz=lorem
 
 
 	/**
@@ -38,7 +38,9 @@ class Router {
 		// Create website URL, eg.: http://domain.com/website
 		$this->site_path = $this->protocol . $_SERVER['SERVER_NAME'];
 		$script_dirname = dirname($_SERVER['SCRIPT_NAME']);
-		if ($script_dirname != '/') $this->site_path .= $script_dirname;
+		if ($script_dirname != '/') {
+			$this->site_path .= $script_dirname;
+		}
 
 		// Return string after domain from physical URL
 		// eg.: 'website' from http://domain.com/website/request
@@ -59,7 +61,9 @@ class Router {
 		$this->request = array_values(array_filter(explode('/', $requested_str[0])));
 
 		// Get query params
-		if (isset($requested_str[1])) parse_str($requested_str[1], $this->query);
+		if (isset($requested_str[1])) {
+			parse_str($requested_str[1], $this->query);
+		}
 	}
 
 
@@ -67,9 +71,10 @@ class Router {
 	 * Load module
 	 */
 
-	public function get_module_to_load() {
-		if (!empty($this->request[0])) {
-			$module_file = \Config::$APP_DIR . 'modules/' . $this->request[0] . '/' . $this->request[0] . '.php';
+	public function getModuleToLoad() {
+		$first_request = $this->getFirstRequest();
+		if ($first_request) {
+			$module_file = \Config::$APP_DIR . 'modules/' . $first_request . '/' . $first_request . '.php';
 			if (file_exists($module_file)) return $module_file;
 			else {
 				$error404_module_file = \Config::$APP_DIR . 'modules/404/404.php';
@@ -86,12 +91,19 @@ class Router {
 	}
 
 
+	public function getFirstRequest() {
+		return (isset($this->request[0]))
+			? $this->request[0]
+			: null;
+	}
+
+
 	/**
 	 * Request shift
 	 * Remove first request from array
 	 */
 
-	public function request_shift() {
+	public function requestShift() {
 		array_shift($this->request);
 		return $this->request;
 	}
@@ -124,7 +136,7 @@ class Router {
 	 * if configuration requires it.
 	 */
 
-	public function redirect_to_www() {
+	public function redirectToWww() {
 		$domain = explode('.', $this->domain);
 		if (!in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']) && $domain[0] != 'www') {
 			header('location: ' . str_replace($this->protocol, $this->protocol . 'www.', $this->url));

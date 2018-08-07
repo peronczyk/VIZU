@@ -29,7 +29,7 @@ class Template {
 	 * SETTER : Theme direcory name
 	 */
 
-	public function set_theme($theme_name) {
+	public function setTheme(string $theme_name) {
 		$this->theme = $theme_name;
 	}
 
@@ -40,7 +40,7 @@ class Template {
 	 * @return string|false - Return template path or false if not found
 	 */
 
-	public function get_template_path($file) {
+	public function getTemplatePath(string $file) {
 		if (empty($this->theme)) {
 			Core::error('Theme not set', __FILE__, __LINE__, debug_backtrace());
 		}
@@ -58,7 +58,7 @@ class Template {
 	 * Load field class
 	 */
 
-	public function load_field_class($field_name) {
+	public function loadFieldClass(string $field_name) {
 		$class_file = 'app/fields/' . $field_name . '.php';
 		if (file_exists($class_file)) {
 			require_once $class_file;
@@ -80,8 +80,8 @@ class Template {
 	 * Get contents of template file
 	 */
 
-	public function get_content($file) {
-		$file_path = $this->get_template_path($file);
+	public function getContent(string $file) {
+		$file_path = $this->getTemplatePath($file);
 
 		if (!$file_path) {
 			Core::error('Template file does not exist: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
@@ -96,10 +96,7 @@ class Template {
 	 * Assign vars to parse
 	 */
 
-	public function assign($array) {
-		if (!is_array($array)) {
-			Core::error('Variable passed to "assign" method is not an array', __FILE__, __LINE__, debug_backtrace());
-		}
+	public function assign(array $array) {
 		foreach($array as $key => $val) {
 			$this->vars[$key] = $val;
 		}
@@ -113,7 +110,7 @@ class Template {
 	 * @return array
 	 */
 
-	public function get_fields($content) {
+	public function getFields(string $content) {
 		$num_matches = preg_match_all('/{{(.*?)}}/', $content, $matches);
 		$fields = [];
 
@@ -150,12 +147,12 @@ class Template {
 	/**
 	 * Parse template
 	 *
-	 * @param string - HTML code with template tags: {{ something }}
+	 * @param string $content - HTML code with template tags: {{ something }}
 	 * @param array $fields
 	 * @param array $translations
 	 */
 
-	public function parse($content, $fields, $translations = []) {
+	public function parse(string $content, array $fields, array $translations = []) {
 
 		// Prepare all fields
 		// @TODO: needed to be replaced
