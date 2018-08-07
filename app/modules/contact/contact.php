@@ -59,6 +59,8 @@ foreach ($theme_config['contact']['fields'] as $form_field) {
 
 if (count($contact_fields_errors) > 0) {
 	$ajax
+		->set('success', false)
+		->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' .  $lang->_t('mailer-form-invalid', 'One or more fields have an error.'))
 		->set('form-errors', $contact_fields_errors)
 		->send();
 }
@@ -83,7 +85,7 @@ if (!empty($theme_config['contact']['recaptcha_secret'])) {
 	catch (Exception $e) {
 		return $ajax
 			->set('success', false)
-			->set('message', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-error', 'Anti-spam system error.') . ' ' . $e->getMessage())
+			->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-error', 'Anti-spam system error.') . ' ' . $e->getMessage())
 			->send();
 	}
 
@@ -91,7 +93,7 @@ if (!empty($theme_config['contact']['recaptcha_secret'])) {
 	if ($recaptcha_result === false) {
 		return $ajax
 			->set('success', false)
-			->set('message', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-invalid', 'You have been recognized as spammer.'))
+			->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-invalid', 'You have been recognized as spammer.'))
 			->send();
 	}
 }
@@ -125,7 +127,7 @@ if (count($users) > 0) {
 if (!$main_recipient) {
 	return $ajax
 		->set('success', false)
-		->set('message', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-recipient-error', 'Error in form configuration'))
+		->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-recipient-error', 'Error in form configuration'))
 		->send();
 }
 
@@ -182,7 +184,7 @@ catch (\Exception $e) {
 	}
 
 	$ajax->set('success', false);
-	$ajax->set('message', $message);
+	$ajax->set('error', $message);
 	$ajax->add('log', 'Error code: ' . $e->getCode());
 
 	$sending_error = true;
@@ -195,7 +197,7 @@ if (!$sending_error) {
 	}
 	else {
 		$ajax->set('success', false);
-		$ajax->set('message', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-error', 'Unknown error occured.'));
+		$ajax->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-error', 'Unknown error occured.'));
 	}
 }
 

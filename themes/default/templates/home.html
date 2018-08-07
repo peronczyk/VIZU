@@ -62,7 +62,7 @@
 			<div class="Main__form">
 				<h2>{{ lang id='example-form' }}</h2>
 
-				<form id="contact-form" method="post" action="{{ lang_code }}/contact">
+				<form class="ContactForm" id="contact-form" method="post" action="{{ lang_code }}/contact">
 					<input type="hidden" name="recaptcha_token">
 
 					<label>
@@ -82,7 +82,7 @@
 
 					<button type="submit">{{ lang id='form-send' }}</button>
 
-					<p id="contact-form-info"></p>
+					<p class="ContactForm__message" id="contact-form-info"></p>
 				</form>
 			</div>
 		</div>
