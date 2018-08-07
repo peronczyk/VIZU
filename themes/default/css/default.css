@@ -84,6 +84,15 @@ ul {
 form {
 	display: block;
 	margin: 30px 0;
+	transition: .3s;
+}
+
+	form.is-Sending {
+		opacity: .5;
+	}
+
+.is-Error .ContactForm__message {
+	color: red;
 }
 
 label {
@@ -100,6 +109,7 @@ textarea {
 	width: 100%;
 	border: 1px solid #ccccc9;
 	font-family: 'Roboto', Arial, Helvetica, sans-serif;
+	transition: .2s;
 }
 
 input[type='checkbox'] {
@@ -127,8 +137,18 @@ button {
 	text-transform: uppercase;
 	color: #fff;
 	background-color: #00a8ff;
+	transition: .3s;
 	cursor: pointer;
 }
+
+	button:hover {
+		background-color: #008cd4;
+	}
+
+	.is-Sending button {
+		background-color: #7f7f7f;
+		pointer-events: none;
+	}
 
 .Header {
 	display: flex;

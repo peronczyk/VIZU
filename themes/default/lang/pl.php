@@ -32,10 +32,16 @@
 	# ------------------------------------------------------------------------------
 	# Mailer messages
 
+	'mailer-sent'            => '<strong>Wiadomość została wysłana</strong>',
+	'mailer-not-sent'        => '<strong>Wiadomość nie została wysłana</strong>',
+	'mailer-thankyou'        => 'Dziękujemy za kontakt!<br>Postaramy się odpowiedzieć na nią jak najszybciej.',
+	'mailer-form-invalid'    => 'Jedno lub więcej pól nie zostało poprawnie wypełnione.',
 	'mailer-field-required'  => 'To pole jest wymagane',
 	'mailer-email-wrong'     => 'Podano niepoprawny adres email',
-	'mailer-flood'           => '<strong>Wiadomość nie została wysłana</strong><br>Nie możesz tak często przesyłać wiadomości',
-	'mailer-recipient-error' => '<strong>Wiadomość nie została wysłana</strong><br>Brak skonfigurowanego poprawnie odbiorcy.',
-	'mailer-sent'            => '<strong>Wiadomość została wysłana</strong><br>Dziękujemy za kontakt!<br>Postaramy się odpowiedzieć na nią jak najszybciej.',
+	'mailer-flood'           => 'Nie możesz tak często przesyłać wiadomości',
+	'mailer-recipient-error' => 'Brak skonfigurowanego poprawnie odbiorcy.',
+	'mailer-captcha-error'   => 'Wystąpił błąd podczas próby zweryfikowania użytkownika poprzez system antyspamowy. Odświerz stronę i spróbuj ponownie.',
+	'mailer-captcha-invalid' => 'Zostałeś uznany za internetowego bota.',
+	'mailer-error'           => 'Wystąpił błąd przy próbie wysłania wiadomości.',
 
 ];

@@ -10,11 +10,11 @@
 header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
 
 $tpl = new libs\Template();
-$tpl->set_theme(Config::$THEME_NAME);
+$tpl->setTheme(Config::$THEME_NAME);
 
-if ($tpl->get_template_path('404')) {
-	$template_content = $tpl->get_content('404');
-	$template_fields  = $tpl->get_fields($template_content);
+if ($tpl->getTemplatePath('404')) {
+	$template_content = $tpl->getContent('404');
+	$template_fields  = $tpl->getFields($template_content);
 
 	$tpl->assign([
 		'site_path'   => $router->site_path . '/',

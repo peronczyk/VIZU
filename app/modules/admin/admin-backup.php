@@ -16,10 +16,10 @@ if (IN_ADMIN !== true) {
 
 if (empty($router->request[2])) {
 
-	$tpl->set_theme('admin');
+	$tpl->setTheme('admin');
 
-	$template_content = $tpl->get_content('backup');
-	$template_fields  = $tpl->get_fields($template_content);
+	$template_content = $tpl->getContent('backup');
+	$template_fields  = $tpl->getFields($template_content);
 
 	$ajax->set('html', $tpl->parse($template_content, $template_fields));
 
