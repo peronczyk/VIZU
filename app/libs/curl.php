@@ -12,7 +12,7 @@ namespace libs;
 class Curl {
 
 	private $handle; // cURL handle
-	private $response = []; // Last cal result data
+	private $response = []; // Last call result data
 	private $default_options = [
 		CURLOPT_HEADER         => 0,
 		CURLOPT_RETURNTRANSFER => true,
@@ -68,15 +68,12 @@ class Curl {
 		$options[CURLOPT_URL] = $url;
 		curl_setopt_array($this->handle, $options);
 
-		$exec_response = curl_exec($this->handle);
-		$exec_error = curl_error($this->handle);
-
 		$this->response = [
-			'body' => $exec_response,
-			'errno' => curl_errno($this->handle),
-			'error' => curl_error($this->handle),
+			'body'          => curl_exec($this->handle),
+			'errno'         => curl_errno($this->handle),
+			'error'         => curl_error($this->handle),
 			'response_code' => curl_getinfo($this->handle, CURLINFO_RESPONSE_CODE),
-			'time' => curl_getinfo($this->handle, CURLINFO_TOTAL_TIME),
+			'time'          => curl_getinfo($this->handle, CURLINFO_TOTAL_TIME),
 		];
 
 		curl_close($this->handle);
