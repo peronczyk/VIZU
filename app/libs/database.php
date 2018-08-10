@@ -90,15 +90,12 @@ class Database {
 	 * @return array|false
 	 */
 
-	public function fetch(object $result) {
-		if (is_object($result) && method_exists($result, 'fetch_assoc')) {
-			$arr = [];
-			while ($row = $result->fetch_assoc()) {
-				$arr[] = $row;
-			}
-			return $arr;
+	public function fetch(\mysqli_result $result) {
+		$arr = [];
+		while ($row = $result->fetch_assoc()) {
+			$arr[] = $row;
 		}
-		else return false;
+		return $arr;
 	}
 
 
