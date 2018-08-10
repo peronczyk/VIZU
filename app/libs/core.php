@@ -38,7 +38,7 @@ class Core {
 	 * Force display PHP errors
 	 */
 
-	public function forceDisplayPhpErrors() : void {
+	public function forceDisplayPhpErrors() {
 		ini_set('display_errors', '1');
 		ini_set('display_startup_errors', '1');
 		error_reporting(E_ALL);
