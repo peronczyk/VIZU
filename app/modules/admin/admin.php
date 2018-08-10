@@ -29,27 +29,7 @@ $user = new libs\User($db);
  * If true change the behavior of page to always return JSON data.
  */
 
-if (libs\Core::$ajax_loaded === true) {
-
-	/**
-	 * Bypass default PHP errors by custom error handler.
-	 * This allows to display errors as JSON.
-	 */
-
-	function error_handler($errno, $errstr, $errfile, $errline) {
-		echo json_encode(
-			['error' => [
-				'number' => $errno,
-				'str'    => $errstr,
-				'file'   => $errfile,
-				'line'   => $errline
-			]]
-		);
-		die();
-	}
-
-	$old_error_handler = set_error_handler("error_handler");
-
+if (libs\Core::isAjax()) {
 
 	/**
 	 * Start AJAX class and set it up
@@ -58,13 +38,9 @@ if (libs\Core::$ajax_loaded === true) {
 	$ajax = new libs\Ajax();
 
 	$display = true; // Is there anything that needs to be shown?
-
-	if (!isset($router->request[1])) {
-		$request = 'home';
-	}
-	else {
-		$request = $router->request[1];
-	}
+	$request = (!isset($router->request[1]))
+		? 'home'
+		: $router->request[1];
 
 
 	/**
@@ -120,29 +96,29 @@ if (libs\Core::$ajax_loaded === true) {
 
 			// CONTENT ADMINISTRATION
 
-			case 'edit':
-				require_once 'admin-edit.php';
+			case 'content':
+				require_once __DIR__ . '/content/content.php';
 				break;
 
 
 			// CHANGES HISTORY
 
 			case 'history':
-				require_once 'admin-history.php';
+				require_once __DIR__ . '/history/history.php';
 				break;
 
 
 			// USER FUNCTIONS
 
 			case 'user':
-				require_once 'admin-user.php';
+				require_once __DIR__ . '/user/user.php';
 				break;
 
 
 			// BACKUP OPERATIONS
 
 			case 'backup':
-				require_once 'admin-backup.php';
+				require_once __DIR__ . '/backup/backup.php';
 				break;
 
 
@@ -150,7 +126,7 @@ if (libs\Core::$ajax_loaded === true) {
 
 			default:
 				$ajax->set('error', [
-					'str'  => 'Nieznana funkcja: ' . $request,
+					'str'  => 'Unknown function: ' . $request,
 					'file' => __FILE__,
 					'line' => __LINE__
 				]);

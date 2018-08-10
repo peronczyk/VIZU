@@ -91,10 +91,36 @@ class Router {
 	}
 
 
+	/**
+	 * Get first request
+	 */
+
 	public function getFirstRequest() {
 		return (isset($this->request[0]))
 			? $this->request[0]
 			: null;
+	}
+
+
+	/**
+	 * Get last request
+	 */
+
+	public function getLastRequest() {
+		return (count($this->request) > 1)
+			? $this->request[count($this->request) - 1]
+			: null;
+	}
+
+
+	/**
+	 * Get query element
+	 */
+
+	public function getQuery(string $key) {
+		return (isset($this->query[$key]))
+			? $this->query[$key]
+			: false;
 	}
 
 

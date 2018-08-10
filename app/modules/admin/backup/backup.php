@@ -15,14 +15,12 @@ if (IN_ADMIN !== true) {
 // Display layout
 
 if (empty($router->request[2])) {
-
 	$tpl->setTheme('admin');
 
 	$template_content = $tpl->getContent('backup');
 	$template_fields  = $tpl->getFields($template_content);
 
 	$ajax->set('html', $tpl->parse($template_content, $template_fields));
-
 }
 
 else {

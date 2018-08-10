@@ -11,10 +11,6 @@ namespace libs;
 
 class Core {
 
-	// Check if script is running as AJAX request
-	public static $ajax_loaded = false;
-
-
 	/**
 	 * Constructor
 	 */
@@ -26,10 +22,6 @@ class Core {
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) {
 			session_start();
-		}
-
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-			self::$ajax_loaded = true;
 		}
 	}
 
@@ -54,13 +46,13 @@ class Core {
 	 * @param array $debug - Pass here debug_backtrace()
 	 */
 
-	public static function error($msg, $file = null, $line = null, $debug = null) {
+	public static function error(string $msg, $file = null, $line = null, $debug = null) {
 
 		// Hide server document root from file path
 		$document_root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
 		$file = str_replace($document_root, '', $file);
 
-		if (self::$ajax_loaded === true) {
+		if ($self::isAjax()) {
 			header('Content-type: application/json');
 			echo json_encode([
 				'error' => [
@@ -86,7 +78,10 @@ class Core {
 			echo '</ul>';
 			echo self::commonHtmlFooter();
 		}
-		if ($headers_sent) ob_end_flush();
+
+		if ($headers_sent) {
+			ob_end_flush();
+		}
 		exit;
 	}
 
@@ -95,8 +90,17 @@ class Core {
 	 * Check if application is in development mode
 	 */
 
-	public function isDev() {
+	public function isDev() : bool {
 		return (\Config::$DEBUG === true || (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)));
+	}
+
+
+	/**
+	 * Check if page was loaded as a result of AJAX request
+	 */
+
+	public static function isAjax() : bool {
+		return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 	}
 
 
@@ -119,9 +123,7 @@ class Core {
 	 * @return array
 	 */
 
-	public function processArray($array, $key_name) {
-		if (!is_array($array)) return false;
-
+	public function processArray(array $array, string $key_name) : array {
 		$processed_array = [];
 		foreach($array as $val) {
 			if (isset($val[$key_name])) {
@@ -139,7 +141,7 @@ class Core {
 	 * @return string
 	 */
 
-	public static function commonHtmlHeader($title = 'VIZU') {
+	public static function commonHtmlHeader(string $title = 'VIZU') {
 		return '<!DOCTYPE html><html>
 			<head>
 				<meta charset="utf-8">
