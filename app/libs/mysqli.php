@@ -9,7 +9,7 @@
 
 namespace libs;
 
-class Database {
+class Mysqli {
 
 	private $host;
 	private $user;

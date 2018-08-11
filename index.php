@@ -72,7 +72,7 @@ else {
 	libs\Core::error('Database configuration file (config-db.php) is missing. You can copy this file from <a href="https://raw.githubusercontent.com/peronczyk/VIZU/master/config-db.php">this</a> location. Be sure to set database connection credentials.', __FILE__, __LINE__, debug_backtrace());
 }
 
-$db = new libs\Database($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
+$db = new libs\Mysqli($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
 unset($db_config);
 
 
