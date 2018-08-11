@@ -3,7 +3,7 @@
 # ==================================================================================
 #
 #	VIZU CMS
-#	Module: Admin / Edit / Display
+#	Module: Admin / Content / Display
 #
 # ==================================================================================
 
@@ -33,10 +33,10 @@ foreach($languages as $lang) {
 	$lang_str .= '><a href="admin/edit?language=' . $lang['code'] . '&amp;field_category=' . $router->getQuery('field_category') . '">' . $lang['short_name'] . '</a></li>';
 }
 
-$form_fields   = null; // Stores html of form elements - fields
-$field_class   = [];   // Stores array of loaded field's classes
-$field_num     = [];   // Stores numbers of each field types
-$skiped_fields = 0;    // Stores number of skiped fields (not editable fields or with errors)
+$form_fields    = null; // Stores html of form elements - fields
+$field_class    = [];   // Stores array of loaded field's classes
+$field_num      = [];   // Stores numbers of each field types
+$skipped_fields = 0;    // Stores number of skipped fields (not editable fields or with errors)
 
 /**
  * Loop over fields
@@ -46,14 +46,14 @@ foreach($template_fields as $field_id => $field) {
 
 	// Skip if field don't have 'category' or it's 'category' is not editable
 	if (!isset($field['category']) || !in_array($field['category'], $allowed_field_category)) {
-		$skiped_fields++;
+		$skipped_fields++;
 		continue;
 	}
 
 	// Skip if field don't have 'type' or it's 'type' is not editable
 	if (!isset($field['type']) || !in_array($field['type'], Config::$FIELD_TYPES)) {
 		$ajax->add('log', 'Skipped: ' . $field_id . ' / ' . $field['category']);
-		$skiped_fields++;
+		$skipped_fields++;
 		continue;
 	}
 
@@ -64,7 +64,7 @@ foreach($template_fields as $field_id => $field) {
 	// If field don't have name in template skip it
 	if (empty($field['name'])) {
 		$ajax->add('log', 'There is no name for field ' . $field_id . ' [' . $field_num[$field['type']] . ']');
-		$skiped_fields++;
+		$skipped_fields++;
 		continue;
 	}
 
@@ -93,10 +93,12 @@ foreach($template_fields as $field_id => $field) {
 	}
 
 	// Add to form data about this field
-	$form_fields .= $field_class[$field['type']]->field_html($field_id, $field, $content);
+	$form_fields .= $field_class[$field['type']]->fieldHtml($field_id, $field, $content);
 }
 
-if ($skiped_fields > 0) $ajax->add('log', 'Skiped fields: ' . $skiped_fields);
+if ($skipped_fields > 0) {
+	$ajax->add('log', 'Skipped fields: ' . $skipped_fields);
+}
 
 // Display other fields, that was in database but don't exists in template
 $not_used_fields_num = 0;
@@ -105,7 +107,7 @@ foreach($fields_data as $data_key => $data) {
 }
 
 if ($not_used_fields_num > 0) {
-	$tpl->assign(['other_fields' => 'Pola nie użyte: ' . $not_used_fields_num]);
+	$tpl->assign(['other_fields' => 'Fields not used: ' . $not_used_fields_num]);
 }
 else {
 	$tpl->assign(['other_fields' => '']);

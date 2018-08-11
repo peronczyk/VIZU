@@ -22,14 +22,12 @@ switch($router->getLastRequest()) {
 		require_once __DIR__ . '/user-change-password.php';
 		break;
 
-
 	/**
 	 * Add user
 	 */
 	case 'user_add':
 		require_once __DIR__ . '/user-add.php';
 		break;
-
 
 	/**
 	 * Display page

@@ -12,17 +12,19 @@ if (IN_ADMIN !== true) {
 }
 
 
-// Display layout
+switch ($router->getLastRequest()) {
 
-if (empty($router->request[2])) {
-	$tpl->setTheme('admin');
+	/**
+	 * Save & upload
+	 */
+	case 'save':
+	case 'upload':
+		$ajax->set('message', 'This option is not available in this application version.');
+		break;
 
-	$template_content = $tpl->getContent('backup');
-	$template_fields  = $tpl->getFields($template_content);
-
-	$ajax->set('html', $tpl->parse($template_content, $template_fields));
-}
-
-else {
-	$ajax->set('message', 'Opcja wykonywania oraz wczytywania kopii bezpieczeństwa nie jest aktywna w tej wersji aplikacji.');
+	/**
+	 * Display layout
+	 */
+	default:
+		require_once __DIR__ . '/backup-display.php';
 }

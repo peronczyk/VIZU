@@ -3,7 +3,7 @@
 # ==================================================================================
 #
 #	VIZU CMS
-#	Module: Admin / Edit
+#	Module: Admin / Content
 #
 # ==================================================================================
 
@@ -66,17 +66,17 @@ $tpl->setTheme(Config::$THEME_NAME);
 $content         = $tpl->getContent('home');
 $template_fields = $tpl->getFields($content);
 
+switch ($router->getLastRequest()) {
+	/**
+	 * Save data
+	 */
+	case 'save':
+		require_once __DIR__ . '/content-save.php';
+		break;
 
-/**
- * Save data
- */
-if ($router->getLastRequest() == 'save') {
-	require_once __DIR__ . '/content-save.php';
-}
-
-/**
- * Display form
- */
-else {
-	require_once __DIR__ . '/content-display.php';
+	/**
+	 * Display form
+	 */
+	default:
+		require_once __DIR__ . '/content-display.php';
 }

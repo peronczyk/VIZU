@@ -468,8 +468,7 @@ nav {
 
 #pages.loading {
 	opacity: 0;
-	transform: translatey(-200px);
-	/*transform: scale(.7); */
+	transform: scale(.98);
 }
 
 	#pages section {

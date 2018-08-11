@@ -155,7 +155,7 @@ class Database {
 		// Read in entire file
 		$lines = file($file);
 
-		foreach ($lines as $line) {
+		foreach($lines as $line) {
 
 			// Skip it if it's a comment
 			if (substr($line, 0, 2) == '--' || $line == '') continue;

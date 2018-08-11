@@ -62,16 +62,16 @@ class Template {
 		$class_file = 'app/fields/' . $field_name . '.php';
 		if (file_exists($class_file)) {
 			require_once $class_file;
-			$class_name = 'fields\\' . $field_name;
+			$class_name = 'fields\\' . ucfirst($field_name);
 			if (class_exists($class_name)) {
 				return new $class_name();
 			}
 			else {
-				return 'Template field handling file does not have proper class: "' . $field_name . '"';
+				throw new \Exception('Template field handling file does not have proper class: "' . $field_name . '"');
 			}
 		}
 		else {
-			return 'Template field handling file does not exist: "' . $class_file . '"';
+			throw new \Exception('Template field handling file does not exist: "' . $class_file . '"');
 		}
 	}
 
@@ -119,20 +119,18 @@ class Template {
 			$chunks = array_filter(explode(' ', $val));
 			$field  = [];
 
-			if (in_array($chunks[0], \Config::$FIELD_CATEGORIES['content']) or in_array($chunks[0], \Config::$FIELD_CATEGORIES['other'])) {
+			if (in_array($chunks[0], \Config::$FIELD_CATEGORIES['content']) || in_array($chunks[0], \Config::$FIELD_CATEGORIES['other'])) {
 				$field['category'] = $chunks[0];
 
 				// Get params of the field
-
 				$num_params = preg_match_all("/([a-z]+)='([^']*)'/", $val, $params);
 				if (is_array($params)) {
-					foreach ($params[1] as $p => $param) {
+					foreach($params[1] as $p => $param) {
 						$field[$params[1][$p]] = $params[2][$p];
 					}
 				}
 
 				// Add field to array if has ID and there is no existing entry with this ID
-
 				if (!empty($field['id']) && !isset($fields[$field['id']])) {
 					$fields[$field['id']] = $field;
 					unset($fields[$field['id']]['id']); // Remove additional ID from params array
@@ -217,7 +215,7 @@ class Template {
 			}
 			else $preg_status_text = $preg_status;
 
-			Core::error('Unable to display template becouse of error in parsing function. Returned error:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
+			Core::error('Unable to display template because of error in parsing function. Returned error:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
 		}
 	}
 }

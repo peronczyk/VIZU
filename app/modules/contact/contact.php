@@ -26,7 +26,7 @@ if (!is_array($theme_config['contact']['fields'])) {
 
 $contact_fields_errors = [];
 
-foreach ($theme_config['contact']['fields'] as $form_field) {
+foreach($theme_config['contact']['fields'] as $form_field) {
 	if (isset($form_field['required']) && $form_field['required'] == true) {
 		switch ($form_field['type']) {
 
@@ -145,7 +145,7 @@ $mailer
  * Collect all form data
  */
 
-foreach ($theme_config['contact']['fields'] as $form_field) {
+foreach($theme_config['contact']['fields'] as $form_field) {
 	$mailer->addContent($lang->_t($form_field['label']), $_POST[$form_field['name']]);
 }
 
