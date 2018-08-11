@@ -33,6 +33,17 @@ class Database {
 
 
 	/**
+	 * Destructor
+	 */
+
+	public function __destruct() {
+		if ($this->connection) {
+			mysqli_close($this->connection);
+		}
+	}
+
+
+	/**
 	 * Connect to database
 	 */
 
@@ -140,9 +151,13 @@ class Database {
 
 	/**
 	 * Import file
+	 *
+	 * @param string $file - path of file to import
+	 *
+	 * @return bool - action result
 	 */
 
-	public function importFile(string $file) {
+	public function importFile(string $file) : bool {
 		if (!file_exists($file)) {
 			Core::error('Unable to import SQL file "' . $file . '" because it does not exists.', __FILE__, __LINE__, debug_backtrace());
 		}
@@ -158,7 +173,9 @@ class Database {
 		foreach($lines as $line) {
 
 			// Skip it if it's a comment
-			if (substr($line, 0, 2) == '--' || $line == '') continue;
+			if (substr($line, 0, 2) == '--' || $line == '') {
+				continue;
+			}
 
 			// Add this line to the current segment
 			$templine .= $line;
@@ -170,7 +187,7 @@ class Database {
 			}
 		}
 
-		return ($errors > 0) ? false : true;
+		return (bool) ($errors > 0);
 	}
 
 }
