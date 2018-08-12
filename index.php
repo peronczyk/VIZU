@@ -9,6 +9,7 @@
 
 
 define('VIZU_VERSION', '1.2.2');
+define('__ROOT__', __DIR__);
 
 
 /**
@@ -62,18 +63,8 @@ if (Config::$REDIRECT_TO_WWW === true) {
  * Connection configuration depends on enviroment - development or production.
  */
 
-if ($core->isDev() && file_exists('config-db.dev.php')) {
-	$db_config = require_once 'config-db.dev.php';
-}
-elseif (file_exists('config-db.php')) {
-	$db_config = require_once 'config-db.php';
-}
-else {
-	libs\Core::error('Database configuration file (config-db.php) is missing. You can copy this file from <a href="https://raw.githubusercontent.com/peronczyk/VIZU/master/config-db.php">this</a> location. Be sure to set database connection credentials.', __FILE__, __LINE__, debug_backtrace());
-}
-
+$db_config = $core->loadDatabaseConfig();
 $db = new libs\Mysqli($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
-unset($db_config);
 
 
 /**

@@ -52,7 +52,7 @@ class Core {
 		$document_root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
 		$file = str_replace($document_root, '', $file);
 
-		if ($self::isAjax()) {
+		if (self::isAjax()) {
 			header('Content-type: application/json');
 			echo json_encode([
 				'error' => [
@@ -132,6 +132,23 @@ class Core {
 			}
 		}
 		return $processed_array;
+	}
+
+
+	/**
+	 * Load database configuration
+	 */
+
+	public function loadDatabaseConfig() {
+		if ($this->isDev() && file_exists('config-db.dev.php')) {
+			return require_once 'config-db.dev.php';
+		}
+		elseif (file_exists('config-db.php')) {
+			return require_once 'config-db.php';
+		}
+		else {
+			self::error('Database configuration file (config-db.php) is missing. You can copy this file from <a href="https://raw.githubusercontent.com/peronczyk/VIZU/master/config-db.php">this</a> location. Be sure to set database connection credentials.', __FILE__, __LINE__, debug_backtrace());
+		}
 	}
 
 
