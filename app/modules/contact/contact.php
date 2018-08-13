@@ -72,7 +72,7 @@ if (count($contact_fields_errors) > 0) {
 
 if (!empty($theme_config['contact']['recaptcha_secret'])) {
 	$curl = new libs\Curl();
-	if (libs\Core::isDev()) {
+	if (Core::isDev()) {
 		$curl->disableSsl();
 	}
 
@@ -103,7 +103,7 @@ if (!empty($theme_config['contact']['recaptcha_secret'])) {
  * Prepare mail data
  */
 
-if (!libs\Core::isDev()) {
+if (!Core::isDev()) {
 	$mailer->setAntiflood();
 }
 

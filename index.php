@@ -9,7 +9,6 @@
 
 
 define('VIZU_VERSION', '1.2.2');
-define('__ROOT__', __DIR__);
 
 
 /**
@@ -23,17 +22,19 @@ require_once 'config-app.php';
 
 
 /**
- * Load class autoloader
+ * Bootstrapping
  */
 
-require_once Config::$APP_DIR . 'autoload.php';
+require_once __DIR__ . '/core.php';
+$core = new Core();
+Core::init();
+Core::defineBasicAutoloader(__DIR__ . '/' . Config::$APP_DIR);
 
 
 /**
- * Start core libraries
+ * Start router
  */
 
-$core   = new libs\Core();
 $router = new libs\Router();
 
 
@@ -41,17 +42,20 @@ $router = new libs\Router();
  * Load theme configuration
  */
 
-$theme_configuration_file = \Config::$THEMES_DIR . \Config::$THEME_NAME . '/config-theme.php';
+$theme_configuration_file = Config::$THEMES_DIR . Config::$THEME_NAME . '/config-theme.php';
 if (!file_exists($theme_configuration_file)) {
-	libs\Core::displayError('Theme configuration file is missing', __FILE__, __LINE__, debug_backtrace());
+	Core::displayError('Theme configuration file is missing', __FILE__, __LINE__, debug_backtrace());
 }
 $theme_config = require_once $theme_configuration_file;
 
 
 /**
- * Redirects based on configuration and enviroment
+ * Start router
  */
 
+$router = new libs\Router();
+
+// Redirects based on configuration and enviroment
 if (Config::$REDIRECT_TO_WWW === true) {
 	$router->redirectToWww();
 }

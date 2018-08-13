@@ -15,7 +15,7 @@ if (IN_ADMIN !== true) {
 // Get data from database for all fields
 
 $result = $db->query("SELECT `id`, `modified` FROM `fields` WHERE `template` = 'home'");
-$fields_data = libs\Core::processArray($db->fetch($result), 'id');
+$fields_data = Core::processArray($db->fetch($result), 'id');
 
 
 // Get fields from home of user template

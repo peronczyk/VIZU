@@ -16,7 +16,7 @@ define('DB_FILE', 'db.sql');
 $module_path = Config::$APP_DIR . '/modules/install/';
 
 if (!file_exists($module_path . DB_FILE)) {
-	libs\Core::displayError('Missing required default database dump file: "db.sql"', __FILE__, __LINE__, debug_backtrace());
+	Core::displayError('Missing required default database dump file: "db.sql"', __FILE__, __LINE__, debug_backtrace());
 }
 
 $install = new modules\install\Install($db);
@@ -28,7 +28,7 @@ $user = new libs\User($db);
  */
 
 if ($router->request[1] === 'error') {
-	echo libs\Core::commonHtmlHeader('VIZU Installer: Error');
+	echo Core::commonHtmlHeader('VIZU Installer: Error');
 	echo '<h3>Error occured</h3><hr>';
 
 	switch (@$_SESSION['vizu']['install']['error']) {
@@ -52,7 +52,7 @@ if ($router->request[1] === 'error') {
 		echo '<p>Returned error message:<br>' . $_SESSION['vizu']['install']['message'] . '</p>';
 	}
 	echo '<p><a href="./">&lsaquo; &nbsp; Back</a></p>';
-	echo libs\Core::commonHtmlFooter();
+	echo Core::commonHtmlFooter();
 
 	$_SESSION['vizu_installation_error'] = false;
 }
@@ -69,14 +69,14 @@ elseif ($install->check_db_tables()) {
 	 */
 
 	if ($install->check_db_users()) {
-		echo libs\Core::commonHtmlHeader('VIZU Installer: OK');
+		echo Core::commonHtmlHeader('VIZU Installer: OK');
 		?>
 			<h1>VIZU installed <u>correctly</u></h1>
 			<h2>Enjoy the simplicity</h2>
 			&mdash;&nbsp; <a href="./">Home page</a><br>
 			&mdash;&nbsp; <a href="./admin">Administration panel</a>
 		<?php
-		echo libs\Core::commonHtmlFooter();
+		echo Core::commonHtmlFooter();
 	}
 
 
@@ -110,7 +110,7 @@ elseif ($install->check_db_tables()) {
 
 		// Show installation step : 2
 		else {
-			echo libs\Core::commonHtmlHeader('VIZU Installer: Set up administrator');
+			echo Core::commonHtmlHeader('VIZU Installer: Set up administrator');
 			?>
 				<h3>Step 2/2</h3>
 				<hr>
@@ -124,7 +124,7 @@ elseif ($install->check_db_tables()) {
 					<button type="submit">Add &nbsp;&nbsp;&rsaquo;</button>
 				</form>
 			<?php
-			echo libs\Core::commonHtmlFooter();
+			echo Core::commonHtmlFooter();
 		}
 	}
 }
@@ -153,7 +153,7 @@ else {
 
 	// Show installation step : 1
 	else {
-		echo libs\Core::commonHtmlHeader('VIZU Installer: Begin installation');
+		echo Core::commonHtmlHeader('VIZU Installer: Begin installation');
 		?>
 			<h3>Step 1/2</h3>
 			<hr>
@@ -166,6 +166,6 @@ else {
 				<button type="submit">YES, please &nbsp;&nbsp;&rsaquo;</button>
 			</form>
 		<?php
-		echo libs\Core::commonHtmlFooter();
+		echo Core::commonHtmlFooter();
 	}
 }

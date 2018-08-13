@@ -24,12 +24,19 @@ class Config {
 	// This is the name of direcory of your theme. Default: "default".
 	static $THEME_NAME = 'default';
 
+	// Force use of HTTPS
+	static $FORCE_HTTPS = true;
+
+	// Send security headers and remove ones that can potentially expose
+	// vulnerabilities. Learn more: https://securityheaders.io
+	static $SEND_SECURE_HEADERS = true;
+
 
 	# ------------------------------------------------------------------------------
 	# DIRECTORIES
 
-	static $APP_DIR		= 'app/';
-	static $THEMES_DIR	= 'themes/';
+	static $APP_DIR = 'app/';
+	static $THEMES_DIR = 'themes/';
 
 
 	# ------------------------------------------------------------------------------

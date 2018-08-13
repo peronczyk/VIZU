@@ -7,26 +7,39 @@
 #
 # ==================================================================================
 
-namespace libs;
-
 class Core {
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Constructor
 	 */
 
 	public function __construct() {
+		define('__ROOT__', __DIR__);
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Initiate core
+	 */
+
+	public static function init() {
 		if (self::isDev()) {
 			self::forceDisplayPhpErrors();
 		}
 
-		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) {
-			session_start();
+		self::startSession();
+
+		if (Config::$SEND_SECURE_HEADERS === true) {
+			self::sendSecureHeaders();
+		}
+
+		if (Config::$FORCE_HTTPS === true) {
+			self::forceHttps();
 		}
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Force display PHP errors
 	 */
 
@@ -37,13 +50,89 @@ class Core {
 	}
 
 
+	/** ----------------------------------------------------------------------------
+	 * Start session
+	 */
+
+	public static function startSession() {
+		// Force to use the HTTP-Only and Secure flags when sending the session
+		// identifier cookie, which prevents a successful XSS attack from stealing
+		// users' cookies and forces them to only be sent over HTTPS, respectively.
+		session_start([
+			'cookie_httponly' => true,
+			'cookie_secure' => true
+		]);
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Send security headers and remove ones that can potentially expose
+	 * vulnerabilities. Learn more: https://securityheaders.io
+	 */
+
+	public static function sendSecureHeaders() {
+		// Enables XSS filtering. Rather than sanitizing the page,
+		// the browser will prevent rendering of the page if an attack is detected.
+		header('X-XSS-Protection: 1; mode=block');
+
+		// Prevent loading page in frames - secures from clickjacking
+		header('X-Frame-Options: DENY');
+
+		// This opts-out of MIME type sniffing - is a way to say that the webmasters
+		// knew what they were doing.
+		// Learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types#MIME_sniffing
+		header('X-Content-Type-Options: nosniff');
+
+		// Remove header that informs about PHP version
+		header_remove('X-Powered-By');
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Force using of HTTPS
+	 */
+
+	public static function forceHttps() {
+		// The HTTP Strict-Transport-Security response header (HSTS) lets a web site
+		// tell browsers that it should only be accessed using HTTPS,
+		// instead of using HTTP.
+		header('Strict-Transport-Security: max-age=31536000; preload');
+	}
+
+
+	/**
+	 * Define simple autoloader
+	 */
+
+	public static function defineBasicAutoloader($class_dir) {
+		define('CLASS_DIR', $class_dir);
+		spl_autoload_register(function($class) {
+			if (class_exists($class, false)) {
+				return;
+			}
+
+			$chunks = explode('\\', trim($class));
+
+			if (count($chunks) > 1) {
+				$lib_file_name  = strtolower(end($chunks));
+				$lib_class_name = ucfirst($lib_file_name);
+				$lib_file_path  = CLASS_DIR . '/' . $chunks[0] . '/' . $lib_file_name . '.php';
+
+				if (file_exists($lib_file_path)) {
+					require_once $lib_file_path;
+				}
+			}
+		});
+	}
+
+
 	/**
 	 * Display critical errors
 	 *
 	 * @param string $msg
 	 * @param string $file - Pass here __FILE__
 	 * @param string $line - Pass here __LINE__
-	 * @param array $debug - Pass here debug_backtrace()
+	 * @param array $debug - Pass here result of debug_backtrace()
 	 */
 
 	public static function displayError(string $msg, $file = null, $line = null, $trace = null) {
@@ -123,15 +212,15 @@ class Core {
 	 * Load database configuration
 	 */
 
-	public function loadDatabaseConfig() {
-		if ($this->isDev() && file_exists('config-db.dev.php')) {
-			return require_once 'config-db.dev.php';
+	public static function loadDatabaseConfig() {
+		if (self::isDev() && file_exists(__DIR__ . '/config-db.dev.php')) {
+			return require_once __DIR__ . '/config-db.dev.php';
 		}
-		elseif (file_exists('config-db.php')) {
-			return require_once 'config-db.php';
+		elseif (file_exists(__DIR__ . '/config-db.php')) {
+			return require_once __DIR__ . '/config-db.php';
 		}
 		else {
-			self::error('Database configuration file (config-db.php) is missing. You can copy this file from <a href="https://raw.githubusercontent.com/peronczyk/VIZU/master/config-db.php">this</a> location. Be sure to set database connection credentials.', __FILE__, __LINE__, debug_backtrace());
+			self::displayError('Database configuration file (config-db.php) is missing. You can copy this file from <a href="https://raw.githubusercontent.com/peronczyk/VIZU/master/config-db.php">this</a> location. Be sure to set database connection credentials.', __FILE__, __LINE__, debug_backtrace());
 		}
 	}
 

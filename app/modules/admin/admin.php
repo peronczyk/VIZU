@@ -29,7 +29,7 @@ $user = new libs\User($db);
  * If true change the behavior of page to always return JSON data.
  */
 
-if (libs\Core::isAjax()) {
+if (Core::isAjax()) {
 
 	/**
 	 * Start AJAX class and set it up
