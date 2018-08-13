@@ -75,7 +75,7 @@ $db = new libs\Mysqli($db_config['host'], $db_config['user'], $db_config['pass']
 if ($router->getFirstRequest() !== 'install') {
 	$lang = new libs\Language($router, $db);
 	$lang->set();
-	$lang->load_theme_translations();
+	$lang->loadThemeTranslations();
 }
 
 

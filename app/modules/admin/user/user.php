@@ -13,7 +13,7 @@ if (IN_ADMIN !== true) {
 
 define('PASSWORD_MIN_CHARS', 5);
 
-switch($router->getLastRequest()) {
+switch($router->getRequestPart(2)) {
 
 	/**
 	 * Password change operation
@@ -25,8 +25,15 @@ switch($router->getLastRequest()) {
 	/**
 	 * Add user
 	 */
-	case 'user_add':
+	case 'add':
 		require_once __DIR__ . '/user-add.php';
+		break;
+
+	/**
+	 * Add user
+	 */
+	case 'remove':
+		require_once __DIR__ . '/user-remove.php';
 		break;
 
 	/**

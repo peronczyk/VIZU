@@ -1,4 +1,3 @@
-
 'use strict';
 
 var debug = 1;
@@ -40,6 +39,8 @@ $(function() {
 	function ajaxSuccess(obj, json, url) {
 		$loadBar.removeClass('active');
 
+		window.history.pushState('', '', sitePath + '/' + url);
+
 		if (debug) {
 			console.info('Ajax request succeed to url: ' + url);
 			console.log(json);
@@ -53,7 +54,7 @@ $(function() {
 		// If there was no JSON data
 		if (!json) {
 			if (debug) {
-				console.log('No JSON data received after AJAX success');
+				console.info('No JSON data received after AJAX success');
 				console.log(json);
 			}
 			showMsg('Serwer nie przesłał żadnej odpowiedzi na zapytanie.');
@@ -63,7 +64,7 @@ $(function() {
 		// Simple check if received data is JSON. Yes, it's lame, but fast
 		else if (typeof json !== 'object') {
 			if (debug) {
-				console.log('Received data is not an AJAX object');
+				console.info('Received data is not an AJAX object');
 			}
 			showMsg('Odpowiedź serwera jest niepoprawna - przesłane dane nie sa obiektem AJAX<br><br>' + json);
 			return false;
@@ -226,7 +227,9 @@ $(function() {
 			.children('p').empty().html(text);
 
 		// Auto close after given time
-		msgBoxInitial = setTimeout(function() { $msgBox.removeClass(); }, 8000);
+		msgBoxInitial = setTimeout(function() {
+			$msgBox.removeClass();
+		}, 8000);
 	}
 
 

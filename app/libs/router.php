@@ -92,6 +92,17 @@ class Router {
 
 
 	/**
+	 * Get request chunk of specified number
+	 */
+
+	public function getRequestPart(int $number) {
+		return (isset($this->request[$number]))
+			? $this->request[$number]
+			: null;
+	}
+
+
+	/**
 	 * Get first request
 	 */
 

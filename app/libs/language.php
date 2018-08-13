@@ -143,7 +143,7 @@ class Language {
 	 * @return boolean
 	 */
 
-	public function load_theme_translations() {
+	public function loadThemeTranslations() {
 		if (!$this->lang_code) return false;
 
 		$lang_file = \Config::$THEMES_DIR . \Config::$THEME_NAME . '/lang/' . $this->lang_code . '.php';

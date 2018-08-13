@@ -12,12 +12,14 @@ if (IN_ADMIN !== true) {
 }
 
 
-$query = $db->query('SELECT * FROM `users`');
+$query  = $db->query('SELECT * FROM `users`');
 $result = $db->fetch($query);
 $users_list = '';
 
 foreach($result as $user_data) {
-	$users_list .= '<tr><td>' . $user_data['id'] . '</td><td>' . $user_data['email'] . '</td></tr>';
+	$users_list .= ($user_data['id'] == $user->getId())
+		? '<tr><td><strong>' . $user_data['id'] . '</strong></td><td><strong>' . $user_data['email'] . '</strong></td><td></td></tr>'
+		: '<tr><td>' . $user_data['id'] . '</td><td>' . $user_data['email'] . '</td><td class="center"><a href="admin/user/remove/' . $user_data['id'] . '"><svg class="icon-16"><use xlink:href="#icon-16_times"></use></svg></a></td></tr>';
 }
 
 $tpl->assign([
