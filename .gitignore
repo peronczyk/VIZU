@@ -37,6 +37,7 @@ ftpsync.settings
 # -------------
 # Other ignores
 
+/backup.sql
 php.ini
 *.crt
 *.key

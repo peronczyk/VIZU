@@ -182,12 +182,44 @@ class Mysqli {
 
 			// If it has a semicolon at the end, it's the end of the query
 			if (substr(trim($line), -1, 1) == ';') {
-				if (!$this->query($templine)) $errors++;
+				if (!$this->query($templine)) {
+					$errors++;
+				}
 				$templine = '';
 			}
 		}
 
 		return (bool) ($errors > 0);
+	}
+
+
+	/**
+	 * Export database
+	 */
+
+	public function exportDb(string $export_file, $error_log_file = '') {
+		// Prepare command string to be executed
+		$exec_format  = 'mysqldump --user=%s --password=%s --host=%s --log-error=%s %s > %s';
+		$exec_command = sprintf($exec_format, $this->user, $this->pass, $this->host, $error_log_file, $this->name, $export_file);
+
+		exec(
+			$exec_command,
+			$exec_output,
+			$exec_status
+		);
+
+		if ($exec_status === 0) {
+			return true;
+		}
+
+		// When process returns anything other than 0 when something goes wrong
+		else {
+			$output_str = (count($exec_output) > 0)
+				? 'Returned output: ' . print_r($exec_output, true)
+				: 'No output returned';
+
+			throw new \Exception('Backup creation failed. Probably your server does not recognize "mysqldump" command. ' . $output_str);
+		}
 	}
 
 }

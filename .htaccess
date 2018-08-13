@@ -1,11 +1,15 @@
 RewriteEngine on
 RewriteCond %{DOCUMENT_ROOT} !-f
-RewriteRule !\.(js|ico|gif|jpg|png|css|htm?l|swf|flv|xml|otf|ttf|woff?2|svg|eot|mp4|pdf|doc|docx|ppt|pptx|txt)$ index.php [QSA,L]
+RewriteRule !\.(js|ico|gif|jpg|png|css|htm?l|swf|flv|xml|otf|ttf|woff?2|svg|eot|mp4|pdf|doc|docx|ppt|pptx|txt|sql)$ index.php [QSA,L]
 
 AddType application/vnd.ms-fontobject .eot
 AddType application/x-font-woff .woff
 AddType font/ttf .ttf
 AddType image/svg+xml .svg .svgz
+
+
+# ----------------------------------------------------------------------------------
+# EXPIRATIONS
 
 <IfModule mod_expires.c>
 	ExpiresActive On
@@ -24,6 +28,10 @@ AddType image/svg+xml .svg .svgz
 	ExpiresByType application/x-javascript "access plus 7 days"
 </IfModule>
 
+
+# ----------------------------------------------------------------------------------
+# HEADERS
+
 <IfModule mod_headers.c>
 	Header append Vary User-Agent
 	Header unset ETag
@@ -37,7 +45,8 @@ AddType image/svg+xml .svg .svgz
 </IfModule>
 
 
-## COMPRESSION ##
+# ----------------------------------------------------------------------------------
+# COMPRESSIONS
 
 <IfModule mod_deflate.c>
 	AddOutputFilterByType DEFLATE text/html
@@ -65,3 +74,12 @@ AddType image/svg+xml .svg .svgz
 	BrowserMatch ^Mozilla/4\.0[678] no-gzip
 	BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
 </IfModule>
+
+
+# ----------------------------------------------------------------------------------
+# PATHS ACCESS
+
+<Files "backup.sql">
+	Order Allow,Deny
+	Deny from all
+</Files>
