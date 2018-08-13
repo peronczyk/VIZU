@@ -79,13 +79,13 @@ class Router {
 			else {
 				$error404_module_file = \Config::$APP_DIR . 'modules/404/404.php';
 				if (file_exists($error404_module_file)) return $error404_module_file;
-				else Core::error('Requested module "' . \Config::$DEFAULT_MODULE . '" and module "404" does not exist.', __FILE__, __LINE__, debug_backtrace());
+				else Core::displayError('Requested module "' . \Config::$DEFAULT_MODULE . '" and module "404" does not exist.', __FILE__, __LINE__, debug_backtrace());
 			}
 		}
 		else {
 			$default_module_file = \Config::$APP_DIR . 'modules/' . \Config::$DEFAULT_MODULE . '/' . \Config::$DEFAULT_MODULE . '.php';
 			if (file_exists($default_module_file)) return $default_module_file;
-			else Core::error('Configured default module "' . \Config::$DEFAULT_MODULE . '" does not exist', __FILE__, __LINE__, debug_backtrace());
+			else Core::displayError('Configured default module "' . \Config::$DEFAULT_MODULE . '" does not exist', __FILE__, __LINE__, debug_backtrace());
 		}
 		return false;
 	}

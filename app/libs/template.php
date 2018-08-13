@@ -42,7 +42,7 @@ class Template {
 
 	public function getTemplatePath(string $file) {
 		if (empty($this->theme)) {
-			Core::error('Theme not set', __FILE__, __LINE__, debug_backtrace());
+			Core::displayError('Theme not set', __FILE__, __LINE__, debug_backtrace());
 		}
 
 		$file_path = \Config::$THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
@@ -84,7 +84,7 @@ class Template {
 		$file_path = $this->getTemplatePath($file);
 
 		if (!$file_path) {
-			Core::error('Template file does not exist: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
+			Core::displayError('Template file does not exist: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
 			return false;
 		}
 
@@ -215,7 +215,7 @@ class Template {
 			}
 			else $preg_status_text = $preg_status;
 
-			Core::error('Unable to display template because of error in parsing function. Returned error:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
+			Core::displayError('Unable to display template because of error in parsing function. Returned error:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
 		}
 	}
 }

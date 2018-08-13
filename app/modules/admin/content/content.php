@@ -57,7 +57,7 @@ $ajax->add('log', 'Active language: ' . $active_lang);
 // Get data from database for all fields
 
 $result = $db->query("SELECT * FROM `fields` WHERE `template` = 'home' AND `language` = '" . $active_lang . "'");
-$fields_data = $core->processArray($db->fetch($result), 'id');
+$fields_data = libs\Core::processArray($db->fetch($result), 'id');
 
 
 // Get fields from home of user template

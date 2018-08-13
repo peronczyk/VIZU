@@ -16,7 +16,7 @@ define('DB_FILE', 'db.sql');
 $module_path = Config::$APP_DIR . '/modules/install/';
 
 if (!file_exists($module_path . DB_FILE)) {
-	libs\Core::error('Missing required default database dump file: "db.sql"', __FILE__, __LINE__, debug_backtrace());
+	libs\Core::displayError('Missing required default database dump file: "db.sql"', __FILE__, __LINE__, debug_backtrace());
 }
 
 $install = new modules\install\Install($db);

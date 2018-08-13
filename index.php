@@ -43,7 +43,7 @@ $router = new libs\Router();
 
 $theme_configuration_file = \Config::$THEMES_DIR . \Config::$THEME_NAME . '/config-theme.php';
 if (!file_exists($theme_configuration_file)) {
-	libs\Core::error('Theme configuration file is missing', __FILE__, __LINE__, debug_backtrace());
+	libs\Core::displayError('Theme configuration file is missing', __FILE__, __LINE__, debug_backtrace());
 }
 $theme_config = require_once $theme_configuration_file;
 

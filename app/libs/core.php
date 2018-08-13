@@ -16,8 +16,8 @@ class Core {
 	 */
 
 	public function __construct() {
-		if ($this->isDev()) {
-			$this->forceDisplayPhpErrors();
+		if (self::isDev()) {
+			self::forceDisplayPhpErrors();
 		}
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) {
@@ -30,7 +30,7 @@ class Core {
 	 * Force display PHP errors
 	 */
 
-	public function forceDisplayPhpErrors() {
+	public static function forceDisplayPhpErrors() {
 		ini_set('display_errors', '1');
 		ini_set('display_startup_errors', '1');
 		error_reporting(E_ALL);
@@ -46,43 +46,27 @@ class Core {
 	 * @param array $debug - Pass here debug_backtrace()
 	 */
 
-	public static function error(string $msg, $file = null, $line = null, $debug = null) {
+	public static function displayError(string $msg, $file = null, $line = null, $trace = null) {
+		$error_page = self::commonHtmlHeader('Critical error');
+		$error_page .= '
+			<figure>;(</figure><h1>Something went<br>terribly wrong</h1><hr>
+			<p>' . $msg . '</p>
+			<ul>
+				<li>Occurs in: <strong>' . self::processSystemFilePath($file) . '</strong> (line: <strong>' . $line . '</strong>)</li>
+		';
 
-		// Hide server document root from file path
-		$document_root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
-		$file = str_replace($document_root, '', $file);
-
-		if (self::isAjax()) {
-			header('Content-type: application/json');
-			echo json_encode([
-				'error' => [
-					'str'  => $msg,
-					'file' => $file,
-					'line' => $line
-				]
-			]);
-		}
-		else {
-			echo self::commonHtmlHeader('Critical error');
-			echo '<figure>;(</figure><h1>Something went<br>terribly wrong</h1><hr><p>' . $msg . '</p><ul>';
-
-			if (empty($debug)) {
-				echo '<li>File: <strong>' . $file . '</strong></li><li>Line: <strong>' . $line . '</strong></li>';
+		if ($trace) {
+			$error_page .= '<li><strong>Trace</strong>:<ol>';
+			foreach ($trace as $key => $entry) {
+				$error_page .= '<li>' . self::processSystemFilePath($entry['file']) . ' (line: ' . $entry['line'] . ')</li>';
 			}
-			else {
-				$debug[0]['file'] = str_replace($document_root, '', $debug[0]['file']);
-				echo '<li>Invoked by: ' . $debug[0]['file'] . ' (line: <strong>' . $debug[0]['line'] . '</strong>)</li>';
-				echo '<li>Occurs in: ' . $file . ' (line: <strong>' . $line . '</strong>)</li>';
-			}
-
-			echo '</ul>';
-			echo self::commonHtmlFooter();
+			$error_page .= '</ol></li>';
 		}
 
-		if ($headers_sent) {
-			ob_end_flush();
-		}
-		exit;
+		$error_page .= '</ul>';
+		$error_page .= self::commonHtmlFooter();
+
+		die($error_page);
 	}
 
 
@@ -90,7 +74,7 @@ class Core {
 	 * Check if application is in development mode
 	 */
 
-	public function isDev() : bool {
+	public static function isDev() : bool {
 		return (\Config::$DEBUG === true || (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)));
 	}
 
@@ -123,7 +107,7 @@ class Core {
 	 * @return array
 	 */
 
-	public function processArray(array $array, string $key_name) : array {
+	public static function processArray(array $array, string $key_name) : array {
 		$processed_array = [];
 		foreach($array as $val) {
 			if (isset($val[$key_name])) {
@@ -181,6 +165,7 @@ class Core {
 					p { margin-top: 20px; line-height: 1.6em; }
 					small { font-size: .9em; color: #8fa3ad; }
 					ul { margin-top: 20px; padding-left: 20px; color: #4f4f4f; font-size: 12px; line-height: 1.6em; }
+					ol { margin-left: 20px; }
 					li { margin-bottom: 4px; }
 
 					a { text-decoration: none; color: #00a8ff; transition: .2s; }
@@ -210,6 +195,15 @@ class Core {
 
 	public static function commonHtmlFooter() {
 		return '</div></main></body></html>';
+	}
+
+
+	/**
+	 * Process file path to prevent FPD (Full Path Disclolsure) attack
+	 */
+
+	public static function processSystemFilePath(string $file_path) : string {
+		return basename($file_path);
 	}
 
 }
