@@ -29,7 +29,9 @@ if (count($languages) < 1) {
 // Loop over languages received from DB and set the active
 foreach($languages as $lang) {
 	$lang_str .= '<li';
-	if ($active_lang == $lang['code']) $lang_str .= ' class="active"';
+	if ($active_lang == $lang['code']) {
+		$lang_str .= ' class="active"';
+	}
 	$lang_str .= '><a href="admin/content?language=' . $lang['code'] . '&amp;field_category=' . $router->getQuery('field_category') . '">' . $lang['short_name'] . '</a></li>';
 }
 

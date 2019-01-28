@@ -17,7 +17,7 @@ if (IN_ADMIN !== true) {
  */
 
 $error_msg = null;
-$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '" . $user->getId() . "' LIMIT 1");
+$result    = $db->query("SELECT `password` FROM `users` WHERE `id` = '" . $user->getId() . "' LIMIT 1");
 $user_data = $db->fetch($result);
 
 if (empty($_POST['password_actual'])) {
@@ -56,4 +56,6 @@ if ($result) {
 	$ajax->set('message', 'Password changes successfully.');
 	$_SESSION['password'] = $new_password;
 }
-else $ajax->set('message', 'Password change process failed.');
+else {
+	$ajax->set('message', 'Password change process failed.');
+}

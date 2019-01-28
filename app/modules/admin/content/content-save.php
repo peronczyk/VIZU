@@ -26,7 +26,9 @@ foreach($_POST as $post_key => $post_val) {
 	}
 
 	// Stop if post field does not exists in template
-	if (!is_array($template_fields[$post_key])) continue;
+	if (!is_array($template_fields[$post_key])) {
+		continue;
+	}
 
 	// If field doesn't exist create it
 	if (!isset($fields_data[$post_key])) {

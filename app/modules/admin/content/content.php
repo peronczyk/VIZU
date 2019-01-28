@@ -19,12 +19,12 @@ if (IN_ADMIN !== true) {
 // Check if field types or group was queried
 // If yes set up allowed_field_types to view them
 
-$field_category = $router->getQuery('field_category');
+$selected_field_category = $router->getQuery('field_category');
 
-if ($field_category) {
-	if (in_array($field_category, Config::$FIELD_CATEGORIES['content'])) {
-		$allowed_field_category = [$field_category];
-		$tpl->assign(['field_type' => $field_category]);
+if ($selected_field_category) {
+	if (in_array($selected_field_category, Config::$FIELD_CATEGORIES['content'])) {
+		$allowed_field_category = [$selected_field_category];
+		$tpl->assign(['field_type' => $selected_field_category]);
 	}
 	else {
 		$ajax->set('error', [

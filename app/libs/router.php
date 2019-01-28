@@ -157,7 +157,9 @@ class Router {
 		$redirect_url = $this->site_path . '/' . $path;
 
 		if ($add_request && count($this->request) > 0) {
-			if (substr($redirect_url, -1) != '/') $redirect_url .= '/';
+			if (substr($redirect_url, -1) != '/') {
+				$redirect_url .= '/';
+			}
 			$redirect_url .= implode('/', $this->request);
 		}
 		if ($add_query && !empty($_SERVER['QUERY_STRING'])) {
