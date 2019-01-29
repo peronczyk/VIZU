@@ -1,11 +1,13 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Module: Admin / History
-#
-# ==================================================================================
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Module: Admin / History
+ *
+ * =================================================================================
+ */
 
 if (IN_ADMIN !== true) {
 	die('This file can be loaded only in admin module');
@@ -47,12 +49,18 @@ foreach($fields_data_simple as $key => $val) {
 	if (!isset($template_fields[$key]['name']) || !isset($template_fields[$key]['category'])) {
 		continue;
 	}
-
 	$date = explode(' ', $val);
 	switch($template_fields[$key]['category']) {
-		case 'text':    $category = 'Content'; break;
-		case 'setting': $category = 'Setting'; break;
-		default:        $category = null; break;
+		case 'text':
+			$category = 'Content';
+			break;
+
+		case 'setting':
+			$category = 'Setting';
+			break;
+
+		default:
+			$category = null;
 	}
 	$display_str .= '<tr><td>' . $category . '</td><td>' . $template_fields[$key]['name'] . '</td><td>' . $date[0] . '</td><td>' . $date[1] . '</td></tr>';
 }

@@ -1,16 +1,18 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Module: Admin
-#
-# ==================================================================================
+/**
+ * =================================================================================
+ *
+ * IZU CMS
+ * Module: Admin
+ *
+ * =================================================================================
+ */
 
 // Security constant. Needs to be checked in all included files
 define('IN_ADMIN', true);
 
-$tpl = new libs\Template();
+$tpl = new Template();
 
 $tpl->setTheme('admin');
 $tpl->assign([
@@ -21,7 +23,7 @@ $tpl->assign([
 	'phpversion'     => phpversion(),
 ]);
 
-$user = new libs\User($db);
+$user = new User($db);
 
 /**
  * PAGE LOADED VIA AJAX
@@ -29,7 +31,7 @@ $user = new libs\User($db);
  * If true change the behavior of page to always return JSON data.
  */
 
-if (libs\Core::$ajax_loaded === true) {
+if (Core::$ajax_loaded === true) {
 
 	/**
 	 * Bypass default PHP errors by custom error handler.
@@ -55,7 +57,7 @@ if (libs\Core::$ajax_loaded === true) {
 	 * Start AJAX class and set it up
 	 */
 
-	$ajax = new libs\Ajax();
+	$ajax = new Ajax();
 
 	$display = true; // Is there anything that needs to be shown?
 
@@ -73,6 +75,9 @@ if (libs\Core::$ajax_loaded === true) {
 
 	if (count($_POST) > 0) {
 		switch($request) {
+
+			// LOGIN
+
 			case 'login':
 				$auth = $user->login($_POST['email'], $_POST['pass']);
 				if ($auth === true) {
@@ -150,7 +155,7 @@ if (libs\Core::$ajax_loaded === true) {
 
 			default:
 				$ajax->set('error', [
-					'str'  => 'Nieznana funkcja: ' . $request,
+					'str'  => 'Unknown function: ' . $request,
 					'file' => __FILE__,
 					'line' => __LINE__
 				]);
@@ -184,7 +189,7 @@ else {
 		]);
 	}
 
-	$template_content  = $tpl->getContent('index');
-	$template_fields   = $tpl->getFields($template_content);
+	$template_content = $tpl->getContent('index');
+	$template_fields  = $tpl->getFields($template_content);
 	echo $tpl->parse($template_content, $template_fields);
 }
