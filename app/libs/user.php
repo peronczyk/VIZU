@@ -1,23 +1,38 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Lib: User
-#
-# ==================================================================================
-
-namespace libs;
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Lib: User
+ *
+ * =================================================================================
+ */
 
 class User {
 
-	private $_db;        // Handle to database controller
-	private $access = 0; // User access level. 0 = no access to admin panel
-	private $id;         // Logged in user ID
-	private $email;      // Logged in user email adress (login)
-
+	/**
+	 * Handle to database controller
+	 */
+	private $_db;
 
 	/**
+	 * User access level. 0 = no access to admin panel
+	 */
+	private $access = 0;
+
+	/**
+	 * Logged in user ID
+	 */
+	private $id;
+
+	/**
+	 * Logged in user email adress (login)
+	 */
+	private $email;
+
+
+	/** ----------------------------------------------------------------------------
 	 * Constructor & login status check
 	 */
 
@@ -43,20 +58,22 @@ class User {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * SETTER : Access level
 	 */
 
-	public function setAccess($lvl) {
-		if (is_int($lvl) && $lvl > -1) {
+	public function setAccess(int $lvl) {
+		if ($lvl > -1) {
 			$this->access = $lvl;
 			return true;
 		}
-		else return false;
+		else {
+			return false;
+		}
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : User access level
 	 */
 
@@ -65,7 +82,7 @@ class User {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : Logged in user email (login)
 	 */
 
@@ -74,7 +91,7 @@ class User {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : Logged in user ID
 	 */
 
@@ -83,16 +100,16 @@ class User {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Verify login (email address)
 	 */
 
 	public function verifyUsername($username) {
-		return (filter_var($username, FILTER_VALIDATE_EMAIL) !== false) ? true : false;
+		return (filter_var($username, FILTER_VALIDATE_EMAIL) !== false);
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Verify password
 	 */
 
@@ -112,7 +129,7 @@ class User {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Try to login user
 	 *
 	 * @param string $login
@@ -121,9 +138,15 @@ class User {
 	 */
 
 	public function login($email, $password) {
-		if (empty($email)) return 'Account login (email) not provided';
-		if (empty($password)) return 'Account password not provided';
-		if (!$this->verifyUsername($email)) return 'Provided email address is not correct';
+		if (empty($email)) {
+			return 'Account login (email) not provided';
+		}
+		if (empty($password)) {
+			return 'Account password not provided';
+		}
+		if (!$this->verifyUsername($email)) {
+			return 'Provided email address is not correct';
+		}
 
 		$result = $this->_db->query('SELECT `id`, `password` FROM `users` WHERE `email` = "' . $email . '" LIMIT 1');
 		$user_data = $this->_db->fetch($result);
@@ -134,11 +157,13 @@ class User {
 			$_SESSION['password'] = $user_data[0]['password'];
 			return true;
 		}
-		else return 'Incorrect login details were provided';
+		else {
+			return 'Incorrect login details were provided';
+		}
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Logout user
 	 */
 
@@ -149,15 +174,17 @@ class User {
 	}
 
 
-	/**
-	 * Password generator
+	/** ----------------------------------------------------------------------------
+	 * Random password generator
 	 * This code generates random "easy" to remember passwords that are built by
 	 * letters and 2 digits at the end. One of the letters are uppercase.
 	 */
 
-	public function generatePassword($length = 10) {
+	public function generatePassword(int $length = 10) {
 		// Length paramenter must be a multiple of 2
-		if (($length % 2) !== 0) $length++;
+		if (($length % 2) !== 0) {
+			$length++;
+		}
 
 		// Make room for the two-digit number on the end
 		$length = $length - 2;
@@ -179,7 +206,7 @@ class User {
 		$password[$uppercase_letter] = strtoupper($password[$uppercase_letter]);
 
 		// Add two digits at the end
-		$password .= rand(10,99);
+		$password .= rand(10, 99);
 
 		return $password;
 	}

@@ -1,16 +1,17 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Module: Admin / Edit
-#
-# ==================================================================================
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Module: Admin / Edit
+ *
+ * =================================================================================
+ */
 
 if (IN_ADMIN !== true) {
 	die('This file can be loaded only in admin module');
 }
-
 
 /**
  * Common operations
@@ -49,7 +50,7 @@ $active_lang = (!empty($router->query['language']) && strlen($router->query['lan
 	? $router->query['language']
 	: $lang->get();
 
-$ajax->add('log', 'Active language: ' . $active_lang);
+	$ajax->add('log', 'Active language: ' . $active_lang);
 
 
 // Get data from database for all fields
@@ -190,9 +191,9 @@ else {
 			// If class of field failed to start
 			if (!is_object($field_class[$field['type']])) {
 				$ajax->set('error', [
-					'str'	=> $field_class[$field['type']],
-					'file'	=> __FILE__,
-					'line'	=> __LINE__
+					'str'  => $field_class[$field['type']],
+					'file' => __FILE__,
+					'line' => __LINE__
 				]);
 				continue;
 			}
@@ -220,7 +221,7 @@ else {
 	}
 
 	if ($not_used_fields_num > 0) {
-		$tpl->assign(['other_fields' => 'Pola nie użyte: ' . $not_used_fields_num]);
+		$tpl->assign(['other_fields' => 'Fields not used: ' . $not_used_fields_num]);
 	}
 	else {
 		$tpl->assign(['other_fields' => '']);

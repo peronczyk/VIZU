@@ -1,13 +1,13 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Lib: Language
-#
-# ==================================================================================
-
-namespace libs;
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Lib: Language
+ *
+ * =================================================================================
+ */
 
 class Language {
 
@@ -20,30 +20,30 @@ class Language {
 	private $_db; // Handle to database class
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Constructor & dependency injection
 	 *
-	 * @param object $router - Router class
-	 * @param object $db - Database handling class
+	 * @param Object $router - Router class
+	 * @param Object $db - Database handling class
 	 */
 
-	public function __construct($router, $db) {
+	public function __construct(Router $router, Database $db) {
 		$this->_router = $router;
 		$this->_db = $db;
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : List of configured languages
 	 *
-	 * @return array
+	 * @return Array
 	 */
 
-	public function get_list() {
+	public function getList() {
 		if (!$this->lang_list) {
 			$result = $this->_db->query('SELECT * FROM `languages`', true);
 			if (!$result) {
-				\libs\Core::error('Language database table does not exist. Probably application was not installed properly. Please run <a href="install/">installation</a> process.', __FILE__, __LINE__, debug_backtrace());
+				\Core::error('Language database table does not exist. Probably application was not installed properly. Please run <a href="install/">installation</a> process.', __FILE__, __LINE__, debug_backtrace());
 			}
 			$this->lang_list = $this->_db->fetch($result);
 		}
@@ -51,10 +51,10 @@ class Language {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : Active language code
 	 *
-	 * @return string{2}
+	 * @return String{2}
 	 */
 
 	public function get() {
@@ -62,10 +62,10 @@ class Language {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Set active language
 	 *
-	 * @return boolean - Returns false if language was set to default
+	 * @return Boolean - Returns false if language was set to default
 	 */
 
 	public function set() {
@@ -113,19 +113,19 @@ class Language {
 			return false;
 		}
 		else {
-			\libs\Core::error('Configured default page language does not exist in database or it is inactive.', __FILE__, __LINE__, debug_backtrace());
+			\Core::error('Configured default page language does not exist in database or it is inactive.', __FILE__, __LINE__, debug_backtrace());
 		}
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Check if provided lang code matches any configured language in database
 	 *
-	 * @return boolean
+	 * @return Boolean
 	 */
 
 	public function exists($lang_code) {
-		$lang_list = $this->get_list();
+		$lang_list = $this->getList();
 		if ($lang_list && count($lang_list) > 0) {
 			foreach($lang_list as $lang) {
 				if ($lang['code'] == $lang_code && (bool)$lang['active'] === true) {
@@ -137,13 +137,13 @@ class Language {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Load theme translations
 	 *
-	 * @return boolean
+	 * @return Boolean
 	 */
 
-	public function load_theme_translations() {
+	public function loadThemeTranslations() {
 		if (!$this->lang_code) return false;
 
 		$lang_file = \Config::$THEMES_DIR . \Config::$THEME_NAME . '/lang/' . $this->lang_code . '.php';
@@ -153,12 +153,12 @@ class Language {
 			return true;
 		}
 		else {
-			\libs\Core::error('Theme translations file not found at location: ' . $lang_file, __FILE__, __LINE__);
+			\Core::error('Theme translations file not found at location: ' . $lang_file, __FILE__, __LINE__);
 		}
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Translate string
 	 *
 	 * @param string $key - Key name that will be returned from loaded translations
@@ -166,7 +166,7 @@ class Language {
 	 *	in loaded translations. If array is passed script searches in it for key.
 	 *	If string is passed it will be returned as it is.
 	 *
-	 * @return string|false
+	 * @return String|false
 	 */
 
 	public function _t($key, $additionals = false) {

@@ -1,31 +1,39 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Lib: Template
-#
-# ==================================================================================
-
-namespace libs;
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Lib: Template
+ *
+ * =================================================================================
+ */
 
 class Template {
 
-	// Assignement storage. This values will be parsed in to the template
-	// eg.: {{ text id='foo'}} will be changed with 'foo' => 'Bar'
-	public $vars = [];
+	/**
+	 * Assignement storage. This values will be parsed in to the template
+	 * eg.: {{ text id='foo'}} will be changed with 'foo' => 'Bar'
+	 */
+	public $vars = array();
 
-	// Stores theme name (folder)
+	/**
+	 * Stores theme name (folder)
+	 */
 	private $theme;
 
-	// Templates direcotory name that is inside each theme
+	/**
+	 * Templates direcotory name that is inside each theme
+	 */
 	private $tpl_dir = 'templates/';
 
-	// Template files extension
+	/**
+	 * Template files extension
+	 */
 	private $tpl_ext = '.html';
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * SETTER : Theme direcory name
 	 */
 
@@ -34,10 +42,10 @@ class Template {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Check if template exists
 	 *
-	 * @return string|false - Return template path or false if not found
+	 * @return String|false - Return template path or false if not found
 	 */
 
 	public function getTemplatePath(string $file) {
@@ -54,8 +62,10 @@ class Template {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Load field class
+	 *
+	 * @return String
 	 */
 
 	public function loadFieldClass(string $field_name) {
@@ -76,7 +86,7 @@ class Template {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Get contents of template file
 	 */
 
@@ -92,7 +102,7 @@ class Template {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Assign vars to parse
 	 */
 
@@ -103,11 +113,11 @@ class Template {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Prepare array of fields found in content
 	 *
-	 * @param string $content
-	 * @return array
+	 * @param String $content
+	 * @return Array
 	 */
 
 	public function getFields(string $content) {
@@ -115,7 +125,7 @@ class Template {
 		$fields = [];
 
 		foreach($matches[1] as $key => $val) {
-			$val    = trim($val); // Remove spaces from beggining and the end
+			$val    = trim($val);
 			$chunks = array_filter(explode(' ', $val));
 			$field  = [];
 
@@ -144,12 +154,12 @@ class Template {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Parse template
 	 *
-	 * @param string $content - HTML code with template tags: {{ something }}
-	 * @param array $fields
-	 * @param array $translations
+	 * @param String $content - HTML code with template tags: {{ something }}
+	 * @param Array $fields
+	 * @param Array $translations
 	 */
 
 	public function parse(string $content, array $fields, array $translations = []) {

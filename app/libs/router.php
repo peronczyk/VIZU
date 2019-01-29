@@ -1,25 +1,50 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Lib: Router
-#
-# ==================================================================================
-
-namespace Libs;
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Lib: Router
+ *
+ * =================================================================================
+ */
 
 class Router {
 
-	public $protocol;   // Website protocol: http:// or https://
-	public $url;        // Full actual URL
-	public $domain;     // Domain, eg: domain.com
-	public $site_path;  // Website path, eg: http://www.domain.com/website
-	public $request;    // Array of reqested modules, eg: /admin/login
-	public $query;      // Array of requested query, eg: ?foo=bar&baz=lorem
-
+	/**
+	 * Website protocol: http:// or https://
+	 */
+	public $protocol;
 
 	/**
+	 * Full actual URL
+	 */
+	public $url;
+
+	/**
+	 * Domain, eg: domain.com
+	 */
+	public $domain;
+
+	/**
+	 * Website path, eg: http://www.domain.com/website
+	 */
+	public $site_path;
+
+	/**
+	 * Reqested modules, eg: /admin/login
+	 * @var Array
+	 */
+	public $request = [];
+
+	/**
+	 * Requested query, eg: ?foo=bar&baz=lorem
+	 * @var Array
+	 */
+	public $query = [];
+
+
+	/** ----------------------------------------------------------------------------
 	 * Constructor
 	 * Sets often used variables that describes user location
 	 */
@@ -67,7 +92,7 @@ class Router {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Load module
 	 */
 
@@ -91,6 +116,10 @@ class Router {
 	}
 
 
+	/** ----------------------------------------------------------------------------
+	 * Get first request
+	 */
+
 	public function getFirstRequest() {
 		return (isset($this->request[0]))
 			? $this->request[0]
@@ -98,7 +127,7 @@ class Router {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Request shift
 	 * Remove first request from array
 	 */
@@ -109,11 +138,11 @@ class Router {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Redirect to specified module
 	 *
-	 * @param boolean $add_request
-	 * @param boolean $add_query
+	 * @param Boolean $add_request
+	 * @param Boolean $add_query
 	 */
 
 	public function redirect($path, $add_request = false, $add_query = false) {
@@ -131,7 +160,7 @@ class Router {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Redirect to url address with WWW at the beginning
 	 * if configuration requires it.
 	 */
