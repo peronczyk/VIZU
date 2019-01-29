@@ -1,14 +1,22 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	https://github.com/peronczyk/vizu
-#
-# ==================================================================================
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Simple, dependency-free CMS system that allows for quick implementation of
+ * simple one-pages without having to configure anything in the administration panel
+ *
+ * ---------------------------------------------------------------------------------
+ *
+ * @see    https://github.com/peronczyk/vizu
+ * @author Bartosz Perończyk <bartosz@peronczyk.com>
+ *
+ * =================================================================================
+ */
 
 
-define('VIZU_VERSION', '1.2.2');
+define('VIZU_VERSION', '1.3.0');
 
 
 /**
@@ -22,7 +30,7 @@ require_once 'config-app.php';
 
 
 /**
- * Load class autoloader
+ * Class autoloader
  */
 
 require_once Config::$APP_DIR . 'autoload.php';
@@ -32,17 +40,17 @@ require_once Config::$APP_DIR . 'autoload.php';
  * Start core libraries
  */
 
-$core   = new libs\Core();
-$router = new libs\Router();
+$core   = new Core();
+$router = new Router();
 
 
 /**
  * Load theme configuration
  */
 
-$theme_configuration_file = \Config::$THEMES_DIR . \Config::$THEME_NAME . '/config-theme.php';
+$theme_configuration_file = Config::$THEMES_DIR . Config::$THEME_NAME . '/config-theme.php';
 if (!file_exists($theme_configuration_file)) {
-	libs\Core::error('Theme configuration file is missing', __FILE__, __LINE__, debug_backtrace());
+	Core::error('Theme configuration file is missing', __FILE__, __LINE__, debug_backtrace());
 }
 $theme_config = require_once $theme_configuration_file;
 
@@ -69,10 +77,10 @@ elseif (file_exists('config-db.php')) {
 	$db_config = require_once 'config-db.php';
 }
 else {
-	libs\Core::error('Database configuration file (config-db.php) is missing. You can copy this file from <a href="https://raw.githubusercontent.com/peronczyk/VIZU/master/config-db.php">this</a> location. Be sure to set database connection credentials.', __FILE__, __LINE__, debug_backtrace());
+	Core::error('Database configuration file (config-db.php) is missing. You can copy this file from <a href="https://raw.githubusercontent.com/peronczyk/VIZU/master/config-db.php">this</a> location. Be sure to set database connection credentials.', __FILE__, __LINE__, debug_backtrace());
 }
 
-$db = new libs\Database($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
+$db = new Mysql($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
 unset($db_config);
 
 
@@ -82,9 +90,9 @@ unset($db_config);
  */
 
 if ($router->getFirstRequest() !== 'install') {
-	$lang = new libs\Language($router, $db);
+	$lang = new Language($router, $db);
 	$lang->set();
-	$lang->load_theme_translations();
+	$lang->loadThemeTranslations();
 }
 
 

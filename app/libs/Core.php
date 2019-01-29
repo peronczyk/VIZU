@@ -1,13 +1,13 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Lib: Core
-#
-# ==================================================================================
-
-namespace libs;
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Lib: Core
+ *
+ * =================================================================================
+ */
 
 class Core {
 
@@ -15,7 +15,7 @@ class Core {
 	public static $ajax_loaded = false;
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Constructor
 	 */
 
@@ -34,7 +34,7 @@ class Core {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Force display PHP errors
 	 */
 
@@ -45,7 +45,7 @@ class Core {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Display critical errors
 	 *
 	 * @param string $msg
@@ -91,7 +91,7 @@ class Core {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Check if application is in development mode
 	 */
 
@@ -100,17 +100,17 @@ class Core {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : Mtime
 	 */
 
-	public static function getMtime() {
+	public static function get_mtime() {
 		list($usec, $sec) = explode (' ', microtime());
 		return (float)$usec + (float)$sec;
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Change default keys in array to $key_name values taken from inside the array
 	 *
 	 * @param array $array
@@ -133,7 +133,7 @@ class Core {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Aplication messages HTML header structure
 	 *
 	 * @return string
@@ -183,7 +183,7 @@ class Core {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Aplication messages HTML footer structure
 	 *
 	 * @return string

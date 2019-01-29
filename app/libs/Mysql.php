@@ -1,15 +1,15 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Lib: Database
-#
-# ==================================================================================
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Lib: Database
+ *
+ * =================================================================================
+ */
 
-namespace libs;
-
-class Database {
+class Mysql implements SqlDb {
 
 	private $host;
 	private $user;
@@ -20,7 +20,7 @@ class Database {
 	private $queries_count = 0;
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Constructor
 	 */
 
@@ -32,7 +32,7 @@ class Database {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Connect to database
 	 */
 
@@ -50,7 +50,7 @@ class Database {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : Database connection handle
 	 */
 
@@ -59,18 +59,20 @@ class Database {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Query
 	 *
-	 * @param string $query - MySQL query
-	 * @param boolean $is_silent - if true this method will not throw errors
+	 * @param String $query - MySQL query
+	 * @param Boolean $is_silent - if true this method will not throw errors
 	 *	on failure.
 	 *
 	 * @return object - MySQL result
 	 */
 
 	public function query(string $query, $is_silent = false) {
-		if (!$this->connection) $this->connect();
+		if (!$this->connection) {
+			$this->connect();
+		}
 
 		$result = $this->connection->query($query);
 		$this->queries_count++;
@@ -84,7 +86,7 @@ class Database {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Fetch results
 	 *
 	 * @return array|false
@@ -99,7 +101,7 @@ class Database {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : Database server version
 	 */
 
@@ -111,7 +113,7 @@ class Database {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Check if application is connected to database
 	 */
 
@@ -120,7 +122,7 @@ class Database {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : Number of performed queries
 	 */
 
@@ -129,7 +131,7 @@ class Database {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * GETTER : Database name
 	 */
 
@@ -138,7 +140,7 @@ class Database {
 	}
 
 
-	/**
+	/** ----------------------------------------------------------------------------
 	 * Import file
 	 */
 

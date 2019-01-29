@@ -1,25 +1,23 @@
 <?php
 
-# ==================================================================================
-#
-#	VIZU CMS
-#	Lib: reCAPTCHA v3
-#
-# ==================================================================================
-
-namespace libs;
+/**
+ * =================================================================================
+ *
+ * VIZU CMS
+ * Lib: reCAPTCHA v3
+ *
+ * =================================================================================
+ */
 
 class Recaptcha3 {
 	const MIN_SCORE = 0.5; // Default minimal score
 	const VERIFY_API_URL = 'https://www.google.com/recaptcha/api/siteverify';
 
 	private $curl;
-	private $mailer;
 	private $secret;
 
-	public function __construct(Curl $curl, Mailer $mailer, string $secret) {
+	public function __construct(Curl $curl, string $secret) {
 		$this->curl = $curl;
-		$this->mailer = $mailer;
 		$this->secret = $secret;
 	}
 
