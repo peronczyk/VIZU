@@ -36,10 +36,8 @@ class User {
 	 * Constructor & login status check
 	 */
 
-	public function __construct($db) {
-		// Check if variable passed to this class is database controller
-		if ($db && is_object($db) && is_a($db, __NAMESPACE__ . '\Database')) $this->_db = $db;
-		else Core::error('Variable passed to class "User" is not correct "Database" object', __FILE__, __LINE__, debug_backtrace());
+	public function __construct(SqlDb $db) {
+		$this->_db = $db;
 
 		// Set up access level by checking if user is logged in
 

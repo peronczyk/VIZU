@@ -9,7 +9,7 @@
  * =================================================================================
  */
 
-class Database {
+class Mysql implements SqlDb {
 
 	private $host;
 	private $user;
@@ -70,7 +70,9 @@ class Database {
 	 */
 
 	public function query(string $query, $is_silent = false) {
-		if (!$this->connection) $this->connect();
+		if (!$this->connection) {
+			$this->connect();
+		}
 
 		$result = $this->connection->query($query);
 		$this->queries_count++;

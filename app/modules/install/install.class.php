@@ -21,7 +21,7 @@ class Install {
 	 * Constructor & dependancy injection
 	 */
 
-	public function __construct(Database $db) {
+	public function __construct(SqlDb $db) {
 		$this->_db = $db;
 	}
 

@@ -27,7 +27,7 @@ class Language {
 	 * @param Object $db - Database handling class
 	 */
 
-	public function __construct(Router $router, Database $db) {
+	public function __construct(Router $router, SqlDb $db) {
 		$this->_router = $router;
 		$this->_db = $db;
 	}
