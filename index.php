@@ -5,7 +5,7 @@
  *
  * VIZU CMS
  * Simple, dependency-free CMS system that allows for quick implementation of
- * simple one-pages without having to configure anything in the administration panel
+ * simple one-pages without having to configure anything in the administration panel.
  *
  * ---------------------------------------------------------------------------------
  *
