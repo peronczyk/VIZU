@@ -1,3 +1,5 @@
 <?php
 
-interface SqlDb {}
+interface SqlDb {
+	public function query();
+}

@@ -20,13 +20,16 @@ define('VIZU_VERSION', '1.3.0');
 
 
 /**
- * Load configuration
+ * Load application base configuration
  */
 
-if (!file_exists('config-app.php')) {
-	die('Configuration file does not exist');
+(file_exists('config.php'))
+	? require_once 'config.php'
+	: die('Configuration file does not exist');
+
+if (file_exists('config-override.php')) {
+	require_once 'config-override.php';
 }
-require_once 'config-app.php';
 
 
 /**
@@ -65,23 +68,21 @@ if (Config::$REDIRECT_TO_WWW === true) {
 
 
 /**
- * Load database handler library
- * The connection is performed on the occasion of the first query.
- * Connection configuration depends on enviroment - development or production.
+ * Load configured database handler library.
  */
 
-if ($core->isDev() && file_exists('config-db.dev.php')) {
-	$db_config = require_once 'config-db.dev.php';
-}
-elseif (file_exists('config-db.php')) {
-	$db_config = require_once 'config-db.php';
-}
-else {
-	Core::error('Database configuration file (config-db.php) is missing. You can copy this file from <a href="https://raw.githubusercontent.com/peronczyk/VIZU/master/config-db.php">this</a> location. Be sure to set database connection credentials.', __FILE__, __LINE__, debug_backtrace());
-}
+switch (Config::$DB_TYPE) {
+	case 'SQLite':
+		$db = new SQLite();
+		break;
 
-$db = new Mysql($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
-unset($db_config);
+	case 'MySQL':
+		$db = new Mysql(Config::$MYSQL_HOST, Config::$MYSQL_USER, Config::$MYSQL_PASS, Config::$MYSQL_NAME);
+		break;
+
+	default:
+		Core::error('Unknown database handler: ' . Config::$DB_NAME);
+}
 
 
 /**
