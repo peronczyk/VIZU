@@ -80,7 +80,7 @@ switch (Config::$DB_TYPE) {
 		break;
 
 	case 'MySQL':
-		$db = new Mysql(Config::$MYSQL_HOST, Config::$MYSQL_USER, Config::$MYSQL_PASS, Config::$MYSQL_NAME);
+		$db = new MySQL(Config::$MYSQL_HOST, Config::$MYSQL_USER, Config::$MYSQL_PASS, Config::$MYSQL_NAME);
 		break;
 
 	default:

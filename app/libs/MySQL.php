@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 
-class Mysql implements SqlDb {
+class MySQL implements SqlDb {
 
 	private $host;
 	private $user;
