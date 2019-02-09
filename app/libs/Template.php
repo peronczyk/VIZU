@@ -69,7 +69,7 @@ class Template {
 	 */
 
 	public function loadFieldClass(string $field_name) {
-		$class_file = 'app/fields/' . $field_name . '.php';
+		$class_file = Config::$APP_DIR . 'fields/' . $field_name . '.php';
 		if (file_exists($class_file)) {
 			require_once $class_file;
 			$class_name = 'fields\\' . $field_name;

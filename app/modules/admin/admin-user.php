@@ -48,8 +48,8 @@ switch($router->request[count($router->request) - 1]) {
 
 		// Check if entered actual password is correct
 
-		$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '" . $user->get_id() . "' LIMIT 1");
-		$user_data = $db->fetch($result);
+		$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '{$user->get_id()}' LIMIT 1");
+		$user_data = $db->fetchAll($result);
 
 		if ($user_data[0]['password'] && $user_data[0]['password'] !== $user->passwordEncode($_POST['password_actual'])) {
 			$ajax->set('message', 'Provided current password is not correct');
@@ -60,7 +60,7 @@ switch($router->request[count($router->request) - 1]) {
 		// Save new password
 
 		$new_password = $user->passwordEncode($_POST['password_new1']);
-		$result = $db->query("UPDATE `users` SET `password` = '" . $new_password . "' WHERE `id` = '" . $user->get_id() . "' LIMIT 1");
+		$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user->get_id()}' LIMIT 1");
 
 		if ($result) {
 			$ajax->set('message', 'Password changed');
@@ -88,8 +88,8 @@ switch($router->request[count($router->request) - 1]) {
 		}
 
 		// Check if email address already exists
-		$result = $db->query('SELECT * FROM `users` WHERE `email` = "' . $email . '"');
-		$user_found = $db->fetch($result);
+		$result = $db->query("SELECT * FROM `users` WHERE `email` = '{$email}'");
+		$user_found = $db->fetchAll($result);
 		if ($user_found) {
 			$ajax->set('message', 'Account with provided email address already exists');
 			break;
@@ -101,8 +101,8 @@ switch($router->request[count($router->request) - 1]) {
 			$user_id = $contact_config['default_recipient'];
 
 			// Get email addres of contact user that was set in configuration
-			$result = $db->query('SELECT `email` FROM `users` WHERE `id` = "' . $user_id . '"');
-			$fetched = $db->fetch($result);
+			$result  = $db->query("SELECT `email` FROM `users` WHERE `id` = '{$user_id}'");
+			$fetched = $db->fetchAll($result);
 
 			if (!$fetched) {
 				$ajax->set('message', "Configured default sender/receiver '{$user_id}' does not exist. Admin acount creation failed.");
@@ -134,7 +134,7 @@ switch($router->request[count($router->request) - 1]) {
 		}
 
 		// Add user to database
-		$query = $db->query('INSERT INTO `users` VALUES ("", "' . $email . '", "' . $user->password_encode($generated_password) . '")');
+		$query = $db->query("INSERT INTO `users` VALUES ('', '{$email}', '{$user->password_encode($generated_password)}')");
 
 		$ajax->set('message', "Administrator account with email address {$email} has been created.");
 		break;
@@ -145,8 +145,8 @@ switch($router->request[count($router->request) - 1]) {
 	 */
 
 	default:
-		$query = $db->query('SELECT * FROM `users`');
-		$result = $db->fetch($query);
+		$query  = $db->query('SELECT * FROM `users`');
+		$result = $db->fetchAll($query);
 		$users_list = '';
 
 		foreach($result as $user_data) {

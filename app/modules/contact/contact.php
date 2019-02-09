@@ -117,7 +117,7 @@ $bcc = [];
 $main_recipient = null;
 
 $result = $db->query('SELECT `id`, `email` FROM `users`');
-$users  = $db->fetch($result);
+$users  = $db->fetchAll($result);
 
 foreach($users as $user) {
 	if ($user['id'] == $contact_config['default_recipient']) {

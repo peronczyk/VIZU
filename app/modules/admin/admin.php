@@ -18,7 +18,7 @@ $tpl->setTheme('admin');
 $tpl->assign([
 	'app_path'       => Config::$APP_DIR,
 	'site_path'      => $router->site_path,
-	'theme_path'     => 'themes/admin',
+	'theme_path'     => Config::$THEMES_DIR . 'admin',
 	'script_version' => VIZU_VERSION,
 	'phpversion'     => phpversion(),
 ]);

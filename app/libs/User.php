@@ -42,8 +42,13 @@ class User {
 		// Set up access level by checking if user is logged in
 
 		if (!empty($_SESSION['id']) && !empty($_SESSION['password'])) {
-			$result = $this->_db->query('SELECT `email`, `password` FROM `users` WHERE `id` = "' . (int)$_SESSION['id'] . '" LIMIT 1', true);
-			$user_data = $this->_db->fetch($result);
+			try {
+				$result = $this->_db->query("SELECT `email`, `password` FROM `users` WHERE `id` = '{$_SESSION['id']}' LIMIT 1");
+				$user_data = $this->_db->fetchAll($result);
+			}
+			catch (Exception $e) {
+				$user_data = [];
+			}
 
 			if (count($user_data) > 0) {
 				if ($_SESSION['password'] === $user_data[0]['password']) {
@@ -147,7 +152,7 @@ class User {
 		}
 
 		$result = $this->_db->query('SELECT `id`, `password` FROM `users` WHERE `email` = "' . $email . '" LIMIT 1');
-		$user_data = $this->_db->fetch($result);
+		$user_data = $this->_db->fetchAll($result);
 
 		if (count($user_data) > 0 && $this->passwordEncode($password) === $user_data[0]['password']) {
 			$this->setAccess(1);

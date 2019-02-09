@@ -73,7 +73,10 @@ if (Config::$REDIRECT_TO_WWW === true) {
 
 switch (Config::$DB_TYPE) {
 	case 'SQLite':
-		$db = new SQLite();
+		$db = new SQLite(
+			Config::$STORAGE_DIR . 'database/' . Config::$SQLITE_FILE_NAME,
+			$core->isDev()
+		);
 		break;
 
 	case 'MySQL':

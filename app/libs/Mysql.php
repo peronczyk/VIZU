@@ -3,11 +3,17 @@
 /**
  * =================================================================================
  *
- * VIZU CMS
- * Lib: Database
+ * Simple MySQL abstraction class
+ *
+ * ---------------------------------------------------------------------------------
+ *
+ * @category  Database Access
+ * @author    Bartosz Perończyk <bartosz@peronczyk.com>
  *
  * =================================================================================
  */
+
+declare(strict_types=1);
 
 class Mysql implements SqlDb {
 
@@ -17,7 +23,7 @@ class Mysql implements SqlDb {
 	private $name;
 
 	private $connection;
-	private $queries_count = 0;
+	private $queries = [];
 
 
 	/** ----------------------------------------------------------------------------
@@ -54,7 +60,7 @@ class Mysql implements SqlDb {
 	 * GETTER : Database connection handle
 	 */
 
-	public function getConn() {
+	public function getConnection() {
 		return $this->connection;
 	}
 
@@ -69,18 +75,13 @@ class Mysql implements SqlDb {
 	 * @return object - MySQL result
 	 */
 
-	public function query(string $query, $is_silent = false) {
+	public function query(string $query) {
 		if (!$this->connection) {
 			$this->connect();
 		}
 
+		array_push($this->queries, $query);
 		$result = $this->connection->query($query);
-		$this->queries_count++;
-
-		// Display critical error if queried table doesn't exist
-		if (!$is_silent && !$result && mysqli_errno($this->connection) === 1146) {
-			Core::error('<strong>Queried database table does not exist</strong>. Returned error: ' . mysqli_error($this->connection) . '. Probably the application is not installed. Navigate to "install/" to start installation process.', __FILE__, __LINE__, debug_backtrace());
-		}
 
 		return $result;
 	}
@@ -92,7 +93,7 @@ class Mysql implements SqlDb {
 	 * @return array|false
 	 */
 
-	public function fetch(\mysqli_result $result) {
+	public function fetchAll($result = null) {
 		$arr = [];
 		while ($row = $result->fetch_assoc()) {
 			$arr[] = $row;
@@ -117,7 +118,7 @@ class Mysql implements SqlDb {
 	 * Check if application is connected to database
 	 */
 
-	public function isConnected() {
+	public function isConnected() : bool {
 		return ($this->connection) ? true : false;
 	}
 
@@ -127,7 +128,7 @@ class Mysql implements SqlDb {
 	 */
 
 	public function getQueriesNumber() {
-		return $this->queries_count;
+		return count($this->queries);
 	}
 
 
@@ -138,41 +139,4 @@ class Mysql implements SqlDb {
 	public function getDbName() {
 		return $this->name;
 	}
-
-
-	/** ----------------------------------------------------------------------------
-	 * Import file
-	 */
-
-	public function importFile(string $file) {
-		if (!file_exists($file)) {
-			Core::error('Unable to import SQL file "' . $file . '" because it does not exists.', __FILE__, __LINE__, debug_backtrace());
-		}
-
-		$errors = 0;
-
-		// Temporary variable, used to store current query
-		$templine = '';
-
-		// Read in entire file
-		$lines = file($file);
-
-		foreach ($lines as $line) {
-
-			// Skip it if it's a comment
-			if (substr($line, 0, 2) == '--' || $line == '') continue;
-
-			// Add this line to the current segment
-			$templine .= $line;
-
-			// If it has a semicolon at the end, it's the end of the query
-			if (substr(trim($line), -1, 1) == ';') {
-				if (!$this->query($templine)) $errors++;
-				$templine = '';
-			}
-		}
-
-		return ($errors > 0) ? false : true;
-	}
-
 }

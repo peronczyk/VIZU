@@ -45,7 +45,7 @@ class Language {
 			if (!$result) {
 				\Core::error('Language database table does not exist. Probably application was not installed properly. Please run <a href="install/">installation</a> process.', __FILE__, __LINE__, debug_backtrace());
 			}
-			$this->lang_list = $this->_db->fetch($result);
+			$this->lang_list = $this->_db->fetchAll($result);
 		}
 		return $this->lang_list;
 	}

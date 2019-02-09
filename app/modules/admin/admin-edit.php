@@ -56,7 +56,7 @@ $active_lang = (!empty($router->query['language']) && strlen($router->query['lan
 // Get data from database for all fields
 
 $result = $db->query("SELECT * FROM `fields` WHERE `template` = 'home' AND `language` = '" . $active_lang . "'");
-$fields_data = $core->processArray($db->fetch($result), 'id');
+$fields_data = $core->processArray($db->fetchAll($result), 'id');
 
 
 // Get fields from home of user template
@@ -94,7 +94,7 @@ if ($router->request[count($router->request) - 1] == 'save') {
 				$num_changes++;
 			}
 			else {
-				$ajax->add('log', 'Field "' . $post_key . '" creation failed. Query error: ' . $db->getConn()->error);
+				$ajax->add('log', 'Field "' . $post_key . '" creation failed. Query error: ' . $db->getConnection()->error);
 			}
 		}
 
@@ -130,7 +130,7 @@ else {
 
 	// Get languages
 	$result    = $db->query("SELECT * FROM `languages`");
-	$languages = $db->fetch($result);
+	$languages = $db->fetchAll($result);
 	$lang_str  = '';
 
 	if (count($languages) < 1) {

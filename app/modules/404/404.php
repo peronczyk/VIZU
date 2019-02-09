@@ -20,7 +20,7 @@ if ($tpl->getTemplatePath('404')) {
 
 	$tpl->assign([
 		'site_path'   => $router->site_path . '/',
-		'theme_path'  => 'themes/' . Config::$THEME_NAME . '/',
+		'theme_path'  => Config::$THEMES_DIR . Config::$THEME_NAME . '/',
 		'app_path'    => Config::$APP_DIR
 	]);
 

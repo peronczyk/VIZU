@@ -122,7 +122,7 @@ class Config {
 	 * complex if you want to be more sure no one will access it from browser.
 	 * @var String
 	 */
-	static $MYSQLITE_FILE_NAME = 'db.sqlite';
+	static $SQLITE_FILE_NAME = 'db.sqlite';
 
 	/**
 	 * MySQL database host name

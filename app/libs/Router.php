@@ -121,9 +121,16 @@ class Router {
 	 */
 
 	public function getFirstRequest() {
-		return (isset($this->request[0]))
-			? $this->request[0]
-			: null;
+		return $this->getRequestChunk(0);
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Get specified element of the request
+	 */
+
+	public function getRequestChunk(int $number) {
+		return $this->request[$number] ?? null;
 	}
 
 
