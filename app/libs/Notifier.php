@@ -52,6 +52,7 @@ class Notifier {
 	private function useThemeSMTP() {
 		if (
 			is_array($this->contact_config) &&
+			isset($this->contact_config['smtp']) &&
 			is_array($this->contact_config['smtp'])
 		) {
 			$smtp = $this->contact_config['smtp'];

@@ -79,7 +79,7 @@ switch($router->request[count($router->request) - 1]) {
 
 	case 'user_add':
 		$email = $_POST['email'] ?? null;
-		$contact_config = $contact_config;
+		$contact_config = $theme_config['contact'];
 
 		// Validate entered email address
 		if (empty($email) || !$user->verifyUsername($email)) {
