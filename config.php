@@ -17,6 +17,12 @@
 class Config {
 
 	/**
+	 * Site name displayed in administration panel and login screen.
+	 * @var String
+	 */
+	static $SITE_NAME = 'VIZU';
+
+	/**
 	 * VIZU module that will be loaded by default (if there is no parameters in URL)
 	 * @var String
 	 */

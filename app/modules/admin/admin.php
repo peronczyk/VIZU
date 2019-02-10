@@ -16,8 +16,9 @@ $tpl = new Template();
 
 $tpl->setTheme('admin');
 $tpl->assign([
-	'app_path'       => Config::$APP_DIR,
+	'site_name'      => Config::$SITE_NAME,
 	'site_path'      => $router->site_path,
+	'app_path'       => Config::$APP_DIR,
 	'theme_path'     => Config::$THEMES_DIR . 'admin',
 	'script_version' => VIZU_VERSION,
 	'phpversion'     => phpversion(),

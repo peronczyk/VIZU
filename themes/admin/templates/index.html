@@ -5,7 +5,7 @@
 		<base href="{{ site_path }}/">
 
 		<meta charset="utf-8">
-		<title>Administration panel</title>
+		<title>{{ site_name }} &mdash; Administration panel</title>
 
 		<link rel="stylesheet" type="text/css" href="{{ theme_path }}/style/style.css">
 		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto:400,700,300,400italic,700italic">
@@ -63,8 +63,8 @@
 		<div id="login">
 			<div class="box pad-double toleft" style="width: 360px; margin-top: 100px">
 				<form action="admin/login" method="post" class="login">
-					<a href="" class="logo logo-big">VIZU</a>
-					<h3>Zaloguj się</h3>
+					<a href="" class="logo logo-big">{{ site_name }}</a>
+					<h3>Log in to admin panel:</h3>
 					<input type="text" name="email" placeholder="Email" novalidate>
 					<input type="password" name="pass" placeholder="Hasło" novalidate>
 					<div class="buttons">
