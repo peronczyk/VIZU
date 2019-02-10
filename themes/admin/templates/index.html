@@ -64,9 +64,9 @@
 			<div class="box pad-double toleft" style="width: 360px; margin-top: 100px">
 				<form action="admin/login" method="post" class="login">
 					<a href="" class="logo logo-big">{{ site_name }}</a>
-					<h3>Log in to admin panel:</h3>
-					<input type="text" name="email" placeholder="Email" novalidate>
-					<input type="password" name="pass" placeholder="Hasło" novalidate>
+					<h3>Admin panel log in:</h3>
+					<input type="email" name="email" placeholder="Email address" novalidate>
+					<input type="password" name="pass" placeholder="Password" novalidate>
 					<div class="buttons">
 						<button type="submit" class="accept">
 							<svg class="icon-16"><use xlink:href="#icon-16_sign-in"></use></svg>
@@ -74,7 +74,17 @@
 						</button>
 					</div>
 					<div class="errorbox"></div>
-					<p><a href="user/passrec">Password recovery</a></p>
+				</form>
+
+				<p><a data-toggle-visibility="passrec">Password recovery</a></p>
+				<form action="admin/passrec" class="passrec" id="passrec">
+					<input type="email" name="email" placeholder="Email address">
+					<div class="buttons">
+						<button type="submit" class="accept">
+							<svg class="icon-16"><use xlink:href="#icon-16_back"></use></svg>
+							Recover
+						</button>
+					</div>
 				</form>
 			</div>
 		</div>

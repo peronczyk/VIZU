@@ -12,7 +12,6 @@ $(function() {
 	 *	INIT LOADED SCRIPTS
 	 *	============================================================================ */
 
-
 	var date = new Date(),
 		refreshAfter = date.getMinutes();
 
@@ -23,11 +22,11 @@ $(function() {
 	});
 
 
-
-	/*	========================================================================
-	 *	DEFINITIONS
-	 *	======================================================================== */
-
+	/**
+	 * =============================================================================
+	 * DEFINITIONS
+	 * =============================================================================
+	 */
 
 	var $pages			= $('#pages'),
 		$msgBox			= $('#msgbox'),
@@ -36,11 +35,22 @@ $(function() {
 		msgBoxInitial	= 0; // Store timeout for message box;
 
 
+	/**
+	 * =============================================================================
+	 * VISIBILITY TOGGLER
+	 * =============================================================================
+	 */
+
+	$(document).on('click', '[data-toggle-visibility]', function(event) {
+		var dataToggleValue = $(this).data('toggle-visibility');
+		$('#' + dataToggleValue).toggleClass('is-Visible');
+	});
+
+
 
 	/*	========================================================================
 	 *	AJAX SUCCESS
 	 *	======================================================================== */
-
 
 	function ajaxSuccess(obj, json, url) {
 
@@ -127,11 +137,9 @@ $(function() {
 	}
 
 
-
 	/*	============================================================================
 	 *	AJAX ERROR
 	 *	============================================================================ */
-
 
 	function ajaxError(obj, jqXHR, textStatus, errorThrown, url) {
 		if (debug) {
@@ -144,22 +152,18 @@ $(function() {
 	}
 
 
-
 	/*	============================================================================
 	 *	AJAX BEFORE SEND
 	 *	============================================================================ */
-
 
 	function ajaxStart() {
 		$loadBar.addClass('active');
 	}
 
 
-
 	/*	========================================================================
 	 *	AJAX FORMS
 	 *	======================================================================== */
-
 
 	$('body').on('submit', 'form', function(e) {
 
@@ -180,20 +184,20 @@ $(function() {
 	});
 
 
-
 	/*	========================================================================
 	 *	AJAX LINKS
 	 *	======================================================================== */
 
-
-	$('body').on('click', 'a', function() {
-
+	$(document).on('click', 'a', function() {
 		if (debug) console.info('Link clicked');
 
 		var $link	= $(this),
 			url		= $link.attr('href');
 
-		if ($link.is('[data-noajax]')) return true; // Prevent loading AJAX content on normal links
+		// Prevent loading AJAX content on normal links
+		if ($link.is('[data-noajax]') || $link.is('[data-toggle-visibility]')) {
+			return true;
+		}
 
 		$.ajax({
 			type		: 'get',
@@ -215,11 +219,9 @@ $(function() {
 	});
 
 
-
 	/*	========================================================================
 	 *	MESSAGE BOX
 	 *	======================================================================== */
-
 
 	// Close message box
 
@@ -249,15 +251,11 @@ $(function() {
 	}
 
 
-
 	/*	========================================================================
 	 *	OBSERVE CONTENT CHANGES AND REACT
 	 *	======================================================================== */
 
-
 	$pages.observe(function(mutation) {
 		$pages.find('[data-richtext]').richTextEditor();
 	}, 'childList');
-
-
 });

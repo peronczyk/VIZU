@@ -148,8 +148,13 @@ p {
  *	04. LINKS
  *	================================================================================ */
 
-a			{ color: #00a8ff; }
-a:hover 	{ color: #0092de;}
+a {
+	color: #00a8ff;
+	cursor: pointer;
+}
+a:hover {
+	color: #0092de;
+}
 
 a.nav {
 	text-transform: uppercase;
@@ -459,11 +464,18 @@ nav {
 }
 
 #pages {
+	visibility: hidden;
 	padding: 0 50px;
 	min-height: 100vh;
 	position: relative;
 	overflow: hidden;
+	opacity: 0;
 	transition: all .3s;
+}
+
+.loggedin #pages {
+	visibility: visible;
+	opacity: 1;
 }
 
 #pages.loading {
@@ -491,9 +503,15 @@ nav {
 	transition: all .4s;
 }
 
-	#login input[type=text] { margin-bottom: 10px; }
+	#login input[type='email'],
+	#login input[type='password'] {
+		margin-bottom: 10px;
+	}
 
-.loggedin #login { opacity: 0; visibility: hidden; }
+.loggedin #login {
+	opacity: 0;
+	visibility: hidden;
+}
 
 	#login > div { margin: 200px auto 0 auto; }
 
@@ -502,6 +520,13 @@ nav {
 		padding-bottom: 25px;
 		border-bottom: 1px solid #e5e5e5;
 	}
+
+.passrec {
+	display: none;
+}
+.passrec.is-Visible {
+	display: block;
+}
 
 
 /*	--------------------------------------------------------------------------------
@@ -719,7 +744,7 @@ fieldset {
 		margin-bottom: 20px;
 	}
 
-.buttons { padding-top: 10px; }
+.buttons { margin-top: 10px; }
 .buttons.ending { padding-bottom: 60px; }
 
 
