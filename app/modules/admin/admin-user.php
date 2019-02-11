@@ -111,7 +111,7 @@ switch($router->request[count($router->request) - 1]) {
 			$contact_user_email = $fetched[0]['email'];
 		}
 
-		$generated_password = $user->generatePassword();
+		$generated_password = User::generatePassword();
 		$content_fields = [
 			'Message'      => 'Administrator account created. It is strongly recomended to change your password now.',
 			'Page address' => $router->site_path,

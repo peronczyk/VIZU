@@ -81,9 +81,38 @@ if (count($_POST) > 0) {
 		case 'passrec':
 			$show_content = false;
 			if (User::verifyUsername($_POST['email'])) {
-				//$db->query
-				$notifier = new Notifier($theme_config['contact'] ?? []);
-				$ajax->set('message', 'Something');
+				$result = $db->query("SELECT `id`, `email` FROM `users` WHERE `email` = '{$_POST['email']}'");
+				$user_data = $db->fetchAll($result);
+				if (count($user_data) == 1) {
+					$user_notified = false;
+					$new_password = User::generatePassword();
+					$content_fields = [
+						'Message' => "You have requested password recovery to your administration panel. Here is your new password: <strong>{$new_password}</strong>. Please use it to log in and change it as soon as possible.",
+						'Page address' => $router->site_path,
+					];
+
+					try {
+						$notifier = new Notifier($theme_config['contact'] ?? []);
+						$notifier->notify(
+							'[' . Config::$SITE_NAME . '] Password recovery request', // Subject
+							$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
+							$user_data[0]['email'] // Recipient
+						);
+						$user_notified = true;
+					}
+					catch (Exception $e) {
+						$ajax->set('error', [
+							'str'  => 'Password recvery process failed - could not send email. Returned error: ' . $e->getMessage(),
+							'file' => __FILE__,
+							'line' => __LINE__
+						]);
+					}
+
+					if ($user_notified) {
+						$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user_data[0]['email']}' LIMIT 1");
+					}
+				}
+				$ajax->set('message', 'Password recovery process started. We have sent you further informations to your email box.');
 			}
 			else {
 				$ajax->set('error', [

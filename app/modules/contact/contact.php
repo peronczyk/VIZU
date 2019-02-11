@@ -145,7 +145,8 @@ if (count($contact_fields_errors) > 0) {
 
 
 /**
- * Prepare message body
+ * Prepare message body. There is no need to validate POST elements because
+ * PHPMailer has its own validation.
  */
 
 $content_fields = [];

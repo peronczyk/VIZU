@@ -38,9 +38,16 @@ class Notifier {
 
 		$this->contact_config = $contact_config;
 
-		// Try to set up SMTP connection if theme configuration has it
-		if ($this->contact_config) {
-			$this->useThemeSMTP();
+		if (is_array($this->contact_config)) {
+			// Try to set up SMTP connection if theme configuration has it
+			if (isset($this->contact_config['smtp'])) {
+				$this->useThemeSMTP($this->contact_config['smtp']);
+			}
+
+			// Set up "from"
+			if (!empty($this->contact_config['from'])) {
+				$this->mailer->setFrom($this->contact_config['from']);
+			}
 		}
 	}
 
@@ -49,27 +56,15 @@ class Notifier {
 	 * Set up SMTP connection based on theme configuration
 	 */
 
-	private function useThemeSMTP() {
-		if (
-			is_array($this->contact_config) &&
-			isset($this->contact_config['smtp']) &&
-			is_array($this->contact_config['smtp'])
-		) {
-			$smtp = $this->contact_config['smtp'];
-
-			if (!empty($smtp['hostname']) && !empty($smtp['username']) && !empty($smtp['password'])) {
-				$this->mailer->isSMTP();
-				$this->mailer->SMTPAuth   = true;
-				$this->mailer->SMTPSecure = 'tls';
-				$this->mailer->Host       = $smtp['hostname'];
-				$this->mailer->Username   = $smtp['username'];
-				$this->mailer->Password   = $smtp['password'];
-				$this->mailer->Port       = $smtp['port'] ?? 587;
-			}
-
-			if (!empty($smtp['from'])) {
-				$this->mailer->setFrom($smtp['from']);
-			}
+	private function useThemeSMTP(array $smtp) {
+		if (!empty($smtp['hostname']) && !empty($smtp['username']) && !empty($smtp['password'])) {
+			$this->mailer->isSMTP();
+			$this->mailer->SMTPAuth   = true;
+			$this->mailer->SMTPSecure = 'tls';
+			$this->mailer->Host       = $smtp['hostname'];
+			$this->mailer->Username   = $smtp['username'];
+			$this->mailer->Password   = $smtp['password'];
+			$this->mailer->Port       = $smtp['port'] ?? 587;
 		}
 	}
 
@@ -81,9 +76,10 @@ class Notifier {
 	 * @param String $lang
 	 */
 
-	public function prepareBodyWithTable($fields, $lang = null) {
-		$style_table = 'style="border-collapse:collapse;"';
-		$style_td    = 'style="padding: 5px;"';
+	public function prepareBodyWithTable(array $fields, $lang = null) {
+		$style_table   = 'style="border-collapse:collapse;"';
+		$style_caption = 'style="padding: 10px 0 5px 0;"';
+		$style_content = 'style="padding-bottom: 10px; border-bottom: 1px solid #dedede;"';
 
 		$fields['Time'] = date('j-n-Y') . ', ' . date('H:i');
 		$fields['Host'] = gethostbyaddr($_SERVER['REMOTE_ADDR']) . ' (' . $_SERVER['REMOTE_ADDR'] . ')';
@@ -93,7 +89,7 @@ class Notifier {
 
 		$body = "<html><body><table {$style_table}><tbody>";
 		foreach($fields as $label => $value) {
-			$body .= "<tr><td {$style_td}><strong>{$label}:</strong></td><td {$style_td}>{$value}</td></tr>";
+			$body .= "<tr><td {$style_caption}><strong>{$label}:</strong></td></tr><tr><td {$style_content}>{$value}</td></tr>";
 		}
 		$body .= '</tbody></table></body></html>';
 
@@ -106,12 +102,12 @@ class Notifier {
 	 *
 	 * @param String $subject
 	 * @param String $body
-	 * @param String $main_recipient
+	 * @param String $recipient
 	 * @param String $reply_to
 	 * @param Array $bcc
 	 */
 
-	public function notify($subject, $body, $recipient, $reply_to = null, $bcc = []) {
+	public function notify(string $subject, string $body, string $recipient, string $reply_to = null, array $bcc = []) {
 		$this->mailer->addAddress($recipient);
 
 		if ($reply_to) {

@@ -183,7 +183,7 @@ class User {
 	 * letters and 2 digits at the end. One of the letters are uppercase.
 	 */
 
-	public function generatePassword(int $length = 10) {
+	public static function generatePassword(int $length = 10) {
 		// Length paramenter must be a multiple of 2
 		if (($length % 2) !== 0) {
 			$length++;
