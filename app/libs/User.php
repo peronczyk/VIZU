@@ -107,7 +107,7 @@ class User {
 	 * Verify login (email address)
 	 */
 
-	public function verifyUsername($username) {
+	public static function verifyUsername($username) {
 		return (filter_var($username, FILTER_VALIDATE_EMAIL) !== false);
 	}
 
@@ -116,7 +116,7 @@ class User {
 	 * Verify password
 	 */
 
-	public function verifyPassword($password) {
+	public static function verifyPassword($password) {
 		return strlen($password) > 6;
 	}
 
@@ -127,7 +127,7 @@ class User {
 	 * @return {string} salted password hash
 	 */
 
-	public function passwordEncode($password) {
+	public static function passwordEncode($password) {
 		return hash('sha256', $password . \Config::$PASSWORD_SALT);
 	}
 
@@ -147,14 +147,14 @@ class User {
 		if (empty($password)) {
 			return 'Account password not provided';
 		}
-		if (!$this->verifyUsername($email)) {
+		if (!self::verifyUsername($email)) {
 			return 'Provided email address is not correct';
 		}
 
 		$result = $this->_db->query('SELECT `id`, `password` FROM `users` WHERE `email` = "' . $email . '" LIMIT 1');
 		$user_data = $this->_db->fetchAll($result);
 
-		if (count($user_data) > 0 && $this->passwordEncode($password) === $user_data[0]['password']) {
+		if (count($user_data) > 0 && self::passwordEncode($password) === $user_data[0]['password']) {
 			$this->setAccess(1);
 			$_SESSION['id'] = $user_data[0]['id'];
 			$_SESSION['password'] = $user_data[0]['password'];

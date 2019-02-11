@@ -48,7 +48,7 @@ else {
 
 $active_lang = (!empty($router->query['language']) && strlen($router->query['language']) == 2)
 	? $router->query['language']
-	: $lang->get();
+	: $lang->getActiveLangCode();
 
 	$ajax->add('log', 'Active language: ' . $active_lang);
 

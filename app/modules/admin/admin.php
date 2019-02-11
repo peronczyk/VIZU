@@ -80,7 +80,18 @@ if (count($_POST) > 0) {
 		 */
 		case 'passrec':
 			$show_content = false;
-			$ajax->set('message', 'Something');
+			if (User::verifyUsername($_POST['email'])) {
+				//$db->query
+				$notifier = new Notifier($theme_config['contact'] ?? []);
+				$ajax->set('message', 'Something');
+			}
+			else {
+				$ajax->set('error', [
+					'str'  => 'Provided email address is not valid.',
+					'file' => __FILE__,
+					'line' => __LINE__
+				]);
+			}
 			break;
 	}
 }

@@ -25,7 +25,7 @@ define('VIZU_VERSION', '1.3.0');
 
 (file_exists('config.php'))
 	? require_once 'config.php'
-	: die('Configuration file does not exist');
+	: die('Configuration file does not exist.');
 
 if (file_exists('config-override.php')) {
 	require_once 'config-override.php';
@@ -62,7 +62,7 @@ $theme_config = require_once $theme_configuration_file;
  * Redirects based on configuration and enviroment
  */
 
-if (Config::$REDIRECT_TO_WWW === true) {
+if (Config::$REDIRECT_TO_WWW) {
 	$router->redirectToWww();
 }
 
@@ -89,13 +89,21 @@ switch (Config::$DB_TYPE) {
 
 
 /**
- * Start language library and set active language
- * if user is not in installation process
+ * If user is not in installation process start language library
+ * and set active language.
  */
 
 if ($router->getFirstRequest() !== 'install') {
+	try {
+		$result = $db->query('SELECT * FROM `languages`');
+		$lang_list = $db->fetchAll($result);
+	}
+	catch (Exception $e) {
+		Core::error('Languages database table does not exist. Probably application was not installed properly. Please run <a href="install/">installation</a> process.', __FILE__, __LINE__, debug_backtrace());
+	}
 	$lang = new Language($router, $db);
-	$lang->set();
+	$lang->setList($lang_list);
+	$lang->autoSetLanguage();
 	$lang->loadThemeTranslations();
 }
 

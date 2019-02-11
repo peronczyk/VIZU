@@ -51,7 +51,7 @@ switch($router->request[count($router->request) - 1]) {
 		$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '{$user->get_id()}' LIMIT 1");
 		$user_data = $db->fetchAll($result);
 
-		if ($user_data[0]['password'] && $user_data[0]['password'] !== $user->passwordEncode($_POST['password_actual'])) {
+		if (isset($user_data[0]['password']) && $user_data[0]['password'] !== User::passwordEncode($_POST['password_actual'])) {
 			$ajax->set('message', 'Provided current password is not correct');
 			return;
 		}
@@ -59,7 +59,7 @@ switch($router->request[count($router->request) - 1]) {
 
 		// Save new password
 
-		$new_password = $user->passwordEncode($_POST['password_new1']);
+		$new_password = User::passwordEncode($_POST['password_new1']);
 		$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user->get_id()}' LIMIT 1");
 
 		if ($result) {
@@ -82,7 +82,7 @@ switch($router->request[count($router->request) - 1]) {
 		$contact_config = $theme_config['contact'];
 
 		// Validate entered email address
-		if (empty($email) || !$user->verifyUsername($email)) {
+		if (empty($email) || !User::verifyUsername($email)) {
 			$ajax->set('message', 'Provided email address is missing or incorrect');
 			break;
 		}
@@ -124,7 +124,7 @@ switch($router->request[count($router->request) - 1]) {
 			$notifier = new Notifier($contact_config);
 			$notifier->notify(
 				"[{$router->domain}] Account registration", // Subject
-				$notifier->prepareBodyWithTable($content_fields, $lang->get()), // Body
+				$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
 				$email // Recipient
 			);
 		}

@@ -23,7 +23,7 @@ $template_fields  = $tpl->getFields($template_content);
 if (count($template_fields) > 0) {
 
 	// Get data from database for all fields
-	$result = $db->query("SELECT `id`, `content` FROM `fields` WHERE `template` = 'home' AND `language` = '{$lang->get()}'");
+	$result = $db->query("SELECT `id`, `content` FROM `fields` WHERE `template` = 'home' AND `language` = '{$lang->getActiveLangCode()}'");
 	$fields_data = $core->processArray($db->fetchAll($result), 'id');
 
 	if (is_array($fields_data) && count($fields_data) > 0) {
@@ -46,7 +46,7 @@ $tpl->assign([
 	'site_path'    => $router->site_path . '/',
 	'theme_path'   => Config::$THEMES_DIR . Config::$THEME_NAME . '/',
 	'app_path'     => Config::$APP_DIR,
-	'lang_code'    => $lang->get(),
+	'lang_code'    => $lang->getActiveLangCode(),
 	'db_connected' => (int)$db->isConnected(),
 	'db_queries'   => (int)$db->getQueriesNumber(),
 	'fields'       => print_r($template_fields, true), // For debug purposes

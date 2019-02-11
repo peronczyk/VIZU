@@ -162,7 +162,7 @@ try {
 	$notifier = new Notifier($contact_config);
 	$notifier->notify(
 		"[{$router->domain}] Contact message", // Subject
-		$notifier->prepareBodyWithTable($content_fields, $lang->get()), // Body
+		$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
 		$main_recipient, // Recipient
 		$_POST['email'], // Reply to
 		$bcc // BCC
