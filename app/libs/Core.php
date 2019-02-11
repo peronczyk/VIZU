@@ -11,10 +11,6 @@
 
 class Core {
 
-	// Check if script is running as AJAX request
-	public static $ajax_loaded = false;
-
-
 	/** ----------------------------------------------------------------------------
 	 * Constructor
 	 */
@@ -26,10 +22,6 @@ class Core {
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) {
 			session_start();
-		}
-
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-			self::$ajax_loaded = true;
 		}
 	}
 
@@ -55,12 +47,11 @@ class Core {
 	 */
 
 	public static function error($msg, $file = null, $line = null, $debug = null) {
-
 		// Hide server document root from file path
 		$document_root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
 		$file = str_replace($document_root, '', $file);
 
-		if (self::$ajax_loaded === true) {
+		if (self::isAjaxRequest()) {
 			header('Content-type: application/json');
 			echo json_encode([
 				'error' => [
@@ -86,7 +77,7 @@ class Core {
 			echo '</ul>';
 			echo self::commonHtmlFooter();
 		}
-		if ($headers_sent) ob_end_flush();
+
 		exit;
 	}
 
@@ -104,7 +95,7 @@ class Core {
 	 * GETTER : Mtime
 	 */
 
-	public static function get_mtime() {
+	public static function getMtime() {
 		list($usec, $sec) = explode (' ', microtime());
 		return (float)$usec + (float)$sec;
 	}
@@ -120,7 +111,9 @@ class Core {
 	 */
 
 	public function processArray($array, $key_name) {
-		if (!is_array($array)) return false;
+		if (!is_array($array)) {
+			return false;
+		}
 
 		$processed_array = [];
 		foreach($array as $val) {
@@ -130,6 +123,16 @@ class Core {
 			}
 		}
 		return $processed_array;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Check if page was requested with asynchronous call
+	 * @return Boolean
+	 */
+
+	public static function isAjaxRequest() {
+		return (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') == 'xmlhttprequest');
 	}
 
 

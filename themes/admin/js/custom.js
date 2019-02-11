@@ -117,15 +117,18 @@ $(function() {
 		}
 
 		// User auth
-		if (json.loggedin !== true) {
+		if (json.message) {
+			showMsg('message', json.message);
+		}
+		else if (json.loggedin !== true) {
 			$('body').removeClass('loggedin');
 			$pages.empty();
-			showMsg('error', 'Nie jesteś zalogowany');
+			showMsg('error', 'This operation requires you to be logged in.');
 		}
 		else {
 			$('body').addClass('loggedin');
 
-			if ('html' in json && json.html) {
+			if (json.html) {
 				if (debug) console.info('HTML found in received JSON. Rendering new page...');
 				$pages.addClass('loading').on('transitionend', function(event) {
 					$(this).html(json.html).off().removeClass('loading'); // Add off() to prevent multiple firing
@@ -243,7 +246,7 @@ $(function() {
 		if ($msgBox.hasClass('active')) { }
 
 		$msgBox
-			.removeClass().addClass('active ' + type)
+			.removeClass().addClass('active').addClass(type)
 			.children('p').empty().html(text);
 
 		// Auto close after given time

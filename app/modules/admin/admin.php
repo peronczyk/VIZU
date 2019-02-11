@@ -25,6 +25,7 @@ $tpl->assign([
 ]);
 
 $user = new User($db);
+$admin = new AdminActions($user, $tpl);
 
 /**
  * PAGE LOADED VIA AJAX
@@ -32,165 +33,123 @@ $user = new User($db);
  * If true change the behavior of page to always return JSON data.
  */
 
-if (Core::$ajax_loaded === true) {
-
-	/**
-	 * Bypass default PHP errors by custom error handler.
-	 * This allows to display errors as JSON.
-	 */
-
-	function error_handler($errno, $errstr, $errfile, $errline) {
-		echo json_encode(
-			['error' => [
-				'number' => $errno,
-				'str'    => $errstr,
-				'file'   => $errfile,
-				'line'   => $errline
-			]]
-		);
-		die();
-	}
-
-	$old_error_handler = set_error_handler("error_handler");
-
-
-	/**
-	 * Start AJAX class and set it up
-	 */
-
-	$ajax = new Ajax();
-
-	$display = true; // Is there anything that needs to be shown?
-
-	if (!isset($router->request[1])) {
-		$request = 'home';
-	}
-	else {
-		$request = $router->request[1];
-	}
-
-
-	/**
-	 * Handle post requests
-	 */
-
-	if (count($_POST) > 0) {
-		switch($request) {
-
-			// LOGIN
-
-			case 'login':
-				$auth = $user->login($_POST['email'], $_POST['pass']);
-				if ($auth === true) {
-					$ajax->set('loggedin', true);
-				}
-				else {
-					$ajax->set('error', [
-						'str'  => $auth,
-						'file' => __FILE__,
-						'line' => __LINE__
-					]);
-					$display = false;
-				}
-				break;
-		}
-	}
-
-	/**
-	 * Display results
-	 */
-
-	if (($user->getAccess() > 0) && ($display === true)) {
-		$ajax->set('loggedin', true);
-
-		switch($request) {
-
-			// ADMIN HOME PAGE
-
-			case 'home':
-			case 'login':
-				$template_content = $tpl->getContent('home');
-				$template_fields  = $tpl->getFields($template_content);
-
-				$ajax->set('html', $tpl->parse($template_content, $template_fields));
-				break;
-
-
-			// LOG OUT USER
-
-			case 'logout':
-				$user->logout();
-				$ajax->set('loggedin', false);
-				break;
-
-
-			// CONTENT ADMINISTRATION
-
-			case 'edit':
-				require_once 'admin-edit.php';
-				break;
-
-
-			// CHANGES HISTORY
-
-			case 'history':
-				require_once 'admin-history.php';
-				break;
-
-
-			// USER FUNCTIONS
-
-			case 'user':
-				require_once 'admin-user.php';
-				break;
-
-
-			// BACKUP OPERATIONS
-
-			case 'backup':
-				require_once 'admin-backup.php';
-				break;
-
-
-			// UNKNOWN REQUEST
-
-			default:
-				$ajax->set('error', [
-					'str'  => 'Unknown function: ' . $request,
-					'file' => __FILE__,
-					'line' => __LINE__
-				]);
-		}
-	}
-
-	$ajax->send();
+if (!Core::isAjaxRequest()) {
+	$admin->displayAdminHomePage();
+	return;
 }
+
+$admin->setAjaxErrorHandler();
 
 
 /**
- * PAGE LOADED NORMALLY
- * If page was not loaded asynchronously display admin template.
+ * Start AJAX class and set it up
  */
 
-else {
-	if ($user->getAccess() > 0) {
-		$template_content = $tpl->getContent('home');
-		$template_fields  = $tpl->getFields($template_content);
+$ajax = new Ajax();
+$show_content = true; // Is there anything that needs to be shown?
+$request = $router->getRequestChunk(1) ?? 'home';
 
-		$tpl->assign([
-			'loggedin' => 'loggedin',
-			'page'     => $tpl->parse($template_content, $template_fields),
-		]);
+
+/**
+ * Handle post requests
+ */
+
+if (count($_POST) > 0) {
+	switch($request) {
+
+		/**
+		 * User login operation
+		 */
+		case 'login':
+			$auth = $user->login($_POST['email'], $_POST['pass']);
+			if ($auth === true) {
+				$ajax->set('loggedin', true);
+			}
+			else {
+				$ajax->set('error', [
+					'str'  => $auth,
+					'file' => __FILE__,
+					'line' => __LINE__
+				]);
+				$show_content = false;
+			}
+			break;
+
+		/**
+		 * Password recovery operation
+		 */
+		case 'passrec':
+			$show_content = false;
+			$ajax->set('message', 'Something');
+			break;
 	}
-
-	else {
-		$tpl->assign([
-			'loggedin' => '',
-			'page'     => '',
-		]);
-	}
-
-	$template_content = $tpl->getContent('index');
-	$template_fields  = $tpl->getFields($template_content);
-	echo $tpl->parse($template_content, $template_fields);
 }
+
+/**
+ * Display results
+ */
+
+if (($user->getAccess() > 0) && ($show_content === true)) {
+	$ajax->set('loggedin', true);
+
+	switch($request) {
+
+		// ADMIN HOME PAGE
+
+		case 'home':
+		case 'login':
+			$template_content = $tpl->getContent('home');
+			$template_fields  = $tpl->getFields($template_content);
+
+			$ajax->set('html', $tpl->parse($template_content, $template_fields));
+			break;
+
+
+		// LOG OUT USER
+
+		case 'logout':
+			$user->logout();
+			$ajax->set('loggedin', false);
+			break;
+
+
+		// CONTENT ADMINISTRATION
+
+		case 'edit':
+			require_once 'admin-edit.php';
+			break;
+
+
+		// CHANGES HISTORY
+
+		case 'history':
+			require_once 'admin-history.php';
+			break;
+
+
+		// USER FUNCTIONS
+
+		case 'user':
+			require_once 'admin-user.php';
+			break;
+
+
+		// BACKUP OPERATIONS
+
+		case 'backup':
+			require_once 'admin-backup.php';
+			break;
+
+
+		// UNKNOWN REQUEST
+
+		default:
+			$ajax->set('error', [
+				'str'  => 'Unknown function: ' . $request,
+				'file' => __FILE__,
+				'line' => __LINE__
+			]);
+	}
+}
+
+$ajax->send();
