@@ -98,15 +98,29 @@ class Template {
 
 	public function getFields(string $content) {
 		$num_matches = preg_match_all('/{{(.*?)}}/', $content, $matches);
-		$fields = [];
+		list($full_tags, $field_contents) = $matches;
 
-		foreach($matches[1] as $key => $val) {
-			$val        = trim($val);
-			$chunks     = array_filter(explode(' ', $val));
-			$field_type = $chunks[0];
+		$fields = [];
+		$paired_field_started = false;
+		$paired_field_type    = null;
+		$paired_field_id      = null;
+
+		foreach($field_contents as $key => $val) {
+			$field_type = explode(' ', trim($val), 2)[0];
 			$field      = [];
 
-			// Skip fields with types t
+			/**
+			 * If loop reached end tag of paired field reset
+			 * @example {{ /paired }}
+			 */
+			if ($field_type == '/' . $paired_field_type) {
+				$paired_field_started = false;
+				$paired_field_type    = null;
+				$paired_field_id      = null;
+				continue;
+			}
+
+			// Skip fields with types that was not configured
 			if (
 				!in_array($field_type, Config::$EDITABLE_FIELD_TYPES) &&
 				!in_array($field_type, Config::$OTHER_FIELD_TYPES))
@@ -116,18 +130,40 @@ class Template {
 
 			$field['type'] = $field_type;
 
-			// Get params of the field
+			/**
+			 * Get params of the field
+			 * @example foo='bar' becomes array ['foo' => 'bar']
+			 */
 			$num_params = preg_match_all("/([a-z]+)='([^']*)'/", $val, $params);
 			if (is_array($params)) {
 				foreach ($params[1] as $p => $param) {
 					$field[$params[1][$p]] = $params[2][$p];
 				}
 			}
+			$field_id = $field['id'];
+			unset($field['id']);
+
+			/**
+			 * If paired mode is ON attach all fields to paired tag as subfields.
+			 */
+			if ($paired_field_started) {
+				$fields[$paired_field_id]['subfields'][$field_id] = $field;
+				continue;
+			}
+
+			/**
+			 * Check if this iteration field is configured as 'paired'.
+			 */
+			if (in_array($field_type, Config::$PAIRED_FIELD_TYPES)) {
+				$paired_field_started = true;
+				$paired_field_type    = $field_type;
+				$paired_field_id      = $field_id;
+				$field['subfields']   = [];
+			}
 
 			// Add field to array if has ID and there is no existing entry with this ID
-			if (!empty($field['id']) && !isset($fields[$field['id']])) {
-				$fields[$field['id']] = $field;
-				unset($fields[$field['id']]['id']); // Remove additional ID from params array
+			if (!isset($fields[$field_id])) {
+				$fields[$field_id] = $field;
 			}
 		}
 
@@ -145,9 +181,11 @@ class Template {
 
 	public function parse(string $content, array $fields, array $translations = []) {
 
-		// Prepare all fields
-		// @TODO: needed to be replaced
-		// http://stackoverflow.com/questions/5017582/php-looping-template-engine-from-scratch
+		/**
+		 * Prepare all fields
+		 * @todo needed to be replaced
+		 * @link http://stackoverflow.com/questions/5017582/php-looping-template-engine-from-scratch
+		 */
 
 		$patterns     = [];
 		$replacements = [];

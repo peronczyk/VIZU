@@ -106,6 +106,12 @@ class Config {
 	static $EDITABLE_FIELD_TYPES = ['simple', 'rich', 'repeatable'];
 
 	/**
+	 * Field types that has its start and end tag.
+	 * @example {{ paired }}Foo{{ /paired }}
+	 */
+	static $PAIRED_FIELD_TYPES = ['repeatable'];
+
+	/**
 	 * Other acceptable field types that can be used in template files.
 	 * @var Array
 	 */
