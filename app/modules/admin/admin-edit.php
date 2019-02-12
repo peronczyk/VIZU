@@ -209,7 +209,7 @@ else {
 		}
 
 		// Add to form data about this field
-		$form_fields .= $field_class[$field['type']]->field_html($field_id, $field, $content);
+		$form_fields .= $field_class[$field['type']]->fieldHtml($field_id, $field, $content);
 	}
 
 	if ($skiped_fields > 0) $ajax->add('log', 'Skiped fields: ' . $skiped_fields);
