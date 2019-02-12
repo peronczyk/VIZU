@@ -63,30 +63,6 @@ class Template {
 
 
 	/** ----------------------------------------------------------------------------
-	 * Load field class
-	 *
-	 * @return String
-	 */
-
-	public function loadFieldClass(string $field_name) {
-		$class_file = Config::$APP_DIR . 'fields/' . $field_name . '.php';
-		if (file_exists($class_file)) {
-			require_once $class_file;
-			$class_name = 'fields\\' . $field_name;
-			if (class_exists($class_name)) {
-				return new $class_name();
-			}
-			else {
-				return 'Template field handling file does not have proper class: "' . $field_name . '"';
-			}
-		}
-		else {
-			return 'Template field handling file does not exist: "' . $class_file . '"';
-		}
-	}
-
-
-	/** ----------------------------------------------------------------------------
 	 * Get contents of template file
 	 */
 

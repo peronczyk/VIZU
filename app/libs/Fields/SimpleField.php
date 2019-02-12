@@ -9,9 +9,9 @@
  * =================================================================================
  */
 
-namespace fields;
+namespace Fields;
 
-class Simple implements Field {
+class SimpleField {
 
 	public function fieldHtml(string $id, array $params, string $content = null) {
 		$str = "<label class='row'><div class='desc'><h4>{$params['name']}</h4>";

@@ -144,9 +144,8 @@ else {
 
 	// Loop over languages received from DB and set the active
 	foreach($languages as $lang) {
-		$lang_str .= '<li';
-		if ($active_lang == $lang['code']) $lang_str .= ' class="active"';
-		$lang_str .= '><a href="admin/edit?language=' . $lang['code'] . '&amp;field_category=' . $router->query['field_category'] . '">' . $lang['short_name'] . '</a></li>';
+		$active_class = ($active_lang == $lang['code']) ? ' class="active"' : '';
+		$lang_str .= "<li{$active_class}><a href='admin/edit?language={$lang['code']}&amp;field_category={$router->query['field_category']}'>{$lang['short_name']}</a></li>";
 	}
 
 	$form_fields   = null; // Stores html of form elements - fields
@@ -168,25 +167,30 @@ else {
 
 		// Skip if field don't have 'type' or it's 'type' is not editable
 		if (!isset($field['type']) || !in_array($field['type'], Config::$FIELD_TYPES)) {
-			$ajax->add('log', 'Skipped: ' . $field_id . ' / ' . $field['category']);
+			$ajax->add('log', "Skipped: {$field_id} / {$field['category']}");
 			$skiped_fields++;
 			continue;
 		}
 
 		// Counting how many fields of this type occured in parsed document
-		if (!isset($field_num[$field['type']])) $field_num[$field['type']] = 1;
-		else $field_num[$field['type']]++;
+		if (!isset($field_num[$field['type']])) {
+			$field_num[$field['type']] = 1;
+		}
+		else {
+			$field_num[$field['type']]++;
+		}
 
 		// If field don't have name in template skip it
 		if (empty($field['name'])) {
-			$ajax->add('log', 'There is no name for field ' . $field_id . ' [' . $field_num[$field['type']] . ']');
+			$ajax->add('log', "There is no name for field {$field_id} [{$field_num[$field['type']]}]");
 			$skiped_fields++;
 			continue;
 		}
 
-		// Setup field type class if i wasn't started before
+		// Setup field type class if it wasn't started before
 		if (!isset($field_class[$field['type']])) {
-			$field_class[$field['type']] = $tpl->loadFieldClass($field['type']);
+			$field_class_name = 'Fields\\' . ucfirst($field['type']) . 'Field';
+			$field_class[$field['type']] = new $field_class_name();
 
 			// If class of field failed to start
 			if (!is_object($field_class[$field['type']])) {
@@ -212,7 +216,9 @@ else {
 		$form_fields .= $field_class[$field['type']]->fieldHtml($field_id, $field, $content);
 	}
 
-	if ($skiped_fields > 0) $ajax->add('log', 'Skiped fields: ' . $skiped_fields);
+	if ($skiped_fields > 0) {
+		$ajax->add('log', 'Skipped fields: ' . $skiped_fields);
+	}
 
 	// Display other fields, that was in database but don't exists in template
 	$not_used_fields_num = 0;

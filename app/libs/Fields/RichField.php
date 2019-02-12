@@ -9,9 +9,9 @@
  * =================================================================================
  */
 
-namespace fields;
+namespace Fields;
 
-class Rich implements Field {
+class RichField {
 
 	public function fieldHtml(string $id, array $params, string $content = null) {
 		$content = $content ?? $params['content'] ?? '';
