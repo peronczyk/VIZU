@@ -10,6 +10,7 @@
 	'scroll-down'            => 'Przewiń w dół',
 	'editable-fields'        => 'Poniższe pola są edytowalne z poziomu <a href="admin/">panelu administratora.</a>',
 	'example-form'           => 'Przykładowy formularz kontaktowy',
+	'repeatable-header'      => 'Przykład pól powtarzalnych',
 
 
 	# ------------------------------------------------------------------------------

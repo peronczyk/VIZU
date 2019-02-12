@@ -10,6 +10,7 @@
 	'scroll-down'            => 'Scroll down',
 	'editable-fields'        => 'The following fields are editable in the <a href="admin/">administration panel</a>',
 	'example-form'           => 'Example contact form',
+	'repeatable-header'      => 'Repeatable fields example',
 
 
 	# ------------------------------------------------------------------------------
@@ -21,7 +22,7 @@
 
 
 	# ------------------------------------------------------------------------------
-	# Forms labels
+	# Form labels
 
 	'form-send'              => 'Send message',
 	'form-label-email'       => 'Your e-mail address',

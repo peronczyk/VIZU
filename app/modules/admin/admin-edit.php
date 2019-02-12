@@ -13,36 +13,9 @@ if (IN_ADMIN !== true) {
 	die('This file can be loaded only in admin module');
 }
 
-/**
+/** --------------------------------------------------------------------------------
  * Common operations
  */
-
-// Check if field types or group was queried
-// If yes set up allowed_field_types to view them
-
-if (!empty($router->query['field_category'])) {
-	if (in_array($router->query['field_category'], Config::$FIELD_CATEGORIES['content'])) {
-		$allowed_field_category = [$router->query['field_category']];
-		$tpl->assign(['field_type' => $router->query['field_category']]);
-	}
-	else {
-		$ajax->set('error', [
-			'str'  => 'Selected field type could not be edited from the admin panel or does not exist in the settings.',
-			'file' => __FILE__,
-			'line' => __LINE__
-		]);
-		return;
-	}
-}
-else {
-	$ajax->set('error', [
-		'str'  => 'The type of field you want to edit is not selected.',
-		'file' => __FILE__,
-		'line' => __LINE__
-	]);
-	return;
-}
-
 
 // Check wchich language is selected in this form
 
@@ -55,7 +28,7 @@ $active_lang = (!empty($router->query['language']) && strlen($router->query['lan
 
 // Get data from database for all fields
 
-$result = $db->query("SELECT * FROM `fields` WHERE `template` = 'home' AND `language` = '" . $active_lang . "'");
+$result = $db->query("SELECT * FROM `fields` WHERE `template` = 'home' AND `language` = '{$active_lang}'");
 $fields_data = $core->processArray($db->fetchAll($result), 'id');
 
 
@@ -66,7 +39,7 @@ $content         = $tpl->getContent('home');
 $template_fields = $tpl->getFields($content);
 
 
-/**
+/** --------------------------------------------------------------------------------
  * Save data
  */
 
@@ -104,70 +77,56 @@ if ($router->request[count($router->request) - 1] == 'save') {
 				`content` = '" . $post_val . "',
 				`modified` = CURRENT_TIMESTAMP
 				WHERE " . $query_common_where . " AND `id` = '" . $post_key . "'");
-			$ajax->add('log', 'Try to modify field: ' . $post_key . '. Result: ' . $result);
+			$ajax->add('log', 'Try to modify field: ' . $post_key . '. Result: ' . ($result ? '0' : '1'));
 			if ($result) {
 				$num_changes++;
 			}
 		}
 	}
 
-	if ($num_changes == 0) {
-		$ajax->add('log', 'No changes have been made');
-		$ajax->set('message', 'No changes have been made in the form.');
-	}
-	else {
-		$ajax->add('log', 'Changes made: ' . $num_changes);
-		$ajax->set('message', 'Changes saved.');
-	}
+	$ajax->set(
+		'message',
+		"Changes saved: {$num_changes}"
+	);
 }
 
 
-/**
+/** --------------------------------------------------------------------------------
  * Display form
  */
 
 else {
 
 	// Get languages
-	$result    = $db->query("SELECT * FROM `languages`");
-	$languages = $db->fetchAll($result);
+	$languages = $lang->getList();
 	$lang_str  = '';
-
-	if (count($languages) < 1) {
-		$ajax->set('error', [
-			'str'  => 'There is no languages set in the database.',
-			'file' => __FILE__,
-			'line' => __LINE__
-		]);
-		return;
-	}
 
 	// Loop over languages received from DB and set the active
 	foreach($languages as $lang) {
 		$active_class = ($active_lang == $lang['code']) ? ' class="active"' : '';
-		$lang_str .= "<li{$active_class}><a href='admin/edit?language={$lang['code']}&amp;field_category={$router->query['field_category']}'>{$lang['short_name']}</a></li>";
+		$lang_str .= "<li{$active_class}><a href='admin/edit?language={$lang['code']}'>{$lang['short_name']}</a></li>";
 	}
 
-	$form_fields   = null; // Stores html of form elements - fields
-	$field_class   = [];   // Stores array of loaded field's classes
-	$field_num     = [];   // Stores numbers of each field types
-	$skiped_fields = 0;    // Stores number of skiped fields (not editable fields or with errors)
+	// Stores array of loaded field's classes
+	$fields_container = new Fields\Container();
+
+	// Stores html of form elements - fields
+	$form_fields = null;
+
+	// Stores numbers of each field types
+	$field_num = [];
+
+	// Stores number of skiped fields (not editable fields or with errors)
+	$skiped_fields = [];
 
 	/**
-	 * Loop over fields
+	 * Loop over fields that was found in the template file
 	 */
-
 	foreach($template_fields as $field_id => $field) {
 
-		// Skip if field don't have 'category' or it's 'category' is not editable
-		if (!isset($field['category']) || !in_array($field['category'], $allowed_field_category)) {
-			$skiped_fields++;
-			continue;
-		}
-
 		// Skip if field don't have 'type' or it's 'type' is not editable
-		if (!isset($field['type']) || !in_array($field['type'], Config::$FIELD_TYPES)) {
-			$ajax->add('log', "Skipped: {$field_id} / {$field['category']}");
+		if (!isset($field['type']) || !in_array($field['type'], Config::$EDITABLE_FIELD_TYPES)) {
+			$ajax->add('log', "Skipped: {$field_id} / {$field['type']}");
 			$skiped_fields++;
 			continue;
 		}
@@ -187,22 +146,6 @@ else {
 			continue;
 		}
 
-		// Setup field type class if it wasn't started before
-		if (!isset($field_class[$field['type']])) {
-			$field_class_name = 'Fields\\' . ucfirst($field['type']) . 'Field';
-			$field_class[$field['type']] = new $field_class_name();
-
-			// If class of field failed to start
-			if (!is_object($field_class[$field['type']])) {
-				$ajax->set('error', [
-					'str'  => $field_class[$field['type']],
-					'file' => __FILE__,
-					'line' => __LINE__
-				]);
-				continue;
-			}
-		}
-
 		// If any data of this field was in DB set it to display
 		$content = null;
 		if (isset($fields_data[$field_id])) {
@@ -213,30 +156,24 @@ else {
 		}
 
 		// Add to form data about this field
-		$form_fields .= $field_class[$field['type']]->fieldHtml($field_id, $field, $content);
+		$form_fields .= $fields_container->getFieldClass($field['type'])->fieldHtml($field_id, $field, $content);
 	}
 
 	if ($skiped_fields > 0) {
-		$ajax->add('log', 'Skipped fields: ' . $skiped_fields);
+		$ajax->add('log', 'Skipped fields: ' . count($skiped_fields));
 	}
 
-	// Display other fields, that was in database but don't exists in template
+	// Display other fields, that was in the database but don't exists in template
 	$not_used_fields_num = 0;
 	foreach($fields_data as $data_key => $data) {
 		$not_used_fields_num++;
 	}
 
-	if ($not_used_fields_num > 0) {
-		$tpl->assign(['other_fields' => 'Fields not used: ' . $not_used_fields_num]);
-	}
-	else {
-		$tpl->assign(['other_fields' => '']);
-	}
-
 	$tpl->assign([
-		'languages'   => $lang_str,
-		'active_lang' => $active_lang,
-		'fields'      => $form_fields,
+		'languages'      => $lang_str,
+		'active_lang'    => $active_lang,
+		'fields'         => $form_fields,
+		'skipped_fields' => $not_used_fields_num,
 	]);
 
 
@@ -250,11 +187,13 @@ else {
 	$template_fields  = $tpl->getFields($template_content);
 	$parsed_html      = $tpl->parse($template_content, $template_fields);
 
-	if (empty($parsed_html)) $json->set('error', [
-		'str'  => 'Parsing function does not return any value.',
-		'file' => __FILE__,
-		'line' => __LINE__
-	]);
+	if (empty($parsed_html)) {
+		$json->set('error', [
+			'str'  => 'Parsing function does not return any value.',
+			'file' => __FILE__,
+			'line' => __LINE__
+		]);
+	}
 	else {
 		$ajax->set('html', $parsed_html);
 	}

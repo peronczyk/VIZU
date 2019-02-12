@@ -99,23 +99,17 @@ class Config {
 	static $PASSWORD_SALT = 'SomeRand0mString';
 
 	/**
-	 * Categories of fields that can be used in templates.
+	 * Field types that are allowed to be edited in admin panel.
+	 * @example {{ fieldtype id='foo' }}
 	 * @var Array
 	 */
-	static $FIELD_CATEGORIES = [
-
-		// Fields, that can be edited in 'Content' CMS.
-		'content' => ['text', 'setting'],
-
-		// Other fields.
-		'other' => ['lang'],
-	];
+	static $EDITABLE_FIELD_TYPES = ['simple', 'rich', 'repeatable'];
 
 	/**
-	 * Determines how field can be edited in admin panel.
+	 * Other acceptable field types that can be used in template files.
 	 * @var Array
 	 */
-	static $FIELD_TYPES = ['simple', 'rich'];
+	static $OTHER_FIELD_TYPES = ['lang'];
 
 	/**
 	 * Name of the library class name that will handle SQL queries

@@ -53,7 +53,7 @@ class Template {
 			Core::error('Theme not set', __FILE__, __LINE__, debug_backtrace());
 		}
 
-		$file_path = \Config::$THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
+		$file_path = Config::$THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
 		if (!file_exists($file_path)) {
 			return false;
 		}
@@ -101,28 +101,33 @@ class Template {
 		$fields = [];
 
 		foreach($matches[1] as $key => $val) {
-			$val    = trim($val);
-			$chunks = array_filter(explode(' ', $val));
-			$field  = [];
+			$val        = trim($val);
+			$chunks     = array_filter(explode(' ', $val));
+			$field_type = $chunks[0];
+			$field      = [];
 
-			if (in_array($chunks[0], \Config::$FIELD_CATEGORIES['content']) or in_array($chunks[0], \Config::$FIELD_CATEGORIES['other'])) {
-				$field['category'] = $chunks[0];
+			// Skip fields with types t
+			if (
+				!in_array($field_type, Config::$EDITABLE_FIELD_TYPES) &&
+				!in_array($field_type, Config::$OTHER_FIELD_TYPES))
+			{
+				continue;
+			}
 
-				// Get params of the field
+			$field['type'] = $field_type;
 
-				$num_params = preg_match_all("/([a-z]+)='([^']*)'/", $val, $params);
-				if (is_array($params)) {
-					foreach ($params[1] as $p => $param) {
-						$field[$params[1][$p]] = $params[2][$p];
-					}
+			// Get params of the field
+			$num_params = preg_match_all("/([a-z]+)='([^']*)'/", $val, $params);
+			if (is_array($params)) {
+				foreach ($params[1] as $p => $param) {
+					$field[$params[1][$p]] = $params[2][$p];
 				}
+			}
 
-				// Add field to array if has ID and there is no existing entry with this ID
-
-				if (!empty($field['id']) && !isset($fields[$field['id']])) {
-					$fields[$field['id']] = $field;
-					unset($fields[$field['id']]['id']); // Remove additional ID from params array
-				}
+			// Add field to array if has ID and there is no existing entry with this ID
+			if (!empty($field['id']) && !isset($fields[$field['id']])) {
+				$fields[$field['id']] = $field;
+				unset($fields[$field['id']]['id']); // Remove additional ID from params array
 			}
 		}
 
@@ -150,21 +155,21 @@ class Template {
 
 		foreach($fields as $id => $field) {
 
-			// Match anything like {{ category something='something' id='id' somethin='something' }}
-			// (*UTF8) - selves problem with non latin characters in values
-			// \p{L}   - searches any character from unicode.
-			// /u      - allow searching for all unicode characters
-			$patterns[$n] = '/{{ ' . $field['category'] . '[\p{L}0-9\'=\-_\:\.\(\)\s]+id=\'' . $id . '\'[\p{L}0-9\'=\-_\:\.\(\)\s]+}}/u';
+			/**
+			 * Match anything like {{ type something='something' id='id' somethin='something' }}
+			 * (*UTF8) - selves problem with non latin characters in values
+			 * \p{L}   - searches any character from unicode.
+			 * /u      - allow searching for all unicode characters
+			 */
+			$patterns[$n] = '/{{ ' . $field['type'] . '[\p{L}0-9\'=\-_\:\.\(\)\s]+id=\'' . $id . '\'[\p{L}0-9\'=\-_\:\.\(\)\s]+}}/u';
 
-			switch($field['category']) {
+			switch($field['type']) {
 				case 'lang':
-					if (isset($translations[$id])) $replacements[$n] = $translations[$id];
-					else $replacements[$n] = $id;
+					$replacements[$n] = $translations[$id] ?? $id;
 					break;
 
 				default:
-					if (isset($this->vars[$id])) $replacements[$n] = $this->vars[$id];
-					else $replacements[$n] = strtoupper($field['category'] . ':' . $id);
+					$replacements[$n] = $this->vars[$id] ?? strtoupper($field['type'] . ':' . $id);
 					break;
 			}
 			$n++;
