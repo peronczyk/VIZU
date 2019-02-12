@@ -15,7 +15,7 @@
 	# ------------------------------------------------------------------------------
 	# Page : 404
 
-	'page-not-found-title'   => '404 Nie znaleziono',
+	'page-not-found-title'   => 'Nie znaleziono',
 	'page-not-found-desc'    => 'Strona nie została znaleziona.',
 	'page-not-found-link'    => 'Strona główna',
 
