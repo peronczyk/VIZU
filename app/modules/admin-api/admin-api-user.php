@@ -4,20 +4,16 @@
  * =================================================================================
  *
  * VIZU CMS
- * Module: Admin / User
+ * Module: Admin API / User
  *
  * =================================================================================
  */
 
-if (IN_ADMIN !== true) die('This file can be loaded only in admin module');
+if (IN_ADMIN_API !== true) {
+	die('This file can be loaded only in admin module');
+}
 
-
-switch($router->request[count($router->request) - 1]) {
-
-	/** ----------------------------------------------------------------------------
-	 * Password change operation
-	 */
-
+switch ($router->getRequestChunk(2)) {
 	case 'change_password';
 
 		// Form validation
@@ -141,25 +137,51 @@ switch($router->request[count($router->request) - 1]) {
 
 
 	/** ----------------------------------------------------------------------------
-	 * Display page
+	 * Password recovery
 	 */
 
-	default:
-		$query  = $db->query('SELECT * FROM `users`');
-		$result = $db->fetchAll($query);
-		$users_list = '';
+	case 'password_recovery':
+			$show_content = false;
+			if (User::verifyUsername($_POST['email'])) {
+				$result = $db->query("SELECT `id`, `email` FROM `users` WHERE `email` = '{$_POST['email']}'");
+				$user_data = $db->fetchAll($result);
+				if (count($user_data) == 1) {
+					$user_notified = false;
+					$new_password = User::generatePassword();
+					$content_fields = [
+						'Message' => "You have requested password recovery to your administration panel. Here is your new password: <strong>{$new_password}</strong>. Please use it to log in and change it as soon as possible.",
+						'Page address' => $router->site_path,
+					];
 
-		foreach($result as $user_data) {
-			$users_list .= "<li>{$user_data['email']}</li>";
-		}
+					try {
+						$notifier = new Notifier($theme_config['contact'] ?? []);
+						$notifier->notify(
+							'[' . Config::$SITE_NAME . '] Password recovery request', // Subject
+							$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
+							$user_data[0]['email'] // Recipient
+						);
+						$user_notified = true;
+					}
+					catch (Exception $e) {
+						$ajax->set('error', [
+							'str'  => 'Password recvery process failed - could not send email. Returned error: ' . $e->getMessage(),
+							'file' => __FILE__,
+							'line' => __LINE__
+						]);
+					}
 
-		$tpl->assign([
-			'user_email' => $user->getEmail(),
-			'users_list' => $users_list,
-		]);
-
-		$template_content = $tpl->getContent('user');
-		$template_fields  = $tpl->getFields($template_content);
-
-		$ajax->set('html', $tpl->parse($template_content, $template_fields));
+					if ($user_notified) {
+						$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user_data[0]['email']}' LIMIT 1");
+					}
+				}
+				$ajax->set('message', 'Password recovery process started. We have sent you further informations to your email box.');
+			}
+			else {
+				$ajax->set('error', [
+					'str'  => 'Provided email address is not valid.',
+					'file' => __FILE__,
+					'line' => __LINE__
+				]);
+			}
+			break;
 }

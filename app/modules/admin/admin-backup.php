@@ -16,8 +16,7 @@ if (IN_ADMIN !== true) {
 // Display layout
 
 if (empty($router->request[2])) {
-
-	$tpl->setTheme('admin');
+	$tpl->setTheme(Config::$APP_DIR . 'admin-panel');
 
 	$template_content = $tpl->getContent('backup');
 	$template_fields  = $tpl->getFields($template_content);

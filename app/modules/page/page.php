@@ -12,7 +12,7 @@
 $tpl = new Template();
 $tpl->setTheme(Config::$THEME_NAME);
 
-$template_content = $tpl->getContent('home');
+$template_content = $tpl->getContent('templates/home.html');
 $template_fields  = $tpl->getFields($template_content);
 
 

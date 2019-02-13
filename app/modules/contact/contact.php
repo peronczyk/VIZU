@@ -27,7 +27,7 @@ if (!is_array($contact_config['fields'])) {
 $ajax = new Ajax();
 $tpl  = new Template();
 
-$tpl->setTheme(Config::$THEME_NAME);
+$tpl->setTheme(Config::$THEMES_DIR . Config::$THEME_NAME);
 
 
 /**

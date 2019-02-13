@@ -22,7 +22,7 @@ $fields_data = $core->processArray($db->fetchAll($result), 'id');
 
 // Get fields from home of user template
 
-$tpl->setTheme(Config::$THEME_NAME);
+$tpl->setTheme(Config::$THEMES_DIR . Config::$THEME_NAME);
 $content            = $tpl->getContent('home');
 $template_fields    = $tpl->getFields($content);
 $fields_data_simple = [];
@@ -72,7 +72,7 @@ $tpl->assign([
 
 // Display layout
 
-$tpl->setTheme('admin');
+$tpl->setTheme(Config::$APP_DIR . 'admin-panel');
 
 $template_content = $tpl->getContent('history');
 $template_fields  = $tpl->getFields($template_content);

@@ -25,11 +25,6 @@ class Template {
 	private $theme;
 
 	/**
-	 * Templates direcotory name that is inside each theme
-	 */
-	private $tpl_dir = 'templates/';
-
-	/**
 	 * Template files extension
 	 */
 	private $tpl_ext = '.html';
@@ -39,28 +34,8 @@ class Template {
 	 * SETTER : Theme direcory name
 	 */
 
-	public function setTheme(string $theme_name) {
-		$this->theme = $theme_name;
-	}
-
-
-	/** ----------------------------------------------------------------------------
-	 * Check if template exists
-	 *
-	 * @return String|false - Return template path or false if not found
-	 */
-
-	public function getTemplatePath(string $file) {
-		if (empty($this->theme)) {
-			Core::error('Theme not set', __FILE__, __LINE__, debug_backtrace());
-		}
-
-		$file_path = Config::$THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
-		if (!file_exists($file_path)) {
-			return false;
-		}
-
-		return $file_path;
+	public function setTheme(string $theme_dir) {
+		$this->theme_dir = $theme_dir;
 	}
 
 
@@ -68,11 +43,15 @@ class Template {
 	 * Get contents of template file
 	 */
 
-	public function getContent(string $file) {
-		$file_path = $this->getTemplatePath($file);
+	public function getContent(string $file_path) {
+		if (empty($this->theme_dir)) {
+			throw new Exception('Theme not set');
+		}
 
-		if (!$file_path) {
-			Core::error('Template file does not exist: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
+		$file_path = $this->theme_dir . '/' . $file_path;
+
+		if (!file_exists($file_path)) {
+			throw new Exception("Template file does not exist: {$file_path}");
 			return false;
 		}
 

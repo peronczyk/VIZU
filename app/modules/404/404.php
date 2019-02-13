@@ -12,9 +12,9 @@
 header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
 
 $tpl = new Template();
-$tpl->setTheme(Config::$THEME_NAME);
+$tpl->setTheme(Config::$THEMES_DIR . Config::$THEME_NAME);
 
-if ($tpl->getTemplatePath('404')) {
+try {
 	$template_content = $tpl->getContent('404');
 	$template_fields  = $tpl->getFields($template_content);
 
@@ -27,7 +27,7 @@ if ($tpl->getTemplatePath('404')) {
 	echo $tpl->parse($template_content, $template_fields, $lang->translations);
 }
 
-else {
+catch (Exception $e) {
 	echo '<h1>404 Not Found</h1>';
 	echo '<p>The page that you have requested could not be found.</p>';
 }
