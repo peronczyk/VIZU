@@ -11,6 +11,8 @@
 
 class Template {
 
+	const CHILD_FIELD_KEY = 'children';
+
 	/**
 	 * Assignement storage. This values will be parsed in to the template
 	 * eg.: {{ text id='foo'}} will be changed with 'foo' => 'Bar'
@@ -147,7 +149,7 @@ class Template {
 			 * If paired mode is ON attach all fields to paired tag as subfields.
 			 */
 			if ($paired_field_started) {
-				$fields[$paired_field_id]['subfields'][$field_id] = $field;
+				$fields[$paired_field_id][self::CHILD_FIELD_KEY][$field_id] = $field;
 				continue;
 			}
 
@@ -158,7 +160,7 @@ class Template {
 				$paired_field_started = true;
 				$paired_field_type    = $field_type;
 				$paired_field_id      = $field_id;
-				$field['subfields']   = [];
+				$field[self::CHILD_FIELD_KEY] = [];
 			}
 
 			// Add field to array if has ID and there is no existing entry with this ID

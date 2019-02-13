@@ -131,7 +131,7 @@ else {
 			continue;
 		}
 
-		// Counting how many fields of this type occured in parsed document
+		// Count how many fields of this type occured in parsed document
 		if (!isset($field_num[$field['type']])) {
 			$field_num[$field['type']] = 1;
 		}

@@ -229,6 +229,12 @@ a.nav {
 
 			.box .row h4 { margin: 0; }
 
+			.box .row__inner {
+				margin: 14px 0;
+				padding: 12px 16px;
+				border: 1px solid #ededed;
+			}
+
 
 .logo {
 	display: block;
@@ -429,6 +435,10 @@ nav {
 			#toolbar a:hover {
 				color: #000;
 				background: #f7f7f7;
+			}
+
+			#toolbar .icon-16 {
+				margin-left: 10px;
 			}
 
 

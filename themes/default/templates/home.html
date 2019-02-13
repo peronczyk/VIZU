@@ -18,10 +18,10 @@
 	<link rel="icon" sizes="32x32" href="{{ theme_path }}images/favicon32.png" type="image/png">
 	<link rel="icon" sizes="64x64" href="{{ theme_path }}images/favicon64.png" type="image/png">
 
-	<meta property="og:title" content="{{ setting id='site-title' }}">
+	<meta property="og:title" content="{{ simple id='site-title' }}">
 	<meta property="og:url" content="{{ site_path }}">
 	<meta property="og:image" content="{{ theme_path }}images/og-image.png">
-	<meta property="og:description" content="{{ setting id='site-description' }}">
+	<meta property="og:description" content="{{ simple id='site-description' }}">
 
 	<script>
 		var recaptchaSiteKey = "{{ simple id='recaptcha-site-key' name='reCAPTCHA 3 Site Key' desc='Public key required to filter out spammers' }}";
@@ -105,7 +105,7 @@
 		</div>
 	</footer>
 
-	<script src="https://www.google.com/recaptcha/api.js?render={{ setting id='recaptcha-site-key' }}" async></script>
+	<script src="https://www.google.com/recaptcha/api.js?render={{ simple id='recaptcha-site-key' }}" async></script>
 	<script src="{{ theme_path }}scripts/jquery-3.3.1.min.js"></script>
 	<script src="{{ theme_path }}scripts/vizu-contact-form.js"></script>
 

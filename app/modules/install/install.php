@@ -28,7 +28,7 @@ $user = new User($db);
  */
 
 if ($router->getRequestChunk(1) === 'error') {
-	echo libs\Core::commonHtmlHeader('VIZU Installer: Error');
+	echo Core::commonHtmlHeader('VIZU Installer: Error');
 	echo '<h3>Error occured</h3><hr>';
 
 	switch (@$_SESSION['vizu']['install']['error']) {

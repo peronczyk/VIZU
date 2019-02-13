@@ -21,7 +21,10 @@ class Core {
 		}
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) {
-			session_start();
+			session_start([
+				'cookie_httponly' => true,
+				'cookie_secure' => true
+			]);
 		}
 	}
 
