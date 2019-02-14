@@ -1,0 +1,103 @@
+
+/*
+ * =================================================================================
+ * CONFIGURATION
+ * =================================================================================
+ */
+
+/* ---------------------------------------------------------------------------------
+ * Breakpoint sizes
+ */
+
+ $breakpoints: (
+
+	// Horizontal
+	h-ul: 1520px, // Ultra large
+	h-xl: 1280px, // Extra large
+	h-lg: 980px,  // large
+	h-md: 800px,  // Medium
+	h-sm: 640px,  // Small
+	h-xs: 480px,  // Extra small
+
+	// Vertical
+	v-lg: 780px,  // Large
+	v-md: 700px,  // Medium
+	v-sm: 620px,  // Small
+);
+
+
+/* ---------------------------------------------------------------------------------
+ * Default colors
+ */
+
+$color-white: #fff;
+$color-black: #000;
+
+
+/* ---------------------------------------------------------------------------------
+ * Colors
+ */
+
+$color-brand-1				: #ffa300;
+$color-brand-2				: #ffdc4a;
+$color-brand-3				: #13254d;
+
+$color-light				: #f5f5f3;
+$color-dark					: #1f1e38;
+
+$color-gray					: #8fa3ad;
+$color-gray-light			: #ccdae1;
+$color-gray-dark			: #657076;
+
+$color-blue					: #0095ff;
+$color-blue-light			: #78d2ff;
+$color-blue-dark			: #006cb8;
+
+$color-red					: #f70135;
+$color-red-light			: lighten($color-red, 10);
+$color-red-dark				: darken($color-red, 10);
+
+$color-orange				: $color-brand-1;
+$color-orange-light			: $color-brand-2;
+$color-orange-dark			: darken($color-brand-1, 20);
+
+$color-green				: #1dd95f;
+$color-green-light			: lighten($color-green, 10);
+$color-green-dark			: darken($color-green, 10);
+
+$color-text					: #4e4e4e;
+$color-interactive			: $color-blue;
+$color-interactive-hover	: $color-blue-dark;
+$color-lines				: #e5e5e5;
+$color-inputs				: #c4c4c4;
+
+
+/* ---------------------------------------------------------------------------------
+ * Sizes
+ */
+
+$width-content: 1200px;
+
+$gutter: 2.2vw;
+
+
+/* ---------------------------------------------------------------------------------
+ * Fonts
+ */
+
+$font-primary: 'Roboto', Helvetica, 'Segoe UI', Arial, sans-serif;
+$font-monospace: monospace;
+
+
+/* ---------------------------------------------------------------------------------
+ * Shadows
+ */
+
+$shadow-sm-light	: 0 2px 14px rgba($color-black, .04);
+$shadow-sm-medium	: 0 2px 14px rgba($color-black, .08);
+
+$shadow-md-light	: 0 8px 30px rgba($color-black, .04);
+$shadow-md-medium	: 0 8px 30px rgba($color-black, .08);
+
+$shadow-lg-light	: 0 15px 50px rgba($color-black, .04);
+$shadow-lg-medium	: 0 15px 50px rgba($color-black, .08);

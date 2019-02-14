@@ -1,0 +1,41 @@
+form {
+	display: block;
+	margin-bottom: 6vh;
+
+	label {
+		display: block;
+		margin-bottom: calc(16px + 1.5vh);
+		line-height: 1.4em;
+	}
+}
+
+input[type='text'],
+input[type='password'],
+input[type='email'],
+select {
+	height: 40px;
+	vertical-align: middle;
+	background-color: transparent;
+	border-bottom: 1px solid $color-inputs;
+	transition: .2s;
+
+	&:focus {
+		border-color: $color-blue;
+	}
+}
+
+
+/* ---------------------------------------------------------------------------------
+ * Remove yellow background from autofilled inputs
+ */
+
+@-webkit-keyframes remove-autocomplete-bg {
+	to {
+		background: transparent;
+	}
+}
+
+input:-webkit-autofill {
+	-webkit-animation-name: remove-autocomplete-bg;
+	-webkit-animation-fill-mode: both;
+}

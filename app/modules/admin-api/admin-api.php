@@ -22,6 +22,10 @@ $ajax = new Ajax();
 $requested_submodule = $router->getRequestChunk(1);
 
 switch($requested_submodule) {
+	case 'status':
+		require 'admin-api-status.php';
+		break;
+
 	case 'users':
 		require 'admin-api-users.php';
 		break;

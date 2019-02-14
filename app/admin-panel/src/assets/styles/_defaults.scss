@@ -1,0 +1,47 @@
+/*
+ * =================================================================================
+ * DEFAULTS
+ * ================================================================================
+ */
+
+body {
+	font-family: $font-primary;
+	font-size: 14px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	color: $color-text;
+	background: $color-light;
+}
+
+hr {
+	border-color: $color-lines;
+}
+
+
+/* ---------------------------------------------------------------------------------
+ * Grid with gutter
+ */
+
+.Grid--gutter {
+	margin-left: -$gutter;
+	margin-right: -$gutter;
+
+	[class*='Col-'] {
+		padding-left: $gutter;
+		padding-right: $gutter;
+	}
+}
+
+
+/* ---------------------------------------------------------------------------------
+ * Scrollbar
+ */
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+
+	&-track { background-color: $color-light; }
+
+	&-thumb { background-color: $color-gray; }
+}
