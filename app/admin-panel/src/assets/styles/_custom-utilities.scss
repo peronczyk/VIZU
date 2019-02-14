@@ -42,6 +42,26 @@
 
 
 /* ---------------------------------------------------------------------------------
+ * Page top
+ */
+
+.u-PageTop {
+	display: flex;
+	align-items: center;
+	padding: 20px 0;
+	min-height: 16vh;
+
+	h1 { margin: 0; }
+
+
+	&__buttons {
+		margin-left: auto;
+		transition: .4s;
+	}
+}
+
+
+/* ---------------------------------------------------------------------------------
  * Alignemnts
  */
 
