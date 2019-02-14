@@ -9,24 +9,23 @@
  * =================================================================================
  */
 
+$rest_store = new RestStore();
+
 $contact_config = $theme_config['contact'];
 
 if (!is_array($contact_config)) {
-	$ajax
+	$rest_store
 		->set('message', 'Theme configuration file not found or does not contain contact form configuration')
-		->send();
+		->output();
 }
 
 if (!is_array($contact_config['fields'])) {
-	$ajax
+	$rest_store
 		->set('message', 'Theme contact configuration does not contain fields setup')
-		->send();
+		->output();
 }
 
-
-$ajax = new Ajax();
-$tpl  = new Template();
-
+$tpl = new Template();
 $tpl->setTheme(Config::$THEMES_DIR . Config::$THEME_NAME);
 
 
@@ -68,11 +67,11 @@ foreach ($contact_config['fields'] as $form_field) {
  */
 
 if (count($contact_fields_errors) > 0) {
-	$ajax
+	$rest_store
 		->set('success', false)
 		->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-form-invalid', 'One or more fields have an error.'))
 		->set('form-errors', $contact_fields_errors)
-		->send();
+		->output();
 }
 
 
@@ -93,18 +92,18 @@ if (!empty($contact_config['recaptcha_secret'])) {
 		$recaptcha_result = $recaptcha3->validate($token);
 	}
 	catch (Exception $e) {
-		return $ajax
+		return $rest_store
 			->set('success', false)
 			->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-error', 'Anti-spam system error.') . ' ' . $e->getMessage())
-			->send();
+			->output();
 	}
 
 	// Stop code execution if reCAPTCHA validator recognize user as not a human
 	if ($recaptcha_result === false) {
-		return $ajax
+		return $rest_store
 			->set('success', false)
 			->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-invalid', 'You have been recognized as spammer.'))
-			->send();
+			->output();
 	}
 }
 
@@ -132,15 +131,15 @@ foreach($users as $user) {
 }
 
 if (!$main_recipient) {
-	$ajax
+	$rest_store
 		->set('message', $lang->_t('mailer-recipient-error', 'Message recipient not configured'))
-		->send();
+		->output();
 }
 
 if (count($contact_fields_errors) > 0) {
-	$ajax
+	$rest_store
 		->set('form-errors', $contact_fields_errors)
-		->send();
+		->output();
 }
 
 
@@ -180,6 +179,6 @@ catch (Exception $e) {
  * Output AJAX response
  */
 
-$ajax
+$rest_store
 	->set('message', $result_message)
-	->send();
+	->output();

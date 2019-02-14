@@ -4,6 +4,10 @@
  * ================================================================================
  */
 
+html {
+	overflow-y: scroll;
+}
+
 body {
 	font-family: $font-primary;
 	font-size: 14px;

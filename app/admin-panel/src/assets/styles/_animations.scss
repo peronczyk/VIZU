@@ -1,0 +1,67 @@
+.a-FadeIn {
+	animation: fadein .5s linear;
+}
+
+@keyframes fadein {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+
+.a-Spin {
+	animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(359deg);
+	}
+}
+
+
+.a-Shake { animation: shake 2s infinite linear; }
+
+@keyframes shake {
+	0%, 10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90% { transform: translateX(7%); }
+	5%, 15%, 25%, 35%, 45%, 55%, 65%, 75%, 85%, 95% { transform: translateX(-7%); }
+}
+
+@keyframes slide-in-from-top {
+	0% {
+		opacity: 0;
+		transform: translateY(-40px);
+	}
+	100% {
+		oopacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes scale-in {
+	0% {
+		opacity: 0;
+		transform: scale(1.05);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes scale-out {
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(.9.5);
+	}
+}

@@ -37,7 +37,7 @@ switch ($router->getRequestChunk(2)) {
 		}
 
 		if ($error_msg) {
-			$ajax->set('message', $error_msg);
+			$rest_store->set('message', $error_msg);
 			return;
 		}
 
@@ -48,7 +48,7 @@ switch ($router->getRequestChunk(2)) {
 		$user_data = $db->fetchAll($result);
 
 		if (isset($user_data[0]['password']) && $user_data[0]['password'] !== User::passwordEncode($_POST['password_actual'])) {
-			$ajax->set('message', 'Provided current password is not correct');
+			$rest_store->set('message', 'Provided current password is not correct');
 			return;
 		}
 
@@ -59,11 +59,11 @@ switch ($router->getRequestChunk(2)) {
 		$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user->get_id()}' LIMIT 1");
 
 		if ($result) {
-			$ajax->set('message', 'Password changed');
+			$rest_store->set('message', 'Password changed');
 			$_SESSION['password'] = $new_password;
 		}
 		else {
-			$ajax->set('message', 'Password change failed');
+			$rest_store->set('message', 'Password change failed');
 		}
 
 		break;
@@ -79,7 +79,7 @@ switch ($router->getRequestChunk(2)) {
 
 		// Validate entered email address
 		if (empty($email) || !User::verifyUsername($email)) {
-			$ajax->set('message', 'Provided email address is missing or incorrect');
+			$rest_store->set('message', 'Provided email address is missing or incorrect');
 			break;
 		}
 
@@ -87,7 +87,7 @@ switch ($router->getRequestChunk(2)) {
 		$result = $db->query("SELECT * FROM `users` WHERE `email` = '{$email}'");
 		$user_found = $db->fetchAll($result);
 		if ($user_found) {
-			$ajax->set('message', 'Account with provided email address already exists');
+			$rest_store->set('message', 'Account with provided email address already exists');
 			break;
 		}
 
@@ -101,7 +101,7 @@ switch ($router->getRequestChunk(2)) {
 			$fetched = $db->fetchAll($result);
 
 			if (!$fetched) {
-				$ajax->set('message', "Configured default sender/receiver '{$user_id}' does not exist. Admin acount creation failed.");
+				$rest_store->set('message', "Configured default sender/receiver '{$user_id}' does not exist. Admin acount creation failed.");
 				break;
 			}
 			$contact_user_email = $fetched[0]['email'];
@@ -125,14 +125,14 @@ switch ($router->getRequestChunk(2)) {
 			);
 		}
 		catch (\Exception $e) {
-			$ajax->set('message', "Failed to send account creation notification. Error thrown: '{$e->getMessage()}'");
+			$rest_store->set('message', "Failed to send account creation notification. Error thrown: '{$e->getMessage()}'");
 			break;
 		}
 
 		// Add user to database
 		$query = $db->query("INSERT INTO `users` VALUES ('', '{$email}', '{$user->password_encode($generated_password)}')");
 
-		$ajax->set('message', "Administrator account with email address {$email} has been created.");
+		$rest_store->set('message', "Administrator account with email address {$email} has been created.");
 		break;
 
 
@@ -163,7 +163,7 @@ switch ($router->getRequestChunk(2)) {
 						$user_notified = true;
 					}
 					catch (Exception $e) {
-						$ajax->set('error', [
+						$rest_store->set('error', [
 							'str'  => 'Password recvery process failed - could not send email. Returned error: ' . $e->getMessage(),
 							'file' => __FILE__,
 							'line' => __LINE__
@@ -174,10 +174,10 @@ switch ($router->getRequestChunk(2)) {
 						$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user_data[0]['email']}' LIMIT 1");
 					}
 				}
-				$ajax->set('message', 'Password recovery process started. We have sent you further informations to your email box.');
+				$rest_store->set('message', 'Password recovery process started. We have sent you further informations to your email box.');
 			}
 			else {
-				$ajax->set('error', [
+				$rest_store->set('error', [
 					'str'  => 'Provided email address is not valid.',
 					'file' => __FILE__,
 					'line' => __LINE__

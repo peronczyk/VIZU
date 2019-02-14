@@ -14,7 +14,9 @@
 	top: 50%;
 	left: 50%;
 	visibility: visible;
-	transform: translate(-50%,-50%);
+	width: 54px;
+	height: 54px;
+	transform: translate(-50%, -50%);
 	transition: .3s;
 	will-change: visibility, opacity, transform;
 

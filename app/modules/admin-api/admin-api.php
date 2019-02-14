@@ -17,7 +17,7 @@ if (!$core->isDev() && !Core::isAjaxRequest()) {
 }
 
 $user = new User($db);
-$ajax = new Ajax();
+$rest_store = new RestStore();
 
 $requested_submodule = $router->getRequestChunk(1);
 
@@ -46,11 +46,11 @@ switch($requested_submodule) {
 	// UNKNOWN REQUEST
 
 	default:
-		$ajax->set('error', [
+		$rest_store->set('error', [
 			'str'  => "Unknown submodule '{$requested_submodule}'",
 			'file' => __FILE__,
 			'line' => __LINE__
 		]);
 }
 
-$ajax->send();
+$rest_store->output();

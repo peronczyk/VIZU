@@ -40,41 +40,4 @@ foreach($fields_data as $key => $val) {
 
 arsort($fields_data_simple);
 
-
-// Prepare array ready to display
-
-$display_str = '';
-
-foreach($fields_data_simple as $key => $val) {
-	if (!isset($template_fields[$key]['name']) || !isset($template_fields[$key]['category'])) {
-		continue;
-	}
-	$date = explode(' ', $val);
-	switch($template_fields[$key]['category']) {
-		case 'text':
-			$category = 'Content';
-			break;
-
-		case 'setting':
-			$category = 'Setting';
-			break;
-
-		default:
-			$category = null;
-	}
-	$display_str .= '<tr><td>' . $category . '</td><td>' . $template_fields[$key]['name'] . '</td><td>' . $date[0] . '</td><td>' . $date[1] . '</td></tr>';
-}
-
-
-$tpl->assign([
-	'history' => $display_str
-]);
-
-// Display layout
-
-$tpl->setTheme(Config::$APP_DIR . 'admin-panel');
-
-$template_content = $tpl->getContent('history');
-$template_fields  = $tpl->getFields($template_content);
-
-$ajax->set('html', $tpl->parse($template_content, $template_fields));
+$rest_store->set('history', $fields_data_simple);

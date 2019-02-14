@@ -1,29 +1,45 @@
 <template>
 
 	<div class="c-Content">
-		<form @submit.prevent="saveContent" :class="{'is-FormReady': isFormReady}">
+		<form @submit.prevent="saveContent">
 			<div class="u-PageTop">
 				<h1>Content</h1>
 
-				<div class="o-Top__buttons">
-					Language:
-					<select v-model="formValues['lang']">
-						<option>EN</option>
-					</select>
+				<transition name="fade">
+					<div class="u-PageTop__buttons" v-if="isFormReady">
+						<label class="u-PageTop__option">
+							Language:
+							<select v-model="formValues['lang']">
+								<option>EN</option>
+							</select>
+						</label>
 
-					<button class="Btn Btn--gray" type="reset" @click.prevent="resetForm">Reset</button>
-					<button class="Btn Btn--primary" type="submit">Save changes</button>
-				</div>
+						<button class="Btn Btn--gray" type="reset" @click.prevent="resetForm">Reset</button>
+						<button class="Btn Btn--primary" type="submit">Save changes</button>
+					</div>
+				</transition>
 			</div>
 
 			<div class="c-Content__fields">
 				<loader :is-hidden="isFormReady" />
 
-				<form-row-simple
-					v-for="(fieldInfo, fieldId) in fieldsReceived" :key="fieldId"
-					v-model="formValues[fieldId]"
-					:fieldInfo="fieldInfo"
-				/>
+				<transition-group name="fade">
+					<div
+						v-for="(fieldData, fieldId) in fieldsReceived"
+						:key="fieldId"
+					>
+						<form-row-simple
+							v-if="fieldData.type == 'simple'"
+							v-model="formValues[fieldId]"
+							:field-info="fieldData"
+						/>
+						<form-row-rich
+							v-if="fieldData.type == 'rich'"
+							v-model="formValues[fieldId]"
+							:field-info="fieldData"
+						/>
+					</div>
+				</transition-group>
 			</div>
 		</form>
 	</div>
@@ -56,17 +72,6 @@ export default {
 		};
 	},
 
-	created() {
-		axios.get('../admin-api/content')
-			.then(result => {
-				console.log(result.data);
-				if (result.data.fields) {
-					this.isFormReady = true;
-					this.fieldsReceived = result.data.fields;
-				}
-			});
-	},
-
 	methods: {
 		saveContent() {
 			console.info('Save');
@@ -84,6 +89,17 @@ export default {
 			console.log(this.formValues);
 		}
 	},
+
+	created() {
+		axios.get('../admin-api/content')
+			.then(result => {
+				this.isFormReady = true;
+				console.log(result.data);
+				if (result.data.fields) {
+					this.fieldsReceived = result.data.fields;
+				}
+			});
+	},
 }
 
 </script>
@@ -95,16 +111,6 @@ export default {
 	&__fields {
 		position: relative;
 		min-height: 200px;
-	}
-}
-
-.o-Top__buttons {
-	opacity: 0;
-	transform: translateX(40px);
-
-	.is-FormReady & {
-		opacity: 1;
-		transform: none;
 	}
 }
 

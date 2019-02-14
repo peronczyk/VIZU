@@ -1,9 +1,12 @@
 <?php
 
-$ajax->set('user-access', $user->getAccess());
+$rest_store->set('user-access', $user->getAccess());
 
 if ($user->getAccess() > 0) {
-	$ajax->set('app-version', VIZU_VERSION);
-	$ajax->set('php-version', phpversion());
-	$ajax->set('site-name', Config::$SITE_NAME);
+	$rest_store->merge([
+		'app-version'   => VIZU_VERSION,
+		'php-version'   => phpversion(),
+		'site-name'     => Config::$SITE_NAME,
+		'language-code' => $lang->getActiveLangCode()
+	]);
 }
