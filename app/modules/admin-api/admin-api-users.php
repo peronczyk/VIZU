@@ -14,9 +14,97 @@ if (IN_ADMIN_API !== true) {
 }
 
 switch ($router->getRequestChunk(2)) {
-	case 'change_password';
+	case 'list':
+		$admin_actions->requireAdminAccessRights();
 
-		// Form validation
+		$query = $db->query('SELECT * FROM `users`');
+		$result = $db->fetchAll($query);
+		$users_list = [];
+
+		foreach($result as $user_data) {
+			$users_list[] = [
+				'id' => $user_data['id'],
+				'email' => $user_data['email']
+			];
+		}
+
+		$rest_store->set('users-list', $users_list);
+
+		break;
+
+
+		/** ----------------------------------------------------------------------------
+		 * Add user
+		 */
+
+		case 'add':
+			$admin_actions->requireAdminAccessRights();
+
+			$email = $_POST['email'] ?? null;
+			$contact_config = $theme_config['contact'];
+
+			// Validate entered email address
+			if (empty($email) || !User::verifyUsername($email)) {
+				$rest_store->set('message', 'Provided email address is missing or incorrect');
+				break;
+			}
+
+			// Check if email address already exists
+			$result = $db->query("SELECT * FROM `users` WHERE `email` = '{$email}'");
+			$user_found = $db->fetchAll($result);
+			if ($user_found) {
+				$rest_store->set('message', 'Account with provided email address already exists');
+				break;
+			}
+
+
+			// Set sender email address as theme contact form main recipient
+			if ($contact_config['default_recipient']) {
+				$user_id = $contact_config['default_recipient'];
+
+				// Get email addres of contact user that was set in configuration
+				$result  = $db->query("SELECT `email` FROM `users` WHERE `id` = '{$user_id}'");
+				$fetched = $db->fetchAll($result);
+
+				if (!$fetched) {
+					$rest_store->set('message', "Configured default sender/receiver '{$user_id}' does not exist. Admin acount creation failed.");
+					break;
+				}
+				$contact_user_email = $fetched[0]['email'];
+			}
+
+			$generated_password = User::generatePassword();
+			$content_fields = [
+				'Message'      => 'Administrator account created. It is strongly recomended to change your password now.',
+				'Page address' => $router->site_path,
+				'Login'        => $email,
+				'Password'     => $generated_password
+			];
+
+			// Send notification to user about account creation
+			try {
+				$notifier = new Notifier($contact_config);
+				$notifier->notify(
+					"[{$router->domain}] Account registration", // Subject
+					$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
+					$email // Recipient
+				);
+			}
+			catch (\Exception $e) {
+				$rest_store->set('message', "Failed to send account creation notification. Error thrown: '{$e->getMessage()}'");
+				break;
+			}
+
+			// Add user to database
+			$query = $db->query("INSERT INTO `users` VALUES ('', '{$email}', '{$user->password_encode($generated_password)}')");
+
+			$rest_store->set('message', "Administrator account with email address {$email} has been created.");
+
+			break;
+
+
+	case 'password-change':
+		$admin_actions->requireAdminAccessRights();
 
 		$error_msg = null;
 
@@ -70,118 +158,53 @@ switch ($router->getRequestChunk(2)) {
 
 
 	/** ----------------------------------------------------------------------------
-	 * Add user
-	 */
-
-	case 'user_add':
-		$email = $_POST['email'] ?? null;
-		$contact_config = $theme_config['contact'];
-
-		// Validate entered email address
-		if (empty($email) || !User::verifyUsername($email)) {
-			$rest_store->set('message', 'Provided email address is missing or incorrect');
-			break;
-		}
-
-		// Check if email address already exists
-		$result = $db->query("SELECT * FROM `users` WHERE `email` = '{$email}'");
-		$user_found = $db->fetchAll($result);
-		if ($user_found) {
-			$rest_store->set('message', 'Account with provided email address already exists');
-			break;
-		}
-
-
-		// Set sender email address as theme contact form main recipient
-		if ($contact_config['default_recipient']) {
-			$user_id = $contact_config['default_recipient'];
-
-			// Get email addres of contact user that was set in configuration
-			$result  = $db->query("SELECT `email` FROM `users` WHERE `id` = '{$user_id}'");
-			$fetched = $db->fetchAll($result);
-
-			if (!$fetched) {
-				$rest_store->set('message', "Configured default sender/receiver '{$user_id}' does not exist. Admin acount creation failed.");
-				break;
-			}
-			$contact_user_email = $fetched[0]['email'];
-		}
-
-		$generated_password = User::generatePassword();
-		$content_fields = [
-			'Message'      => 'Administrator account created. It is strongly recomended to change your password now.',
-			'Page address' => $router->site_path,
-			'Login'        => $email,
-			'Password'     => $generated_password
-		];
-
-		// Send notification to user about account creation
-		try {
-			$notifier = new Notifier($contact_config);
-			$notifier->notify(
-				"[{$router->domain}] Account registration", // Subject
-				$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
-				$email // Recipient
-			);
-		}
-		catch (\Exception $e) {
-			$rest_store->set('message', "Failed to send account creation notification. Error thrown: '{$e->getMessage()}'");
-			break;
-		}
-
-		// Add user to database
-		$query = $db->query("INSERT INTO `users` VALUES ('', '{$email}', '{$user->password_encode($generated_password)}')");
-
-		$rest_store->set('message', "Administrator account with email address {$email} has been created.");
-		break;
-
-
-	/** ----------------------------------------------------------------------------
 	 * Password recovery
 	 */
 
-	case 'password_recovery':
-			$show_content = false;
-			if (User::verifyUsername($_POST['email'])) {
-				$result = $db->query("SELECT `id`, `email` FROM `users` WHERE `email` = '{$_POST['email']}'");
-				$user_data = $db->fetchAll($result);
-				if (count($user_data) == 1) {
-					$user_notified = false;
-					$new_password = User::generatePassword();
-					$content_fields = [
-						'Message' => "You have requested password recovery to your administration panel. Here is your new password: <strong>{$new_password}</strong>. Please use it to log in and change it as soon as possible.",
-						'Page address' => $router->site_path,
-					];
+	case 'password-recovery':
+		$admin_actions->requireAdminAccessRights();
 
-					try {
-						$notifier = new Notifier($theme_config['contact'] ?? []);
-						$notifier->notify(
-							'[' . Config::$SITE_NAME . '] Password recovery request', // Subject
-							$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
-							$user_data[0]['email'] // Recipient
-						);
-						$user_notified = true;
-					}
-					catch (Exception $e) {
-						$rest_store->set('error', [
-							'str'  => 'Password recvery process failed - could not send email. Returned error: ' . $e->getMessage(),
-							'file' => __FILE__,
-							'line' => __LINE__
-						]);
-					}
+		$show_content = false;
+		if (User::verifyUsername($_POST['email'])) {
+			$result = $db->query("SELECT `id`, `email` FROM `users` WHERE `email` = '{$_POST['email']}'");
+			$user_data = $db->fetchAll($result);
+			if (count($user_data) == 1) {
+				$user_notified = false;
+				$new_password = User::generatePassword();
+				$content_fields = [
+					'Message' => "You have requested password recovery to your administration panel. Here is your new password: <strong>{$new_password}</strong>. Please use it to log in and change it as soon as possible.",
+					'Page address' => $router->site_path,
+				];
 
-					if ($user_notified) {
-						$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user_data[0]['email']}' LIMIT 1");
-					}
+				try {
+					$notifier = new Notifier($theme_config['contact'] ?? []);
+					$notifier->notify(
+						'[' . Config::$SITE_NAME . '] Password recovery request', // Subject
+						$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
+						$user_data[0]['email'] // Recipient
+					);
+					$user_notified = true;
 				}
-				$rest_store->set('message', 'Password recovery process started. We have sent you further informations to your email box.');
+				catch (Exception $e) {
+					$rest_store->set('error', [
+						'str'  => 'Password recvery process failed - could not send email. Returned error: ' . $e->getMessage(),
+						'file' => __FILE__,
+						'line' => __LINE__
+					]);
+				}
+
+				if ($user_notified) {
+					$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user_data[0]['email']}' LIMIT 1");
+				}
 			}
-			else {
-				$rest_store->set('error', [
-					'str'  => 'Provided email address is not valid.',
-					'file' => __FILE__,
-					'line' => __LINE__
-				]);
-			}
-			break;
+			$rest_store->set('message', 'Password recovery process started. We have sent you further informations to your email box.');
+		}
+		else {
+			$rest_store->set('error', [
+				'str'  => 'Provided email address is not valid.',
+				'file' => __FILE__,
+				'line' => __LINE__
+			]);
+		}
+		break;
 }

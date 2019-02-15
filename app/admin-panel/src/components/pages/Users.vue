@@ -9,7 +9,7 @@
 			<div class="Col-6 Col-12@MD">
 				<div class="c-UserList">
 					<h3>Users list</h3>
-					<ul class="t-List--dashes">
+					<ul class="u-DashList">
 						<li v-for="user in usersList" :key="user.email">{{ user.email }}</li>
 					</ul>
 				</div>
@@ -82,10 +82,8 @@ export default {
 
 	created() {
 		axios.get('../admin-api/users/list')
-			.then(receivedData => {
-				console.info('Users list received');
-				console.log(receivedData);
-				this.usersList = receivedData['users-list'];
+			.then(result => {
+				this.usersList = result.data['users-list'];
 			});
 	},
 }

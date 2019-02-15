@@ -24,21 +24,12 @@
 				<loader :is-hidden="isFormReady" />
 
 				<transition-group name="fade">
-					<div
+					<form-row-wrapper
 						v-for="(fieldData, fieldId) in fieldsReceived"
-						:key="fieldId"
-					>
-						<form-row-simple
-							v-if="fieldData.type == 'simple'"
-							v-model="formValues[fieldId]"
-							:field-info="fieldData"
-						/>
-						<form-row-rich
-							v-if="fieldData.type == 'rich'"
-							v-model="formValues[fieldId]"
-							:field-info="fieldData"
-						/>
-					</div>
+						v-model="formValues[fieldId]"
+						:key="fieldData.id"
+						:field-data="fieldData"
+					/>
 				</transition-group>
 			</div>
 		</form>
@@ -55,12 +46,14 @@ import axios from 'axios';
 // Components
 import FormRowSimple from '../form/FormRowSimple.vue';
 import FormRowRich from '../form/FormRowRich.vue';
+import FormRowWrapper from '../form/FormRowWrapper.vue';
 import Loader from '../objects/Loader.vue';
 
 export default {
 	components: {
 		FormRowSimple,
 		FormRowRich,
+		FormRowWrapper,
 		Loader
 	},
 
@@ -77,7 +70,7 @@ export default {
 			console.info('Save');
 			console.log(this.formValues);
 
-			axios.post('../admin-api/content', this.formValues)
+			axios.post('../admin-api/content/save', this.formValues)
 				.then(result => {
 					console.log(result.data);
 				});
@@ -86,15 +79,13 @@ export default {
 		resetForm() {
 			console.info('Reset');
 			this.formValues = {};
-			console.log(this.formValues);
 		}
 	},
 
 	created() {
-		axios.get('../admin-api/content')
+		axios.get('../admin-api/content/list')
 			.then(result => {
 				this.isFormReady = true;
-				console.log(result.data);
 				if (result.data.fields) {
 					this.fieldsReceived = result.data.fields;
 				}

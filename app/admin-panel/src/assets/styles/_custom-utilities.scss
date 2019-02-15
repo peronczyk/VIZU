@@ -138,3 +138,24 @@
 		letter-spacing: .02em;
 	}
 }
+
+.u-DashList {
+	margin-bottom: $box-bottom-margin;
+	list-style-type: none;
+
+	li {
+		position: relative;
+		margin-bottom: 6px;
+		padding-left: 40px;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 11px;
+			left: 12px;
+			height: 1px;
+			width: 14px;
+			background-color: $color-gray;
+		}
+	}
+}

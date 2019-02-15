@@ -16,8 +16,9 @@ if (!$core->isDev() && !Core::isAjaxRequest()) {
 	die('Only API requests');
 }
 
-$user = new User($db);
-$rest_store = new RestStore();
+$user          = new User($db);
+$rest_store    = new RestStore();
+$admin_actions = new AdminActions($user);
 
 $requested_submodule = $router->getRequestChunk(1);
 

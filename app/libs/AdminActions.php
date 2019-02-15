@@ -1,6 +1,11 @@
 <?php
 
 class AdminActions {
+	private $_user;
+
+	public function __construct(User $user) {
+		$this->_user = $user;
+	}
 
 	/** ----------------------------------------------------------------------------
 	 * Bypass default PHP errors by custom error handler.
@@ -20,5 +25,12 @@ class AdminActions {
 			);
 			die();
 		});
+	}
+
+	public function requireAdminAccessRights() {
+		if ($this->_user->getAccess() < 1) {
+			header('HTTP/1.0 403 Forbidden');
+			die('Forbidden');
+		}
 	}
 }

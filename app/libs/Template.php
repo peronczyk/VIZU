@@ -84,7 +84,7 @@ class Template {
 		$fields = [];
 		$paired_field_started = false;
 		$paired_field_type    = null;
-		$paired_field_id      = null;
+		$paired_field_num     = null;
 
 		foreach($field_contents as $key => $val) {
 			$field_type = explode(' ', trim($val), 2)[0];
@@ -97,7 +97,7 @@ class Template {
 			if ($field_type == '/' . $paired_field_type) {
 				$paired_field_started = false;
 				$paired_field_type    = null;
-				$paired_field_id      = null;
+				$paired_field_num     = null;
 				continue;
 			}
 
@@ -121,14 +121,12 @@ class Template {
 					$field[$params[1][$p]] = $params[2][$p];
 				}
 			}
-			$field_id = $field['id'];
-			unset($field['id']);
 
 			/**
 			 * If paired mode is ON attach all fields to paired tag as subfields.
 			 */
 			if ($paired_field_started) {
-				$fields[$paired_field_id][self::CHILD_FIELD_KEY][$field_id] = $field;
+				$fields[$paired_field_num][self::CHILD_FIELD_KEY][] = $field;
 				continue;
 			}
 
@@ -138,13 +136,13 @@ class Template {
 			if (in_array($field_type, Config::$PAIRED_FIELD_TYPES)) {
 				$paired_field_started = true;
 				$paired_field_type    = $field_type;
-				$paired_field_id      = $field_id;
+				$paired_field_num     = $field['id'];
 				$field[self::CHILD_FIELD_KEY] = [];
 			}
 
 			// Add field to array if has ID and there is no existing entry with this ID
-			if (!isset($fields[$field_id])) {
-				$fields[$field_id] = $field;
+			if (!isset($fields[$field['id']])) {
+				$fields[$field['id']] = $field;
 			}
 		}
 
