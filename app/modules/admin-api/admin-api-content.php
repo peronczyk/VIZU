@@ -13,27 +13,22 @@ if (IN_ADMIN_API !== true) {
 	die('This file can be loaded only in admin module');
 }
 
+$source_template_name = 'home';
+
 // Check wchich language is selected in this form
 $active_lang = (!empty($router->query['language']) && strlen($router->query['language']) == 2)
 	? $router->query['language']
 	: $lang->getActiveLangCode();
 
-
 // Get data from database for all fields
-$result = $db->query("SELECT * FROM `fields` WHERE `template` = 'home' AND `language` = '{$active_lang}'");
+$result = $db->query("SELECT * FROM `fields` WHERE `template` = '{$source_template_name}' AND `language` = '{$active_lang}'");
 $fields_data = $core->processArray($db->fetchAll($result), 'id');
 
+// Run template handler
+$template_file = __ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME . '/templates/' . $source_template_name . '.html';
+$template = new Template($template_file);
 
-// Get fields from home of user template
-$tpl = new Template();
-$tpl->setTemplatesDir(__ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME);
-$template_content = $tpl->getTemplateFileContent('templates/home.html');
-$template_fields  = $tpl->getFieldsFromString($template_content);
-
-echo '<pre>';
-print_r($template_fields);
-die();
-
+// Select action
 switch($router->getRequestChunk(2)) {
 
 	/** ----------------------------------------------------------------------------
@@ -45,7 +40,7 @@ switch($router->getRequestChunk(2)) {
 
 		$rest_store->set('post', $_POST);
 
-		$query_common_where = "`template` = 'home' AND `language` = '{$active_lang}'"; // String used almost in all queries as WHERE
+		$query_common_where = "`template` = '{$source_template_name}' AND `language` = '{$active_lang}'"; // String used almost in all queries as WHERE
 		$num_changes = 0; // Count changes that was made
 
 		// Loop aver all POST fields that was sent by form
@@ -109,13 +104,18 @@ switch($router->getRequestChunk(2)) {
 		$languages = $lang->getList();
 
 		// Stores array of loaded field's classes
-		$fields_container = new Fields\Container();
+		$field_handlers = new FieldHandlersWrapper($template);
+
+		//$field_handlers->
+
+
+		echo '<pre>';
+		print_r($template->getTemplateFields());
+
+		die();
 
 		// Stores html of form elements - fields
 		$form_fields = [];
-
-		// Stores numbers of each field types
-		$field_num = [];
 
 		// Stores number of skiped fields (not editable fields or with errors)
 		$skipped_fields = [];
@@ -133,14 +133,6 @@ switch($router->getRequestChunk(2)) {
 			if (!isset($field['type']) || !in_array($field['type'], Config::$EDITABLE_FIELD_TYPES) || empty($field['name'])) {
 				$skipped_fields[] = $field;
 				continue;
-			}
-
-			// Count how many fields of this type occured in parsed document
-			if (!isset($field_num[$field['type']])) {
-				$field_num[$field['type']] = 1;
-			}
-			else {
-				$field_num[$field['type']]++;
 			}
 
 			// Add value of the field taken from the database

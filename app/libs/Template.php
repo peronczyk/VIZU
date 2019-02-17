@@ -10,25 +10,28 @@
  */
 
 class Template {
+	private $template_file_path;
+	private $template_file_content;
+	private $template_fields;
 
 	/**
-	 * Assignement storage. This values will be parsed in to the template
-	 * eg.: {{ text id='foo'}} will be changed with 'foo' => 'Bar'
+	 * Basic assignement storage. This keys and values will be parsed at the
+	 * beginning of parsing process.
+	 * @example {{ some_name }} will be changed to 'Lorem ipsum' if $vars will
+	 *   contain 'some_name' => 'Lorem ipsum' array element.
 	 */
-	public $vars = array();
-
-	/**
-	 * Stores path to templates directory
-	 */
-	private $templates_dir;
+	public $vars = [];
 
 
 	/** ----------------------------------------------------------------------------
-	 * SETTER : Theme templates directory
+	 * Constructor
 	 */
 
-	public function setTemplatesDir(string $templates_dir) {
-		$this->templates_dir = $templates_dir;
+	public function __construct(string $template_file_path) {
+		if (!file_exists($template_file_path)) {
+			throw new Exception("Template file does not exist: {$template_file_path}");
+		}
+		$this->template_file_path = $template_file_path;
 	}
 
 
@@ -36,19 +39,11 @@ class Template {
 	 * Get contents of template file
 	 */
 
-	public function getTemplateFileContent(string $file_path) {
-		if (empty($this->templates_dir)) {
-			throw new Exception('Templates directory not set.');
+	public function getTemplateFileContent() {
+		if (!$this->template_file_content) {
+			$this->template_file_content = file_get_contents($this->template_file_path);
 		}
-
-		$file_path = $this->templates_dir . '/' . $file_path;
-
-		if (!file_exists($file_path)) {
-			throw new Exception("Template file does not exist: {$file_path}");
-			return false;
-		}
-
-		return file_get_contents($file_path);
+		return $this->template_file_content;
 	}
 
 
@@ -70,7 +65,7 @@ class Template {
 	 * @return Array
 	 */
 
-	public function getFieldsFromString(string $content) {
+	public static function getFieldsFromString(string $content) {
 		$num_matches = preg_match_all('/{{(.*?)}}/', $content, $matches);
 		list($full_tags, $field_contents) = $matches;
 
@@ -84,14 +79,12 @@ class Template {
 			$field['tag'] = $full_tags[$key];
 
 			/**
-			 * Get params of the field
+			 * Get properties of the field
 			 * @example foo='bar' becomes array ['foo' => 'bar']
 			 */
-			$num_params = preg_match_all("/([a-z]+)='([^']*)'/", $val, $params);
-			if (is_array($params)) {
-				foreach ($params[1] as $p => $param) {
-					$field['params'][$params[1][$p]] = $params[2][$p];
-				}
+			$num_props = preg_match_all("/([a-z]+)='([^']*)'/", $val, $props);
+			if ($num_props) {
+				$field['props'] = array_combine($props[1], $props[2]);
 			}
 
 			$fields[] = $field;
@@ -100,27 +93,21 @@ class Template {
 		return $fields;
 	}
 
-
-	/** ----------------------------------------------------------------------------
-	 * Parse file
-	 */
-
-	public function parseFile(string $file, array $translations = []) {
-		$template_content = $this->getTemplateFileContent($file);
-		$template_fields  = $this->getFieldsFromString($template_content);
-		return $this->parse($template_content, $template_fields, $translations);
+	public function getTemplateFields() {
+		if (!$this->template_fields) {
+			$this->template_fields = self::getFieldsFromString($this->getTemplateFileContent());
+		}
+		return $this->template_fields;
 	}
 
 
 	/** ----------------------------------------------------------------------------
 	 * Parse template
-	 *
-	 * @param String $content - HTML code with template tags: {{ something }}
-	 * @param Array $fields
-	 * @param Array $translations
 	 */
 
-	public function parse(string $content, array $fields, array $translations = []) {
+	public function parse() {
+		$content = $this->getTemplateFileContent();
+		$fields  = $this->getTemplateFields();
 
 		/**
 		 * Prepare all fields
