@@ -11,8 +11,6 @@
 
 class Template {
 
-	const CHILD_FIELD_KEY = 'children';
-
 	/**
 	 * Assignement storage. This values will be parsed in to the template
 	 * eg.: {{ text id='foo'}} will be changed with 'foo' => 'Bar'
@@ -20,22 +18,17 @@ class Template {
 	public $vars = array();
 
 	/**
-	 * Stores theme name (folder)
+	 * Stores path to templates directory
 	 */
-	private $theme;
-
-	/**
-	 * Template files extension
-	 */
-	private $tpl_ext = '.html';
+	private $templates_dir;
 
 
 	/** ----------------------------------------------------------------------------
-	 * SETTER : Theme direcory name
+	 * SETTER : Theme templates directory
 	 */
 
-	public function setTheme(string $theme_dir) {
-		$this->theme_dir = $theme_dir;
+	public function setTemplatesDir(string $templates_dir) {
+		$this->templates_dir = $templates_dir;
 	}
 
 
@@ -43,12 +36,12 @@ class Template {
 	 * Get contents of template file
 	 */
 
-	public function getContent(string $file_path) {
-		if (empty($this->theme_dir)) {
-			throw new Exception('Theme not set');
+	public function getTemplateFileContent(string $file_path) {
+		if (empty($this->templates_dir)) {
+			throw new Exception('Templates directory not set.');
 		}
 
-		$file_path = $this->theme_dir . '/' . $file_path;
+		$file_path = $this->templates_dir . '/' . $file_path;
 
 		if (!file_exists($file_path)) {
 			throw new Exception("Template file does not exist: {$file_path}");
@@ -64,7 +57,7 @@ class Template {
 	 */
 
 	public function assign(array $array) {
-		foreach($array as $key => $val) {
+		foreach ($array as $key => $val) {
 			$this->vars[$key] = $val;
 		}
 	}
@@ -77,39 +70,18 @@ class Template {
 	 * @return Array
 	 */
 
-	public function getFields(string $content) {
+	public function getFieldsFromString(string $content) {
 		$num_matches = preg_match_all('/{{(.*?)}}/', $content, $matches);
 		list($full_tags, $field_contents) = $matches;
 
 		$fields = [];
-		$paired_field_started = false;
-		$paired_field_type    = null;
-		$paired_field_num     = null;
 
-		foreach($field_contents as $key => $val) {
+		foreach ($field_contents as $key => $val) {
 			$field_type = explode(' ', trim($val), 2)[0];
 			$field      = [];
 
-			/**
-			 * If loop reached end tag of paired field reset
-			 * @example {{ /paired }}
-			 */
-			if ($field_type == '/' . $paired_field_type) {
-				$paired_field_started = false;
-				$paired_field_type    = null;
-				$paired_field_num     = null;
-				continue;
-			}
-
-			// Skip fields with types that was not configured
-			if (
-				!in_array($field_type, Config::$EDITABLE_FIELD_TYPES) &&
-				!in_array($field_type, Config::$OTHER_FIELD_TYPES))
-			{
-				continue;
-			}
-
 			$field['type'] = $field_type;
+			$field['tag'] = $full_tags[$key];
 
 			/**
 			 * Get params of the field
@@ -118,35 +90,25 @@ class Template {
 			$num_params = preg_match_all("/([a-z]+)='([^']*)'/", $val, $params);
 			if (is_array($params)) {
 				foreach ($params[1] as $p => $param) {
-					$field[$params[1][$p]] = $params[2][$p];
+					$field['params'][$params[1][$p]] = $params[2][$p];
 				}
 			}
 
-			/**
-			 * If paired mode is ON attach all fields to paired tag as subfields.
-			 */
-			if ($paired_field_started) {
-				$fields[$paired_field_num][self::CHILD_FIELD_KEY][] = $field;
-				continue;
-			}
-
-			/**
-			 * Check if this iteration field is configured as 'paired'.
-			 */
-			if (in_array($field_type, Config::$PAIRED_FIELD_TYPES)) {
-				$paired_field_started = true;
-				$paired_field_type    = $field_type;
-				$paired_field_num     = $field['id'];
-				$field[self::CHILD_FIELD_KEY] = [];
-			}
-
-			// Add field to array if has ID and there is no existing entry with this ID
-			if (!isset($fields[$field['id']])) {
-				$fields[$field['id']] = $field;
-			}
+			$fields[] = $field;
 		}
 
 		return $fields;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Parse file
+	 */
+
+	public function parseFile(string $file, array $translations = []) {
+		$template_content = $this->getTemplateFileContent($file);
+		$template_fields  = $this->getFieldsFromString($template_content);
+		return $this->parse($template_content, $template_fields, $translations);
 	}
 
 
@@ -170,7 +132,7 @@ class Template {
 		$replacements = [];
 		$n = 0;
 
-		foreach($fields as $id => $field) {
+		foreach ($fields as $id => $field) {
 
 			/**
 			 * Match anything like {{ type something='something' id='id' somethin='something' }}
@@ -193,7 +155,7 @@ class Template {
 		}
 
 		if (is_array($this->vars)) {
-			foreach($this->vars as $key => $var) {
+			foreach ($this->vars as $key => $var) {
 				if (!empty($key)) {
 					$patterns[] = '/{{ ' . $key . ' }}/';
 					$replacements[] = $var;
@@ -223,9 +185,11 @@ class Template {
 					? $preg_status_list[$preg_status] . ' [' . $preg_status . ']'
 					: 'Unknown error [' . $preg_status . ']';
 			}
-			else $preg_status_text = $preg_status;
+			else {
+				$preg_status_text = $preg_status;
+			}
 
-			Core::error('Unable to display template becouse of error in parsing function. Returned error:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
+			throw new Exception('Unable to display template because of error in parsing function. Returned error:<br>' . $preg_status_text);
 		}
 	}
 }

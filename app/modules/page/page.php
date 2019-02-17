@@ -10,10 +10,10 @@
  */
 
 $tpl = new Template();
-$tpl->setTheme(Config::$THEME_NAME);
+$tpl->setTemplatesDir(__ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME);
 
-$template_content = $tpl->getContent('templates/home.html');
-$template_fields  = $tpl->getFields($template_content);
+$template_content = $tpl->getTemplateFileContent('templates/home.html');
+$template_fields  = $tpl->getFieldsFromString($template_content);
 
 
 /**
@@ -29,7 +29,7 @@ if (count($template_fields) > 0) {
 	if (is_array($fields_data) && count($fields_data) > 0) {
 
 		// Loop over fields from template
-		foreach($template_fields as $field_id => $field) {
+		foreach ($template_fields as $field_id => $field) {
 			if (isset($fields_data[$field_id]['content'])) {
 				$tpl->assign([$field_id => $fields_data[$field_id]['content']]);
 			}
@@ -49,7 +49,6 @@ $tpl->assign([
 	'lang_code'    => $lang->getActiveLangCode(),
 	'db_connected' => (int)$db->isConnected(),
 	'db_queries'   => (int)$db->getQueriesNumber(),
-	'fields'       => print_r($template_fields, true), // For debug purposes
 ]);
 
 

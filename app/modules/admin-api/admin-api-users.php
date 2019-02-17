@@ -21,7 +21,7 @@ switch ($router->getRequestChunk(2)) {
 		$result = $db->fetchAll($query);
 		$users_list = [];
 
-		foreach($result as $user_data) {
+		foreach ($result as $user_data) {
 			$users_list[] = [
 				'id' => $user_data['id'],
 				'email' => $user_data['email']

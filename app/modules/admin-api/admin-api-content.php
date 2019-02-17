@@ -26,9 +26,13 @@ $fields_data = $core->processArray($db->fetchAll($result), 'id');
 
 // Get fields from home of user template
 $tpl = new Template();
-$tpl->setTheme(Config::$THEMES_DIR . Config::$THEME_NAME);
-$content         = $tpl->getContent('templates/home.html');
-$template_fields = $tpl->getFields($content);
+$tpl->setTemplatesDir(__ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME);
+$template_content = $tpl->getTemplateFileContent('templates/home.html');
+$template_fields  = $tpl->getFieldsFromString($template_content);
+
+echo '<pre>';
+print_r($template_fields);
+die();
 
 switch($router->getRequestChunk(2)) {
 
@@ -45,7 +49,7 @@ switch($router->getRequestChunk(2)) {
 		$num_changes = 0; // Count changes that was made
 
 		// Loop aver all POST fields that was sent by form
-		foreach($_POST as $post_key => $post_val) {
+		foreach ($_POST as $post_key => $post_val) {
 
 			// Stop if post value is empty
 			if (empty($post_val)) {
@@ -119,7 +123,7 @@ switch($router->getRequestChunk(2)) {
 		/**
 		 * Loop over fields that was found in the template file
 		 */
-		foreach($template_fields as $field_id => $field) {
+		foreach ($template_fields as $field_id => $field) {
 
 			/**
 			 * Skip if field:

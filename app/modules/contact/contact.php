@@ -25,9 +25,6 @@ if (!is_array($contact_config['fields'])) {
 		->output();
 }
 
-$tpl = new Template();
-$tpl->setTheme(Config::$THEMES_DIR . Config::$THEME_NAME);
-
 
 /**
  * Form validation
@@ -118,7 +115,7 @@ $main_recipient = null;
 $result = $db->query('SELECT `id`, `email` FROM `users`');
 $users  = $db->fetchAll($result);
 
-foreach($users as $user) {
+foreach ($users as $user) {
 	if ($user['id'] == $contact_config['default_recipient']) {
 		$main_recipient = $user['email'];
 		if ($contact_config['inform_all'] !== true) {

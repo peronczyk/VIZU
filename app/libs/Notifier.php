@@ -88,7 +88,7 @@ class Notifier {
 		}
 
 		$body = "<html><body><table {$style_table}><tbody>";
-		foreach($fields as $label => $value) {
+		foreach ($fields as $label => $value) {
 			$body .= "<tr><td {$style_caption}><strong>{$label}:</strong></td></tr><tr><td {$style_content}>{$value}</td></tr>";
 		}
 		$body .= '</tbody></table></body></html>';
@@ -114,7 +114,7 @@ class Notifier {
 			$this->mailer->addReplyTo($reply_to);
 		}
 
-		foreach($bcc as $bcc_email) {
+		foreach ($bcc as $bcc_email) {
 			$this->mailer->addBCC($bcc_email);
 		}
 

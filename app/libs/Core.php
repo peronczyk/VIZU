@@ -119,7 +119,7 @@ class Core {
 		}
 
 		$processed_array = [];
-		foreach($array as $val) {
+		foreach ($array as $val) {
 			if (isset($val[$key_name])) {
 				$processed_array[$val[$key_name]] = $val;
 				unset($processed_array[$val[$key_name]][$key_name]);
