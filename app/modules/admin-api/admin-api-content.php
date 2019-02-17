@@ -104,13 +104,13 @@ switch($router->getRequestChunk(2)) {
 		$languages = $lang->getList();
 
 		// Stores array of loaded field's classes
-		$field_handlers = new FieldHandlersWrapper($template);
+		$field_handlers = new FieldHandlersWrapper($template, $dependancy_container);
 
-		//$field_handlers->
+		$field_handlers->assignValues();
 
 
-		echo '<pre>';
-		print_r($template->getTemplateFields());
+		// echo '<pre>';
+		// print_r($template->getTemplateFields());
 
 		die();
 

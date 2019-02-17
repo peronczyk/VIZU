@@ -4,6 +4,7 @@ class FieldHandlersWrapper {
 	const FIELDS_NAMESPACE = 'Fields';
 
 	private $_template;
+	private $_container;
 	private $field_handlers = [];
 
 
@@ -11,7 +12,7 @@ class FieldHandlersWrapper {
 	 * Initiate
 	 */
 
-	public function __construct(Template $template) {
+	public function __construct(Template $template, DependancyContainer $container) {
 		$this->_template = $template;
 		$this->loadAvailableFieldsHandlers();
 	}
@@ -31,8 +32,28 @@ class FieldHandlersWrapper {
 			}
 			$file_name = pathinfo($file_name, PATHINFO_FILENAME);
 			$class_name = self::FIELDS_NAMESPACE . '\\' . $file_name;
-			array_push($this->field_handlers, new $class_name());
+			array_push($this->field_handlers, new $class_name($this->_template));
 		}
-		//var_dump($this->field_handlers);
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 *
+	 */
+
+	public function runHandlersMethod(string $method_name, array $method_arguments = []) {
+		$results = [];
+		foreach ($this->field_handlers as $handler) {
+			$results[] = $handler->$method_name(...$method_arguments);
+		}
+		return $results;
+	}
+
+	/** ----------------------------------------------------------------------------
+	 *
+	 */
+
+	public function assignValues() {
+		$this->runHandlersMethod('assignValues');
 	}
 }

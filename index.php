@@ -110,6 +110,17 @@ if ($router->getFirstRequest() !== 'install') {
 
 
 /**
+ * Setup dependancy container
+ */
+
+$dependancy_container = new DependancyContainer();
+$dependancy_container
+	->add('router', $router)
+	->add('db', $db)
+	->add('lang', $lang);
+
+
+/**
  * Load the module based on the page address
  */
 
