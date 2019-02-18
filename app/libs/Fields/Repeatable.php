@@ -14,10 +14,20 @@ namespace Fields;
 class Repeatable {
 	private $_template;
 
+
+	/** ----------------------------------------------------------------------------
+	 * Constructor
+	 */
+
 	public function __construct(\Template $template) {
 		$this->_template = $template;
 	}
 
-	public function assignValues($lol) {
+
+	/** ----------------------------------------------------------------------------
+	 * Assign values taken from the database
+	 */
+
+	public function assignValues() {
 	}
 }

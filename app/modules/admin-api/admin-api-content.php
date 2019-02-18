@@ -103,56 +103,14 @@ switch($router->getRequestChunk(2)) {
 		// Get languages
 		$languages = $lang->getList();
 
-		// Stores array of loaded field's classes
-		$field_handlers = new FieldHandlersWrapper($template, $dependancy_container);
+		$field_handlers = new FieldHandlersWrapper($template, $dependency_container);
 
 		$field_handlers->assignValues();
 
-
-		// echo '<pre>';
-		// print_r($template->getTemplateFields());
-
-		die();
-
-		// Stores html of form elements - fields
-		$form_fields = [];
-
-		// Stores number of skiped fields (not editable fields or with errors)
-		$skipped_fields = [];
-
-		/**
-		 * Loop over fields that was found in the template file
-		 */
-		foreach ($template_fields as $field_id => $field) {
-
-			/**
-			 * Skip if field:
-			 * 1. Don't have 'type' or it's 'type' is not editable
-			 * 2. Don't have 'name'
-			 */
-			if (!isset($field['type']) || !in_array($field['type'], Config::$EDITABLE_FIELD_TYPES) || empty($field['name'])) {
-				$skipped_fields[] = $field;
-				continue;
-			}
-
-			// Add value of the field taken from the database
-			$field['value'] = (isset($fields_data[$field_id]))
-				? $fields_data[$field_id]['content']
-				: null;
-
-			// Unset field data to check which of them don't exist in the template
-			unset($fields_data[$field_id]);
-
-			// Add to form data about this field
-			$form_fields[] = $field;
-		}
-
 		$rest_store->merge([
-			'fields'                  => $form_fields,
+			'fields'                  => $template->getTemplateFields(),
 			'languages'               => $languages,
 			'active-language'         => $active_lang,
-			'template-missing-fields' => $fields_data,
-			'skipped-fields-num'      => count($skipped_fields),
 		]);
 
 		break;

@@ -12,7 +12,7 @@
 class Template {
 	private $template_file_path;
 	private $template_file_content;
-	private $template_fields;
+	public $template_fields;
 
 	/**
 	 * Basic assignement storage. This keys and values will be parsed at the
@@ -32,6 +32,8 @@ class Template {
 			throw new Exception("Template file does not exist: {$template_file_path}");
 		}
 		$this->template_file_path = $template_file_path;
+		$this->template_file_content = file_get_contents($this->template_file_path);
+		$this->template_fields = self::getFieldsFromString($this->template_file_content);
 	}
 
 
@@ -40,9 +42,6 @@ class Template {
 	 */
 
 	public function getTemplateFileContent() {
-		if (!$this->template_file_content) {
-			$this->template_file_content = file_get_contents($this->template_file_path);
-		}
 		return $this->template_file_content;
 	}
 
@@ -72,10 +71,9 @@ class Template {
 		$fields = [];
 
 		foreach ($field_contents as $key => $val) {
-			$field_type = explode(' ', trim($val), 2)[0];
-			$field      = [];
+			$field = [];
 
-			$field['type'] = $field_type;
+			$field['type'] = explode(' ', trim($val), 2)[0];
 			$field['tag'] = $full_tags[$key];
 
 			/**
@@ -87,17 +85,58 @@ class Template {
 				$field['props'] = array_combine($props[1], $props[2]);
 			}
 
-			$fields[] = $field;
+			array_push($fields, $field);
 		}
 
 		return $fields;
 	}
 
+
+	/** ----------------------------------------------------------------------------
+	 *
+	 */
+
 	public function getTemplateFields() {
-		if (!$this->template_fields) {
-			$this->template_fields = self::getFieldsFromString($this->getTemplateFileContent());
-		}
 		return $this->template_fields;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 *
+	 */
+
+	public function iterateTemplateFieldsType(string $type, callable $callback) {
+		foreach ($this->template_fields as $key => $field) {
+			if ($field['type'] == $type) {
+				$callback($key, $field);
+			}
+		}
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 *
+	 */
+
+	public function removeDuplicateTemplateFieldsByType(string $type) {
+		$ids_found = [];
+		$remove_count = 0;
+
+		$this->iterateTemplateFieldsType($type, function($key, $field) use (&$ids_found, &$remove_count) {
+			$field_id = $field['props']['id'] ?? null;
+
+			if ($field_id && !in_array($field_id, $ids_found)) {
+				array_push($ids_found, $field_id);
+			}
+			else {
+				unset($this->template_fields[$key]);
+				$remove_count++;
+			}
+		});
+
+		if ($remove_count) {
+			$this->template_fields = array_values($this->template_fields);
+		}
 	}
 
 

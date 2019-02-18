@@ -12,17 +12,8 @@ class DependencyContainer {
 	 * Add
 	 */
 
-	public function add($name, $dependency = null) : object {
-		if (is_array($name)) {
-			$this->dependencies = array_merge($this->dependencies, $name);
-		}
-		elseif ($dependency) {
-			$this->dependencies[$name] = $dependency;
-		}
-		else {
-			throw new Exception("There is no dependency provided in method 'add' in DependencyContainer");
-		}
-
+	public function add(Object $dependency, string $name = null) : object {
+		$this->dependencies[$name ?? get_class($dependency)] = $dependency;
 		return $this;
 	}
 

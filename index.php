@@ -113,11 +113,11 @@ if ($router->getFirstRequest() !== 'install') {
  * Setup dependancy container
  */
 
-$dependancy_container = new DependancyContainer();
-$dependancy_container
-	->add('router', $router)
-	->add('db', $db)
-	->add('lang', $lang);
+$dependency_container = new DependencyContainer();
+$dependency_container
+	->add($router)
+	->add($db)
+	->add($lang);
 
 
 /**

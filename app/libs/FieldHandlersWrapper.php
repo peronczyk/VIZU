@@ -12,8 +12,9 @@ class FieldHandlersWrapper {
 	 * Initiate
 	 */
 
-	public function __construct(Template $template, DependancyContainer $container) {
+	public function __construct(Template $template, DependencyContainer $container) {
 		$this->_template = $template;
+		$this->_container = $container;
 		$this->loadAvailableFieldsHandlers();
 	}
 
@@ -32,7 +33,7 @@ class FieldHandlersWrapper {
 			}
 			$file_name = pathinfo($file_name, PATHINFO_FILENAME);
 			$class_name = self::FIELDS_NAMESPACE . '\\' . $file_name;
-			array_push($this->field_handlers, new $class_name($this->_template));
+			array_push($this->field_handlers, new $class_name($this->_template, $this->_container));
 		}
 	}
 
