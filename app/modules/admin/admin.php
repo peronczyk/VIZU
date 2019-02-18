@@ -9,10 +9,10 @@
  * =================================================================================
  */
 
-$tpl = new Template();
+$template_file = __ROOT__ . '/' . Config::$APP_DIR . 'admin-panel/index.html';
+$admin_template = new Template($template_file);
 
-$tpl->setTemplatesDir(__ROOT__ . '/' . Config::$APP_DIR . 'admin-panel');
-$tpl->assign([
+$admin_template->assign([
 	'site_name'      => Config::$SITE_NAME,
 	'site_path'      => $router->site_path,
 	'app_path'       => Config::$APP_DIR,
@@ -21,4 +21,4 @@ $tpl->assign([
 	'phpversion'     => phpversion(),
 ]);
 
-echo $tpl->parseFile('index.html');
+echo $admin_template->parse();

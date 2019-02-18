@@ -54,7 +54,7 @@ class FieldHandlersWrapper {
 	 *
 	 */
 
-	public function assignValues() {
-		$this->runHandlersMethod('assignValues');
+	public function assignValues(array $fields_data) {
+		$this->runHandlersMethod('assignValues', [$fields_data]);
 	}
 }

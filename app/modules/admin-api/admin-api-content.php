@@ -31,6 +31,29 @@ $template = new Template($template_file);
 // Select action
 switch($router->getRequestChunk(2)) {
 
+	/** --------------------------------------------------------------------------------
+	 * Return list of content fields
+	 */
+
+	case 'list':
+		$admin_actions->requireAdminAccessRights();
+
+		// Get languages
+		$languages = $lang->getList();
+
+		$field_handlers = new FieldHandlersWrapper($template, $dependency_container);
+
+		$field_handlers->assignValues($fields_data);
+
+		$rest_store->merge([
+			'fields'                  => $template->getTemplateFields(),
+			'languages'               => $languages,
+			'active-language'         => $active_lang,
+		]);
+
+		break;
+
+
 	/** ----------------------------------------------------------------------------
 	 * Save data
 	 */
@@ -88,29 +111,6 @@ switch($router->getRequestChunk(2)) {
 
 		$rest_store->merge([
 			'message' => "Changes saved: {$num_changes}"
-		]);
-
-		break;
-
-
-	/** --------------------------------------------------------------------------------
-	 * Return list of content fields
-	 */
-
-	case 'list':
-		$admin_actions->requireAdminAccessRights();
-
-		// Get languages
-		$languages = $lang->getList();
-
-		$field_handlers = new FieldHandlersWrapper($template, $dependency_container);
-
-		$field_handlers->assignValues();
-
-		$rest_store->merge([
-			'fields'                  => $template->getTemplateFields(),
-			'languages'               => $languages,
-			'active-language'         => $active_lang,
 		]);
 
 		break;
