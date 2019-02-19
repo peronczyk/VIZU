@@ -43,10 +43,19 @@ switch($router->getRequestChunk(2)) {
 
 		$field_handlers = new FieldHandlersWrapper($template, $dependency_container);
 
-		$field_handlers->assignValues($fields_data);
+		$field_handlers
+			->removeNotEditableFields()
+			->assignValues($fields_data);
+
+		$fields_to_return = [];
+		foreach ($template->getTemplateFields() as $field) {
+			if (isset($field['props'])) {
+				array_push($fields_to_return, $field);
+			}
+		}
 
 		$rest_store->merge([
-			'fields'                  => $template->getTemplateFields(),
+			'fields'                  => $fields_to_return,
 			'languages'               => $languages,
 			'active-language'         => $active_lang,
 		]);

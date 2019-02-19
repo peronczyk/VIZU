@@ -42,4 +42,14 @@ class Lang {
 			}
 		});
 	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Lang fields are not editable in CMS so this method can remove them from
+	 * Template object.
+	 */
+
+	public function removeNotEditableFields() {
+		$this->_template->removeFieldType(self::FIELD_TYPE);
+	}
 }

@@ -9,8 +9,13 @@
 					<div class="u-PageTop__buttons" v-if="isFormReady">
 						<label class="u-PageTop__option">
 							Language:
-							<select v-model="formValues['lang']">
-								<option>EN</option>
+							<select v-model="activeLanguage">
+								<option
+									v-for="language in languages"
+									:key="language.code"
+									:value="language.code"
+									:selected="language.code == activeLanguage"
+								>{{ language['short_name'] }}</option>
 							</select>
 						</label>
 
@@ -27,7 +32,7 @@
 					<form-row-wrapper
 						v-for="(fieldData, fieldId) in fieldsReceived"
 						v-model="formValues[fieldId]"
-						:key="fieldData.id"
+						:key="fieldData.props.id"
 						:field-data="fieldData"
 					/>
 				</transition-group>
@@ -62,6 +67,8 @@ export default {
 			isFormReady: false,
 			fieldsReceived: [],
 			formValues: {},
+			languages: [],
+			activeLanguage: null,
 		};
 	},
 
@@ -77,20 +84,33 @@ export default {
 		},
 
 		resetForm() {
-			console.info('Reset');
 			this.formValues = {};
+		},
+
+		fetchContent() {
+			axios.get('../admin-api/content/list?language=' + (this.activeLanguage || ''))
+				.then(result => {
+					this.isFormReady = true;
+					if (result.data.fields) {
+						this.fieldsReceived = result.data.fields;
+						this.languages = result.data.languages;
+						this.activeLanguage = result.data['active-language'];
+					}
+				});
 		}
 	},
 
 	created() {
-		axios.get('../admin-api/content/list')
-			.then(result => {
-				this.isFormReady = true;
-				if (result.data.fields) {
-					this.fieldsReceived = result.data.fields;
-				}
-			});
+		this.fetchContent();
 	},
+
+	watch: {
+		activeLanguage(value, prevValue) {
+			if (prevValue != null) {
+				this.fetchContent();
+			}
+		}
+	}
 }
 
 </script>

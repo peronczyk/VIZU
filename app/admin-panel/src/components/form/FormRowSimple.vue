@@ -3,8 +3,8 @@
 	<label class="c-FormRowText">
 		<div class="Grid Grid--center Grid--gutter">
 			<div class="Col-4 Col-12@SM">
-				{{ fieldData.name }}<br>
-				<small>{{ fieldData.desc }}</small><br>
+				{{ fieldData.props.name }}<br>
+				<small>{{ fieldData.props.desc }}</small><br>
 			</div>
 
 			<div class="Col-8 Col-12@SM">

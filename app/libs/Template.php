@@ -93,24 +93,30 @@ class Template {
 
 
 	/** ----------------------------------------------------------------------------
-	 *
+	 * Get template fields array
 	 */
 
-	public function getTemplateFields() {
+	public function getTemplateFields() : array {
 		return $this->template_fields;
 	}
 
 
 	/** ----------------------------------------------------------------------------
-	 *
+	 * Remove specified field types from template fields
 	 */
 
-	public function iterateTemplateFieldsType(string $type, callable $callback) {
-		foreach ($this->template_fields as $key => $field) {
-			if ($field['type'] == $type) {
-				$callback($key, $field);
+	public function removeFieldType($type) : object {
+		$processed_fields = [];
+
+		foreach($this->template_fields as $key => $field) {
+			if ($field['type'] != $type) {
+				array_push($processed_fields, $field);
 			}
-		}
+		};
+
+		$this->template_fields = $processed_fields;
+
+		return $this;
 	}
 
 
@@ -118,7 +124,22 @@ class Template {
 	 *
 	 */
 
-	public function removeDuplicateTemplateFieldsByType(string $type) {
+	public function iterateTemplateFieldsType(string $type, callable $callback) : object {
+		foreach ($this->template_fields as $key => $field) {
+			if ($field['type'] == $type) {
+				$callback($key, $field);
+			}
+		}
+
+		return $this;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 *
+	 */
+
+	public function removeDuplicateTemplateFieldsByType(string $type) : object {
 		$ids_found = [];
 		$remove_count = 0;
 
@@ -137,6 +158,8 @@ class Template {
 		if ($remove_count) {
 			$this->template_fields = array_values($this->template_fields);
 		}
+
+		return $this;
 	}
 
 

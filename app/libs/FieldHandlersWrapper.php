@@ -45,16 +45,30 @@ class FieldHandlersWrapper {
 	public function runHandlersMethod(string $method_name, array $method_arguments = []) {
 		$results = [];
 		foreach ($this->field_handlers as $handler) {
-			$results[] = $handler->$method_name(...$method_arguments);
+			if (method_exists($handler, $method_name)) {
+				$results[] = $handler->$method_name(...$method_arguments);
+			}
 		}
 		return $results;
 	}
+
 
 	/** ----------------------------------------------------------------------------
 	 *
 	 */
 
-	public function assignValues(array $fields_data) {
+	public function assignValues(array $fields_data) : object {
 		$this->runHandlersMethod('assignValues', [$fields_data]);
+		return $this;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 *
+	 */
+
+	public function removeNotEditableFields() : object {
+		$this->runHandlersMethod('removeNotEditableFields');
+		return $this;
 	}
 }
