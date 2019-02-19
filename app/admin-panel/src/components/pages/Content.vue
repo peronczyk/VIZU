@@ -47,6 +47,7 @@
 
 // Dependencies
 import axios from 'axios';
+import { mapActions } from 'vuex';
 
 // Components
 import FormRowSimple from '../form/FormRowSimple.vue';
@@ -73,13 +74,19 @@ export default {
 	},
 
 	methods: {
+		...mapActions([
+			'openToast'
+		]),
+
 		saveContent() {
 			console.info('Save');
 			console.log(this.formValues);
 
 			axios.post('../admin-api/content/save', this.formValues)
 				.then(result => {
-					console.log(result.data);
+					if (result.data.message) {
+						this.openToast(result.data.message);
+					}
 				});
 		},
 

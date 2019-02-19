@@ -49,3 +49,26 @@ hr {
 
 	&-thumb { background-color: $color-gray; }
 }
+
+
+/* ---------------------------------------------------------------------------------
+ * Tables
+ */
+
+table {
+	th, td {
+		padding: 10px 0;
+	}
+
+	thead {
+		th {
+			border-bottom: 2px solid $color-lines;
+		}
+	}
+
+	tbody {
+		td {
+			border-bottom: 1px solid $color-lines;
+		}
+	}
+}

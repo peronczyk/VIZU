@@ -1,19 +1,33 @@
 <template>
 
-	<dialog class="c-Toast" :class="{'is-Visible': isToastVisible}">{{ dialogText }}</dialog>
+	<transition name="slide-right">
+		<dialog v-if="isToastVisible" class="c-Toast">
+			<p>{{ toastContent }}</p>
+		</dialog>
+	</transition>
 
 </template>
 
 
 <script>
 
+// Dependencies
+import { mapActions, mapState } from 'vuex';
+
 export default {
-	data() {
-		return {
-			isToastVisible: true,
-			dialogText: 'Trolololo'
-		}
-	}
+	computed: {
+		...mapState([
+			'isToastVisible',
+			'toastContent',
+		]),
+	},
+
+	methods: {
+		...mapActions([
+			'openToast',
+			'closeToast'
+		]),
+	},
 }
 
 </script>
@@ -24,23 +38,21 @@ export default {
 @import '../../assets/styles/definitions.scss';
 
 .c-Toast {
-	visibility: hidden;
 	position: fixed;
 	z-index: +3;
-	top: $gutter;
+	left: auto;
+	bottom: $gutter;
 	right: $gutter;
+	display: flex;
+	align-items: center;
 	min-height: 50px;
-	min-width: 50px;
+	min-width: 160px;
+	max-width: 400px;
+	padding: 14px 20px;
+	color: $color-white;
 	background-color: $color-dark;
-	opacity: 0;
-	transform: translateX(40px);
+	box-shadow: $shadow-lg-medium;
 	will-change: visibility, opacity, transform;
-
-	&.is-Visible {
-		visibility: visible;
-		opacity: 1;
-		transform: none;
-	}
 }
 
 </style>

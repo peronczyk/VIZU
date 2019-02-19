@@ -1,8 +1,10 @@
 <template>
 
 	<div class="c-Pages">
-		<transition>
-			<router-view class="c-Pages__inner"></router-view>
+		<transition name="page">
+			<keep-alive>
+				<router-view class="c-Pages__inner"></router-view>
+			</keep-alive>
 		</transition>
 	</div>
 
@@ -23,22 +25,6 @@
 		width: 100%;
 		min-height: 100vh;
 		will-change: opacity, transform;
-
-		&.v-enter-to {}
-
-		&.v-enter-active {
-			animation: scale-in .5s forwards;
-		}
-
-		&.v-leave-to {
-			position: absolute;
-			top: 0;
-			left: 0;
-		}
-
-		&.v-leave-active {
-			animation: scale-out .5s forwards;
-		}
 	}
 
 

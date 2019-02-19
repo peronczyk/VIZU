@@ -11,6 +11,8 @@ export default new Vuex.Store({
 		appVersion: null,
 		phpVersion: null,
 		siteName: null,
+		isToastVisible: false,
+		toastContent: null,
 	},
 
 	mutations: {
@@ -49,6 +51,23 @@ export default new Vuex.Store({
 						console.log(result.data.error);
 					}
 				});
-		}
+		},
+
+		openToast({ state, dispatch }, content) {
+			state.isToastVisible = true;
+			state.toastContent = content;
+
+			setTimeout(() => {
+				dispatch('closeToast');
+			}, 12000);
+		},
+
+		closeToast({ state }) {
+			state.isToastVisible = false;
+
+			setTimeout(() => {
+				state.toastContent = null;
+			}, 500);
+		},
 	}
 });

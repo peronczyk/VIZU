@@ -9,26 +9,31 @@
  * =================================================================================
  */
 
-if (IN_ADMIN !== true) {
+if (IN_ADMIN_API !== true) {
 	die('This file can be loaded only in admin module');
 }
 
-// Get data from database for all fields
-$result = $db->query("SELECT `id`, `modified` FROM `fields` WHERE `template` = 'home'");
-$fields_data = $core->processArray($db->fetchAll($result), 'id');
+// Select action
+switch($router->getRequestChunk(2)) {
+	case 'list':
+		// Get data from database for all fields
+		$result = $db->query("SELECT `id`, `modified` FROM `fields` WHERE `template` = 'home'");
+		$fields_data = $core->processArray($db->fetchAll($result), 'id');
 
-// Get fields from home of user template
-$fields_data_simple = [];
+		$history_data = [];
 
+		// Prepare arrays to sort them
+		foreach ($fields_data as $key => $val) {
+			array_push($history_data, [
+				'id' => $key,
+				'modified' => $val['modified'],
+			]);
+		}
 
-// Prepare arrays to sort them
-foreach ($fields_data as $key => $val) {
-	if (isset($template_fields[$key])) {
-		$fields_data_simple[$key] = $val['modified'];
-	}
+		// Sort array by date
+		arsort($history_data);
+
+		$rest_store->set('history', $history_data);
+
+		break;
 }
-
-// Sort array by date
-arsort($fields_data_simple);
-
-$rest_store->set('history', $fields_data_simple);

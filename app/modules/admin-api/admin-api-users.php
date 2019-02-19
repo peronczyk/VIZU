@@ -33,74 +33,74 @@ switch ($router->getRequestChunk(2)) {
 		break;
 
 
-		/** ----------------------------------------------------------------------------
-		 * Add user
-		 */
+	/** ----------------------------------------------------------------------------
+	 * Add user
+	 */
 
-		case 'add':
-			$admin_actions->requireAdminAccessRights();
+	case 'add':
+		$admin_actions->requireAdminAccessRights();
 
-			$email = $_POST['email'] ?? null;
-			$contact_config = $theme_config['contact'];
+		$email = $_POST['email'] ?? null;
+		$contact_config = $theme_config['contact'];
 
-			// Validate entered email address
-			if (empty($email) || !User::verifyUsername($email)) {
-				$rest_store->set('message', 'Provided email address is missing or incorrect');
-				break;
-			}
-
-			// Check if email address already exists
-			$result = $db->query("SELECT * FROM `users` WHERE `email` = '{$email}'");
-			$user_found = $db->fetchAll($result);
-			if ($user_found) {
-				$rest_store->set('message', 'Account with provided email address already exists');
-				break;
-			}
-
-
-			// Set sender email address as theme contact form main recipient
-			if ($contact_config['default_recipient']) {
-				$user_id = $contact_config['default_recipient'];
-
-				// Get email addres of contact user that was set in configuration
-				$result  = $db->query("SELECT `email` FROM `users` WHERE `id` = '{$user_id}'");
-				$fetched = $db->fetchAll($result);
-
-				if (!$fetched) {
-					$rest_store->set('message', "Configured default sender/receiver '{$user_id}' does not exist. Admin acount creation failed.");
-					break;
-				}
-				$contact_user_email = $fetched[0]['email'];
-			}
-
-			$generated_password = User::generatePassword();
-			$content_fields = [
-				'Message'      => 'Administrator account created. It is strongly recomended to change your password now.',
-				'Page address' => $router->site_path,
-				'Login'        => $email,
-				'Password'     => $generated_password
-			];
-
-			// Send notification to user about account creation
-			try {
-				$notifier = new Notifier($contact_config);
-				$notifier->notify(
-					"[{$router->domain}] Account registration", // Subject
-					$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
-					$email // Recipient
-				);
-			}
-			catch (\Exception $e) {
-				$rest_store->set('message', "Failed to send account creation notification. Error thrown: '{$e->getMessage()}'");
-				break;
-			}
-
-			// Add user to database
-			$query = $db->query("INSERT INTO `users` VALUES ('', '{$email}', '{$user->password_encode($generated_password)}')");
-
-			$rest_store->set('message', "Administrator account with email address {$email} has been created.");
-
+		// Validate entered email address
+		if (empty($email) || !User::verifyUsername($email)) {
+			$rest_store->set('message', 'Provided email address is missing or incorrect');
 			break;
+		}
+
+		// Check if email address already exists
+		$result = $db->query("SELECT * FROM `users` WHERE `email` = '{$email}'");
+		$user_found = $db->fetchAll($result);
+		if ($user_found) {
+			$rest_store->set('message', 'Account with provided email address already exists');
+			break;
+		}
+
+
+		// Set sender email address as theme contact form main recipient
+		if ($contact_config['default_recipient']) {
+			$user_id = $contact_config['default_recipient'];
+
+			// Get email addres of contact user that was set in configuration
+			$result  = $db->query("SELECT `email` FROM `users` WHERE `id` = '{$user_id}'");
+			$fetched = $db->fetchAll($result);
+
+			if (!$fetched) {
+				$rest_store->set('message', "Configured default sender/receiver '{$user_id}' does not exist. Admin acount creation failed.");
+				break;
+			}
+			$contact_user_email = $fetched[0]['email'];
+		}
+
+		$generated_password = User::generatePassword();
+		$content_fields = [
+			'Message'      => 'Administrator account created. It is strongly recomended to change your password now.',
+			'Page address' => $router->site_path,
+			'Login'        => $email,
+			'Password'     => $generated_password
+		];
+
+		// Send notification to user about account creation
+		try {
+			$notifier = new Notifier($contact_config);
+			$notifier->notify(
+				"[{$router->domain}] Account registration", // Subject
+				$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
+				$email // Recipient
+			);
+		}
+		catch (\Exception $e) {
+			$rest_store->set('message', "Failed to send account creation notification. Error thrown: '{$e->getMessage()}'");
+			break;
+		}
+
+		// Add user to database
+		$query = $db->query("INSERT INTO `users` VALUES ('', '{$email}', '{$user->password_encode($generated_password)}')");
+
+		$rest_store->set('message', "Administrator account with email address {$email} has been created.");
+
+		break;
 
 
 	case 'password-change':
