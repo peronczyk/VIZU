@@ -41,8 +41,8 @@ export default new Vuex.Store({
 		userLogout({ commit }) {
 			commit('setUserAccess', 0);
 
-			this.axios.get('../admin-api/users/logout')
-				.done(result => {
+			axios.get('../admin-api/users/logout')
+				.then(result => {
 					if (result.data['user-access'] && result.data['user-access'] !== 0) {
 						commit('setUserAccess', result.data['user-access']);
 					}

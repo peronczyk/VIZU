@@ -9,9 +9,21 @@
 			<div class="Col-6 Col-12@MD">
 				<div class="c-UserList">
 					<h3>Users list</h3>
-					<ul class="u-DashList">
-						<li v-for="user in usersList" :key="user.email">{{ user.email }}</li>
-					</ul>
+					<table>
+						<thead>
+							<th>Email</th>
+							<th>Options</th>
+						</thead>
+						<tbody>
+							<tr
+								v-for="user in usersList"
+								:key="user.id"
+							>
+								<td>{{ user.email }}</td>
+								<td><a @click="deleteUser(user.id)">Delete</a></td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 
@@ -112,6 +124,13 @@ export default {
 			axios.get('../admin-api/users/list')
 				.then(result => {
 					this.usersList = result.data['users-list'];
+				});
+		},
+
+		deleteUser(userId) {
+			axios.get('../admin-api/users/delete?user-id=' + userId)
+				.then(result => {
+					this.openToast((result.data.success) ? 'User deleted' : 'User deletion failed');
 				});
 		},
 	},

@@ -3,24 +3,44 @@
 	<div class="c-Auth">
 		<div class="c-Auth__left">
 			<div>
-				<h1>Website</h1>
+				<h1>{{ siteName || 'Website' }}</h1>
 				<h2>Administration panel</h2>
 			</div>
 		</div>
 
 		<div class="c-Auth__right">
-			<form method="post" @submit.prevent="userLogin">
-				<h4>Provide your credentials:</h4>
+			<div>
+				<form method="post" @submit.prevent="userLogin">
+					<h4>Provide your credentials:</h4>
 
-				<label>
-					<input type="email" name="email" placeholder="Email address" v-model="formValues.email">
-				</label>
-				<label>
-					<input type="password" name="password" placeholder="Password" v-model="formValues.password">
-				</label>
-				<button type="submit" class="u-Width--full">Login</button>
-				<div class="c-Auth__message"></div>
-			</form>
+					<label>
+						<input type="email" name="email" placeholder="Email address" v-model="formValues.email">
+					</label>
+					<label>
+						<input type="password" name="password" placeholder="Password" v-model="formValues.password">
+					</label>
+
+					<transition name="fade">
+						<div class="c-Auth__message" v-if="authMessage">{{ authMessage }}</div>
+					</transition>
+
+					<button type="submit" class="u-Width--full">Login</button>
+				</form>
+
+				<a @click.prevent="togglePasswordRecoveryBox">Password recovery</a>
+
+				<transition name="fade">
+					<div class="c-Auth__pwdrec" v-if="showPasswordRecoveryBox">
+						<form method="post" @submit.prevent="passwordRecovery">
+							<label>
+								<input type="email" name="email" placeholder="Email" v-model="formValues.email">
+							</label>
+
+							<button type="submit">Recover</button>
+						</form>
+					</div>
+				</transition>
+			</div>
 		</div>
 	</div>
 
@@ -29,20 +49,45 @@
 
 <script>
 
+// Dependencies
+import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
+import prepareFormData from '../../vendor/PrepareFormData.js';
+
 export default {
 	data() {
 		return {
-			formValues: {}
+			formValues: {},
+			authMessage: null,
+			showPasswordRecoveryBox: false,
 		};
 	},
 
+	computed: {
+		...mapState(['siteName']),
+	},
+
 	methods: {
+		...mapActions([
+			'openToast',
+		]),
+
 		userLogin() {
-			console.log(this.formValues);
-			this.$xhr.post('/users/login', this.formValues)
-				.done(receivedData => {
-					console.log(receivedData);
-					this.$store.commit('setUserAccess', receivedData['user-access']);
+			axios.post('../admin-api/users/login', prepareFormData(this.formValues))
+				.then(result => {
+					this.$store.commit('setUserAccess', result.data['user-access'] || 0);
+					this.authMessage = result.data.message || result.data.error.message || null;
+				});
+		},
+
+		togglePasswordRecoveryBox() {
+			this.showPasswordRecoveryBox = !this.showPasswordRecoveryBox;
+		},
+
+		passwordRecovery() {
+			axios.post('../admin-api/users/password-recovery', prepareFormData(this.formValues))
+				.then(result => {
+					this.openToast(result.data.message);
 				});
 		},
 	}
@@ -77,7 +122,17 @@ export default {
 		box-shadow: $shadow-lg-light;
 	}
 
+	&__message {
+		margin-top: 20px;
+		color: $color-red;
+	}
+
+	&__pwdrec {
+		padding-top: 20px;
+	}
+
 	form {
+		margin-bottom: 20px;
 		max-width: 330px;
 	}
 

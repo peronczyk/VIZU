@@ -14,6 +14,42 @@ if (IN_ADMIN_API !== true) {
 }
 
 switch ($router->getRequestChunk(2)) {
+
+	/** ----------------------------------------------------------------------------
+	 * Add user
+	 */
+
+	case 'login':
+		try {
+			$user->login($_POST['email'] ?? '', $_POST['password'] ?? '');
+		}
+		catch (Exception $e) {
+			$rest_store->set('error', [
+				'message' => $e->getMessage(),
+				'file'    => $e->getFile(),
+				'line'    => $e->getLine(),
+			]);
+		}
+		$rest_store->set('user-access', $user->getAccess());
+
+		break;
+
+
+	/** ----------------------------------------------------------------------------
+	 * Logout user
+	 */
+
+	case 'logout':
+		$user->logout();
+		$rest_store->set('user-access', $user->getAccess());
+
+		break;
+
+
+	/** ----------------------------------------------------------------------------
+	 * List users
+	 */
+
 	case 'list':
 		$admin_actions->requireAdminAccessRights();
 
@@ -104,6 +140,19 @@ switch ($router->getRequestChunk(2)) {
 		break;
 
 
+	/** ----------------------------------------------------------------------------
+	 * Add user
+	 */
+
+	case 'delete':
+		$rest_store->set('success', false);
+		break;
+
+
+	/** ----------------------------------------------------------------------------
+	 * Password change
+	 */
+
 	case 'password-change':
 		$admin_actions->requireAdminAccessRights();
 
@@ -163,12 +212,11 @@ switch ($router->getRequestChunk(2)) {
 	 */
 
 	case 'password-recovery':
-		$admin_actions->requireAdminAccessRights();
-
 		$show_content = false;
 		if (User::verifyUsername($_POST['email'])) {
 			$result = $db->query("SELECT `id`, `email` FROM `users` WHERE `email` = '{$_POST['email']}'");
 			$user_data = $db->fetchAll($result);
+
 			if (count($user_data) == 1) {
 				$user_notified = false;
 				$new_password = User::generatePassword();
@@ -187,25 +235,18 @@ switch ($router->getRequestChunk(2)) {
 					$user_notified = true;
 				}
 				catch (Exception $e) {
-					$rest_store->set('error', [
-						'str'  => 'Password recvery process failed - could not send email. Returned error: ' . $e->getMessage(),
-						'file' => __FILE__,
-						'line' => __LINE__
-					]);
+					$rest_store->set('message', "Password recvery process failed - could not send email. Returned error: {$e->getMessage()}");
 				}
 
 				if ($user_notified) {
 					$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user_data[0]['email']}' LIMIT 1");
+					$rest_store->set('message', "Password recovery process started. We have sent you further informations to your email box.");
 				}
 			}
-			$rest_store->set('message', 'Password recovery process started. We have sent you further informations to your email box.');
 		}
 		else {
-			$rest_store->set('error', [
-				'str'  => 'Provided email address is not valid.',
-				'file' => __FILE__,
-				'line' => __LINE__
-			]);
+			$rest_store->set('message', "Provided email address is not valid.");
 		}
+
 		break;
 }

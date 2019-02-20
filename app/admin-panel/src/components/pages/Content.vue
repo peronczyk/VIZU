@@ -48,6 +48,7 @@
 // Dependencies
 import axios from 'axios';
 import { mapActions } from 'vuex';
+import prepareFormData from '../../vendor/PrepareFormData.js';
 
 // Components
 import FormRowSimple from '../form/FormRowSimple.vue';
@@ -79,13 +80,7 @@ export default {
 		]),
 
 		saveContent() {
-			let formData = new FormData();
-
-			for (let id in this.formValues) {
-				formData.append(id, this.formValues[id]);
-			};
-
-			axios.post('../admin-api/content/save?language=' + (this.activeLanguage || ''), formData)
+			axios.post('../admin-api/content/save?language=' + (this.activeLanguage || ''), prepareFormData(this.formValues))
 				.then(result => {
 					if (result.data.message) {
 						this.openToast(result.data.message);

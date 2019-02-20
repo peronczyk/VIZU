@@ -2,20 +2,19 @@
 
 	<div class="c-App">
 		<loader
-			:is-hidden="$store.state.isAppReady"
+			:is-hidden="isAppReady"
 		/>
 
-		<auth-screen
-			v-if="$store.state.isAppReady && $store.state.userAccess < 1"
-		/>
+		<template v-if="isAppReady">
+			<transition-group name="fade">
+				<template v-if="userAccess > 0">
+					<sidebar key="sidebar" />
+					<pages-wrapper key="pagesWrapper" />
+				</template>
 
-		<sidebar
-			v-if="$store.state.isAppReady && $store.state.userAccess > 0"
-		/>
-
-		<pages-wrapper
-			v-if="$store.state.isAppReady && $store.state.userAccess > 0"
-		/>
+				<auth-screen v-else key="authScreen" />
+			</transition-group>
+		</template>
 
 		<toast />
 	</div>
@@ -27,6 +26,7 @@
 
 // Dependencies
 import axios from 'axios';
+import { mapState } from 'vuex';
 
 // Components
 import Loader from './components/objects/Loader.vue';
@@ -44,6 +44,13 @@ export default {
 		Toast
 	},
 
+	computed: {
+		...mapState([
+			'userAccess',
+			'isAppReady',
+		])
+	},
+
 	created() {
 		this.$root.isContentLoading = true;
 		axios.get('../admin-api/status/')
@@ -54,7 +61,7 @@ export default {
 				this.$store.commit('setPhpVersion', result.data['php-version']);
 				this.$store.commit('setSiteName', result.data['site-name']);
 			});
-	}
+	},
 }
 
 </script>
