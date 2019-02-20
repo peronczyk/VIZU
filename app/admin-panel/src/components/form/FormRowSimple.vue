@@ -9,11 +9,11 @@
 
 			<div class="Col-8 Col-12@SM">
 				<input
-					@input = "$emit('input', $event.target.value)"
-					:value = "value"
-					:name  = "fieldData.id"
-					class  = "u-Width--full"
-					type   = "text"
+					v-model = "value"
+					@input  = "$emit('input', $event.target.value)"
+					:name   = "fieldData.id"
+					class   = "u-Width--full"
+					type    = "text"
 				>
 			</div>
 		</div>
@@ -36,7 +36,10 @@ export default {
 	},
 
 	created() {
-		this.value = this.fieldData.value || this.value;
+		if (this.fieldData.value) {
+			this.value = this.fieldData.value;
+			this.$emit('input', this.value);
+		}
 	}
 }
 

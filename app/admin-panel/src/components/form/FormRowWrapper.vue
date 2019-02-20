@@ -1,15 +1,14 @@
 <template>
 	<div class="c-FormRowWrapper">
 		<form-row-simple
-			v-if="fieldData.type == 'simple'"
-			v-model="rowValue"
-			:field-data="fieldData"
+			v-if        = "fieldData.type == 'simple'"
+			@input      = "$emit('input', $event)"
+			:field-data = "fieldData"
 		/>
 
 		<form-row-rich
-			v-if="fieldData.type == 'rich'"
-			v-model="rowValue"
-			:field-data="fieldData"
+			v-if        = "fieldData.type == 'rich'"
+			:field-data = "fieldData"
 		/>
 
 		<div
@@ -17,12 +16,17 @@
 			class="c-FormRowWrapper__repeatable"
 		>
 			<form-row-wrapper
-				v-for="(childFieldData, fieldId) in fieldData.children"
-				:key="fieldId"
-				:field-data="childFieldData"
+				v-for       = "(childFieldData, fieldId) in fieldData.children"
+				:key        = "fieldId"
+				:field-data = "childFieldData"
 			/>
 
-			<button class="Btn Btn--small" @click.prevent="addRepeatableGroup(fieldData.id)">Add repeatable group</button>
+			<div class="Grid Grid--gutter">
+				<div class="Col-4"></div>
+				<div class="Col-8">
+					<button class="Btn Btn--small" @click.prevent="addRepeatableGroup(fieldData.id)">Add repeatable group</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -57,7 +61,7 @@ export default {
 	methods: {
 		addRepeatableGroup(fieldId) {
 			console.log(fieldId);
-		}
+		},
 	},
 }
 

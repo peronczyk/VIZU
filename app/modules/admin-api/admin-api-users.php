@@ -92,6 +92,7 @@ switch ($router->getRequestChunk(2)) {
 		}
 		catch (\Exception $e) {
 			$rest_store->set('message', "Failed to send account creation notification. Error thrown: '{$e->getMessage()}'");
+			$rest_store->set('trace', $e->getTrace());
 			break;
 		}
 
@@ -108,19 +109,19 @@ switch ($router->getRequestChunk(2)) {
 
 		$error_msg = null;
 
-		if (empty($_POST['password_actual'])) {
+		if (empty($_POST['password_current'])) {
 			$error_msg = 'Current password not provided';
 		}
-		elseif (empty($_POST['password_new1'])) {
+		elseif (empty($_POST['password_new_1'])) {
 			$error_msg = 'New password not provided';
 		}
-		elseif ($_POST['password_new1'] !== $_POST['password_new2']) {
+		elseif ($_POST['password_new_1'] !== $_POST['password_new2']) {
 			$error_msg = 'New passwords does not match';
 		}
-		elseif ($_POST['password_actual'] === $_POST['password_new1']) {
+		elseif ($_POST['password_current'] === $_POST['password_new_1']) {
 			$error_msg = 'New password should be different than previous one';
 		}
-		elseif (strlen($_POST['password_new1']) < 5) {
+		elseif (strlen($_POST['password_new_1']) < 5) {
 			$error_msg = 'New password should have at least 5 characters';
 		}
 

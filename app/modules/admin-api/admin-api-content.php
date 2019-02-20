@@ -70,57 +70,43 @@ switch($router->getRequestChunk(2)) {
 	case 'save':
 		$admin_actions->requireAdminAccessRights();
 
-		$rest_store->set('post', $_POST);
 
 		$query_common_where = "`template` = '{$source_template_name}' AND `language` = '{$active_lang}'"; // String used almost in all queries as WHERE
-		$num_changes = 0; // Count changes that was made
+		$changed_field_ids = []; // Count changes that was made
 
-		// Loop aver all POST fields that was sent by form
+		if (count($_POST) == 0) {
+			$rest_store->set('message', "There was no data passed by the form.");
+			break;
+		}
+
 		foreach ($_POST as $post_key => $post_val) {
-
-			// Stop if post value is empty
-			if (empty($post_val)) {
-				continue;
-			}
-
-			// Stop if post field does not exists in template
-			if (!is_array($template_fields[$post_key])) {
-				continue;
-			}
-
-			// If field doesn't exist create it
+			// Add new row to database if field does not exists
 			if (!isset($fields_data[$post_key])) {
-				/** @todo line below should be put outside the loop */
-				$result = $db->query("INSERT INTO `fields` (template, language, id, content, created, modified, version) VALUES ('home', '{$active_lang}', '{$post_key}', '{$post_val}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1');");
+				$result = $db->query("INSERT INTO `fields` (template, language, id, content, created, modified, version)
+					VALUES ('{$source_template_name}', '{$active_lang}', '{$post_key}', '{$post_val}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1');");
 
-				if ($result) {
-					$num_changes++;
-				}
-				else {
-					$rest_store->merge(['errors' => ['message' => "Field '{$post_key}' creation failed. Query error: {$db->getConnection()->error}"]]);
-				}
+				array_push($changed_field_ids, $post_key);
 			}
 
-			// If field exists in database
-			elseif ($fields_data[$post_key]['content'] != $post_val) {
-				/** @todo line below should be put outside the loop */
-				$result = $db->query("UPDATE `fields` SET
-					`content` = '" . $post_val . "',
-					`modified` = CURRENT_TIMESTAMP
-					WHERE " . $query_common_where . " AND `id` = '" . $post_key . "'");
+			// Modify existing field's row
+			elseif ($post_val != $fields_data[$post_key]['content']) {
+				$result = $db->query("UPDATE `fields`
+					SET
+						`content` = '{$post_val}',
+						`modified` = CURRENT_TIMESTAMP
+					WHERE {$query_common_where} AND `id` = '{$post_key}'");
 
-				if ($result) {
-					$num_changes++;
-				}
-				else {
-					$rest_store->merge(['errors' => ['message' => "Field '{$post_key}' modification failed. Query error: {$db->getConnection()->error}"]]);
-				}
+				array_push($changed_field_ids, $post_key);
 			}
 		}
 
 		$rest_store->merge([
-			'message' => "Changes saved: {$num_changes}"
+			'message' => "Changes saved: " . count($changed_field_ids),
+			'language' => $active_lang,
 		]);
+		// $rest_store->set('post', $_POST);
+		// $rest_store->set('data', $fields_data);
+		// $rest_store->set('message', "Changes saved: " . count($changed_field_ids));
 
 		break;
 }

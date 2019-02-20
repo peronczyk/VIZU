@@ -11,10 +11,10 @@
 							Language:
 							<select v-model="activeLanguage">
 								<option
-									v-for="language in languages"
-									:key="language.code"
-									:value="language.code"
-									:selected="language.code == activeLanguage"
+									v-for     = "language in languages"
+									:key      = "language.code"
+									:value    = "language.code"
+									:selected = "language.code == activeLanguage"
 								>{{ language['short_name'] }}</option>
 							</select>
 						</label>
@@ -30,10 +30,10 @@
 
 				<transition-group name="fade">
 					<form-row-wrapper
-						v-for="(fieldData, fieldId) in fieldsReceived"
-						v-model="formValues[fieldId]"
-						:key="fieldData.props.id"
-						:field-data="fieldData"
+						v-for       = "fieldData in fieldsReceived"
+						v-model     = "formValues[fieldData.props.id]"
+						:key        = "fieldData.props.id"
+						:field-data = "fieldData"
 					/>
 				</transition-group>
 			</div>
@@ -79,10 +79,13 @@ export default {
 		]),
 
 		saveContent() {
-			console.info('Save');
-			console.log(this.formValues);
+			let formData = new FormData();
 
-			axios.post('../admin-api/content/save', this.formValues)
+			for (let id in this.formValues) {
+				formData.append(id, this.formValues[id]);
+			};
+
+			axios.post('../admin-api/content/save?language=' + (this.activeLanguage || ''), formData)
 				.then(result => {
 					if (result.data.message) {
 						this.openToast(result.data.message);
@@ -91,6 +94,7 @@ export default {
 		},
 
 		resetForm() {
+			this.fieldsReceived = [];
 			this.formValues = {};
 		},
 
@@ -114,9 +118,10 @@ export default {
 	watch: {
 		activeLanguage(value, prevValue) {
 			if (prevValue != null) {
+				this.resetForm();
 				this.fetchContent();
 			}
-		}
+		},
 	}
 }
 

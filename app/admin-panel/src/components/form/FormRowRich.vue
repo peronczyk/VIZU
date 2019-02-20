@@ -36,7 +36,10 @@ export default {
 	},
 
 	created() {
-		this.value = this.fieldData.value || this.value;
+		if (this.fieldData.value) {
+			this.value = this.fieldData.value;
+			this.$emit('input', this.value);
+		}
 	}
 }
 

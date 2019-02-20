@@ -89,7 +89,8 @@ export default {
 		]),
 
 		passwordChangeAction() {
-			axios.post('../admin-api/users/change_password', this.passwordChangeData)
+			let formData = new FormData();
+			axios.post('../admin-api/users/password-change', this.passwordChangeData)
 				.then(receivedStatus => {
 					console.info('passwordChangeAction done');
 					console.log(receivedStatus);
