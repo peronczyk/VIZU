@@ -4,14 +4,14 @@
 		<div class="Grid Grid--center Grid--gutter">
 			<div class="Col-4 Col-12@SM">
 				{{ fieldData.props.name }}<br>
-				<small>{{ fieldData.props.desc }}</small><br>
+				<small v-if="fieldData.props.desc">{{ fieldData.props.desc }}</small>
 			</div>
 
 			<div class="Col-8 Col-12@SM">
 				<input
 					v-model = "value"
 					@input  = "$emit('input', $event.target.value)"
-					:name   = "fieldData.id"
+					:name   = "fieldData.props.id"
 					type    = "text"
 				>
 			</div>

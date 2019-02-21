@@ -90,6 +90,16 @@ switch (Config::$DB_TYPE) {
 
 
 /**
+ * Setup dependancy container
+ */
+
+$dependency_container = new DependencyContainer();
+$dependency_container
+	->add($router)
+	->add($db);
+
+
+/**
  * If user is not in installation process start language library
  * and set active language.
  */
@@ -100,24 +110,15 @@ if ($router->getFirstRequest() !== 'install') {
 		$lang_list = $db->fetchAll($result);
 	}
 	catch (Exception $e) {
-		Core::error('Languages database table does not exist. Probably application was not installed properly. Please run <a href="install/">installation</a> process.', __FILE__, __LINE__, debug_backtrace());
+		Core::error('Languages database table does not exist. Probably application was not installed properly. Please run <a href="' . $router->site_path . '/install/">installation</a> process.', __FILE__, __LINE__, debug_backtrace());
 	}
 	$lang = new Language($router, $db);
 	$lang->setList($lang_list);
 	$lang->autoSetLanguage();
 	$lang->loadThemeTranslations();
+
+	$dependency_container->add($lang);
 }
-
-
-/**
- * Setup dependancy container
- */
-
-$dependency_container = new DependencyContainer();
-$dependency_container
-	->add($router)
-	->add($db)
-	->add($lang);
 
 
 /**

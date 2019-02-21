@@ -92,8 +92,9 @@ switch($router->getRequestChunk(2)) {
 			elseif ($post_val != $fields_data[$post_key]['content']) {
 				$result = $db->query("UPDATE `fields`
 					SET
-						`content` = '{$post_val}',
-						`modified` = CURRENT_TIMESTAMP
+						`content`  = '{$post_val}',
+						`modified` = CURRENT_TIMESTAMP,
+						`version`  = '" . ($fields_data[$post_key]['version'] + 1) . "'
 					WHERE {$query_common_where} AND `id` = '{$post_key}'");
 
 				array_push($changed_field_ids, $post_key);

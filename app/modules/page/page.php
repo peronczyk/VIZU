@@ -9,11 +9,10 @@
  * =================================================================================
  */
 
-$tpl = new Template();
-$tpl->setTemplatesDir(__ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME);
-
-$template_content = $tpl->getTemplateFileContent('templates/home.html');
-$template_fields  = $tpl->getFieldsFromString($template_content);
+$source_template_name = 'home';
+$template_file        = __ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME . '/templates/' . $source_template_name . '.html';
+$home_page_template   = new Template($template_file);
+$template_fields      = $home_page_template->getTemplateFields();
 
 
 /**
@@ -31,7 +30,7 @@ if (count($template_fields) > 0) {
 		// Loop over fields from template
 		foreach ($template_fields as $field_id => $field) {
 			if (isset($fields_data[$field_id]['content'])) {
-				$tpl->assign([$field_id => $fields_data[$field_id]['content']]);
+				$home_page_template->assign([$field_id => $fields_data[$field_id]['content']]);
 			}
 		}
 	}
@@ -42,7 +41,7 @@ if (count($template_fields) > 0) {
  * Assign common fields that will be available in template
  */
 
-$tpl->assign([
+$home_page_template->assign([
 	'site_path'    => $router->site_path . '/',
 	'theme_path'   => Config::$THEMES_DIR . Config::$THEME_NAME . '/',
 	'app_path'     => Config::$APP_DIR,
@@ -56,7 +55,7 @@ $tpl->assign([
  * Parse and display
  */
 
-$parsed_html = $tpl->parse($template_content, $template_fields, $lang->translations);
+$parsed_html = $home_page_template->parse($lang->getTranslations());
 
 if (!empty($parsed_html)) {
 	echo $parsed_html;

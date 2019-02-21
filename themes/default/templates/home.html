@@ -40,7 +40,7 @@
 
 			<hgroup class="Header__text">
 				<h1>{{ lang id='welcome' }}</h1>
-				<h2>{{ lang id='about' }} {{ lang id='about' }}</h2>
+				<h2>{{ lang id='about' }}</h2>
 				<p>{{ lang id='theme-info' }}</p>
 				<p>&mdash; &nbsp; <a href="https://github.com/peronczyk/vizu">{{ lang id='github-view' }}</a></p>
 				<p>&mdash; &nbsp; <a href="#main">{{ lang id='scroll-down' }}</a>
@@ -93,7 +93,7 @@
 			<div class="Main__repeatable">
 				<h2>{{ lang id='repeatable-header' }}</h2>
 				{{ repeatable id='repeatable-test' name='Repeatable fields test' }}
-					<span>{{ simple id='simple-inner-1' name='Inner simple 1' }}</span>
+					<span>{{ simple id='simple-inner-1' name='Inner simple 1' desc='Some description' }}</span>
 					<span>{{ rich id='rich-inner-1' name='Inner rich 1' }}</span>
 				{{ /repeatable }}
 			</div>

@@ -54,6 +54,8 @@ class Template {
 		foreach ($array as $key => $val) {
 			$this->vars[$key] = $val;
 		}
+
+		return $this;
 	}
 
 
@@ -64,7 +66,7 @@ class Template {
 	 * @return Array
 	 */
 
-	public static function getFieldsFromString(string $content) {
+	public static function getFieldsFromString(string $content) : array {
 		$num_matches = preg_match_all('/{{(.*?)}}/', $content, $matches);
 		list($full_tags, $field_contents) = $matches;
 
@@ -167,7 +169,7 @@ class Template {
 	 * Parse template
 	 */
 
-	public function parse() {
+	public function parse(array $translations = []) {
 		$content = $this->getTemplateFileContent();
 		$fields  = $this->getTemplateFields();
 
@@ -181,7 +183,13 @@ class Template {
 		$replacements = [];
 		$n = 0;
 
-		foreach ($fields as $id => $field) {
+		foreach ($fields as $field) {
+			if (!isset($field['props'])) {
+				continue;
+			}
+
+			$field_type = $field['type'];
+			$field_id   = $field['props']['id'];
 
 			/**
 			 * Match anything like {{ type something='something' id='id' somethin='something' }}
@@ -189,15 +197,15 @@ class Template {
 			 * \p{L}   - searches any character from unicode.
 			 * /u      - allow searching for all unicode characters
 			 */
-			$patterns[$n] = '/{{ ' . $field['type'] . '[\p{L}0-9\'=\-_\:\.\(\)\s]+id=\'' . $id . '\'[\p{L}0-9\'=\-_\:\.\(\)\s]+}}/u';
+			$patterns[$n] = '/{{ ' . $field_type . '[\p{L}0-9\'=\-_\:\.\(\)\s]+id=\'' . $field_id . '\'[\p{L}0-9\'=\-_\:\.\(\)\s]+}}/u';
 
-			switch($field['type']) {
+			switch($field_type) {
 				case 'lang':
-					$replacements[$n] = $translations[$id] ?? $id;
+					$replacements[$n] = $translations[$field_id] ?? $field_id;
 					break;
 
 				default:
-					$replacements[$n] = $this->vars[$id] ?? strtoupper($field['type'] . ':' . $id);
+					$replacements[$n] = $this->vars[$field_id] ?? strtoupper($field_type . ':' . $field_id);
 					break;
 			}
 			$n++;
@@ -238,7 +246,7 @@ class Template {
 				$preg_status_text = $preg_status;
 			}
 
-			throw new Exception('Unable to display template because of error in parsing function. Returned error:<br>' . $preg_status_text);
+			throw new Exception("Unable to display template because of error in parsing function. Returned error:<br>{$preg_status_text}");
 		}
 	}
 }

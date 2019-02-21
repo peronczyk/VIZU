@@ -1,14 +1,21 @@
 <template>
 
 	<div class="c-FormRowRepeatable">
-		<p>{{ fieldData.props.name }}</p>
+		<p><strong>{{ fieldData.props.name }}</strong></p>
 		<ul>
 			<li
-				v-for = "num in count"
-				:key  = "num"
+				v-for = "groupNum in count"
+				:key  = "groupNum"
 			>
-				<a @click.prevent="removeGroup(num)" class="c-FormRowRepeatable__remove"></a>
-				<input type="text" v-for="(subField, subFieldNum) in fieldData.children" :key="subFieldNum">
+				<a @click.prevent="removeGroup(groupNum)" class="c-FormRowRepeatable__remove"></a>
+				<label
+					v-for = "(subField, subFieldNum) in fieldData.children"
+					:key  = "subFieldNum"
+				>
+					{{ subField.props.name }}
+					<small v-if="subField.props.desc">{{ subField.props.desc }}</small>
+					<input type="text" :name="subField.props.id + num">
+				</label>
 			</li>
 			<li>
 				<button class="Btn Btn--small" @click.prevent="addGroup()">Add repeatable group</button>
@@ -73,10 +80,20 @@ export default {
 		}
 	}
 
+	label {
+		small {
+			display: block;
+		}
+
+		input {
+			margin-top: 6px;
+		}
+	}
+
 	&__remove {
 		position: absolute;
-		top: 0;
-		right: 0;
+		top: 4px;
+		right: 4px;
 		width: 28px;
 		height: 28px;
 		transition: .2s;
