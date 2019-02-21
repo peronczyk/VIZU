@@ -1,7 +1,7 @@
 <template>
 	<div class="c-FormRowWrapper">
-		<form-row-simple
-			v-if        = "fieldData.type == 'simple'"
+		<form-row-repeatable
+			v-if        = "fieldData.type == 'repeatable'"
 			@input      = "$emit('input', $event)"
 			:field-data = "fieldData"
 		/>
@@ -12,24 +12,11 @@
 			:field-data = "fieldData"
 		/>
 
-		<div
-			v-if="fieldData.type == 'repeatable'"
-			class="c-FormRowWrapper__repeatable"
-		>
-			<form-row-wrapper
-				v-for       = "(childFieldData, fieldId) in fieldData.children"
-				@input      = "$emit('input', $event)"
-				:key        = "fieldId"
-				:field-data = "childFieldData"
-			/>
-
-			<div class="Grid Grid--gutter">
-				<div class="Col-4"></div>
-				<div class="Col-8">
-					<button class="Btn Btn--small" @click.prevent="addRepeatableGroup(fieldData.id)">Add repeatable group</button>
-				</div>
-			</div>
-		</div>
+		<form-row-simple
+			v-if        = "fieldData.type == 'simple'"
+			@input      = "$emit('input', $event)"
+			:field-data = "fieldData"
+		/>
 	</div>
 </template>
 
@@ -37,9 +24,9 @@
 <script>
 
 // Dependencies
+import FormRowRepeatable from './FormRowRepeatable.vue';
 import FormRowRich from './FormRowRich.vue';
 import FormRowSimple from './FormRowSimple.vue';
-import FormRowWrapper from './FormRowWrapper.vue';
 
 export default {
 	name: 'form-row-wrapper',
@@ -47,7 +34,7 @@ export default {
 	components: {
 		FormRowRich,
 		FormRowSimple,
-		FormRowWrapper,
+		FormRowRepeatable,
 	},
 
 	props: {

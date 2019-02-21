@@ -95,8 +95,16 @@
  */
 
 .u-Color {
-	&--brand-1 { color: $color-brand-1; }
-}
+	&--brand-1 {
+		color: $color-brand-1;
+	}
+	&--brand-3 {
+		color: $color-brand-3;
+	}
+	&--dark {
+		color: $color-dark;
+	}
+ }
 
 
 /* ---------------------------------------------------------------------------------

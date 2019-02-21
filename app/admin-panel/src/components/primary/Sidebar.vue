@@ -1,8 +1,11 @@
 <template>
 
 	<div class="c-Sidebar">
-		<div class="c-Sidebar__top">
-			VIZU
+		<div class="c-Sidebar__logo">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" title="VIZU">
+				<path class="u-Color--dark" d="M2.8 0h57.7v100z"/>
+				<path class="u-Color--blue" d="M60.5 50h29V0h29l-58 100V50"/>
+			</svg>
 		</div>
 
 		<nav class="c-Sidebar__nav">
@@ -55,12 +58,25 @@ export default {
 	box-shadow: $shadow-lg-light;
 	overflow: auto;
 
-	&__top {
+	&__logo {
 		display: flex;
 		align-items: center;
 		padding: 20px 0;
 		justify-content: center;
 		height: 16vh;
+
+		svg {
+			height: 40%;
+		}
+
+		.u-Color {
+			&--dark {
+				fill: $color-dark;
+			}
+			&--blue {
+				fill: $color-blue;
+			}
+		}
 	}
 
 	&__nav {
