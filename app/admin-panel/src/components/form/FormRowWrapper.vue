@@ -8,6 +8,7 @@
 
 		<form-row-rich
 			v-if        = "fieldData.type == 'rich'"
+			@input      = "$emit('input', $event)"
 			:field-data = "fieldData"
 		/>
 
@@ -17,6 +18,7 @@
 		>
 			<form-row-wrapper
 				v-for       = "(childFieldData, fieldId) in fieldData.children"
+				@input      = "$emit('input', $event)"
 				:key        = "fieldId"
 				:field-data = "childFieldData"
 			/>

@@ -12,7 +12,6 @@
 					v-model = "value"
 					@input  = "$emit('input', $event.target.value)"
 					:name   = "fieldData.id"
-					class   = "u-Width--full"
 					type    = "text"
 				>
 			</div>

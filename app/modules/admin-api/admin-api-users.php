@@ -156,21 +156,24 @@ switch ($router->getRequestChunk(2)) {
 	case 'password-change':
 		$admin_actions->requireAdminAccessRights();
 
-		$error_msg = null;
+		$error_msg        = null;
+		$password_current = $_POST['password_current'] || '';
+		$password_new_1   = $_POST['password_new_1'] || '';
+		$password_new_2   = $_POST['password_new_2'] || '';
 
-		if (empty($_POST['password_current'])) {
+		if (empty($password_current)) {
 			$error_msg = 'Current password not provided';
 		}
-		elseif (empty($_POST['password_new_1'])) {
+		elseif (empty($password_new_1)) {
 			$error_msg = 'New password not provided';
 		}
-		elseif ($_POST['password_new_1'] !== $_POST['password_new2']) {
+		elseif ($password_new_1 !== $password_new_2) {
 			$error_msg = 'New passwords does not match';
 		}
-		elseif ($_POST['password_current'] === $_POST['password_new_1']) {
+		elseif ($password_current === $password_new_1) {
 			$error_msg = 'New password should be different than previous one';
 		}
-		elseif (strlen($_POST['password_new_1']) < 5) {
+		elseif (strlen($password_new_1) < 5) {
 			$error_msg = 'New password should have at least 5 characters';
 		}
 
@@ -180,12 +183,12 @@ switch ($router->getRequestChunk(2)) {
 		}
 
 
-		// Check if entered actual password is correct
+		// Check if entered current password is correct
 
-		$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '{$user->get_id()}' LIMIT 1");
+		$result = $db->query("SELECT `password` FROM `users` WHERE `id` = '{$user->getId()}' LIMIT 1");
 		$user_data = $db->fetchAll($result);
 
-		if (isset($user_data[0]['password']) && $user_data[0]['password'] !== User::passwordEncode($_POST['password_actual'])) {
+		if (isset($user_data[0]['password']) && $user_data[0]['password'] !== User::passwordEncode($password_current)) {
 			$rest_store->set('message', 'Provided current password is not correct');
 			return;
 		}
@@ -193,8 +196,8 @@ switch ($router->getRequestChunk(2)) {
 
 		// Save new password
 
-		$new_password = User::passwordEncode($_POST['password_new1']);
-		$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user->get_id()}' LIMIT 1");
+		$new_password = User::passwordEncode($password_new_1);
+		$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user->getId()}' LIMIT 1");
 
 		if ($result) {
 			$rest_store->set('message', 'Password changed');
@@ -212,41 +215,49 @@ switch ($router->getRequestChunk(2)) {
 	 */
 
 	case 'password-recovery':
-		$show_content = false;
-		if (User::verifyUsername($_POST['email'])) {
-			$result = $db->query("SELECT `id`, `email` FROM `users` WHERE `email` = '{$_POST['email']}'");
-			$user_data = $db->fetchAll($result);
+		$email = $_POST['email'] ?? '';
 
-			if (count($user_data) == 1) {
-				$user_notified = false;
-				$new_password = User::generatePassword();
-				$content_fields = [
-					'Message' => "You have requested password recovery to your administration panel. Here is your new password: <strong>{$new_password}</strong>. Please use it to log in and change it as soon as possible.",
-					'Page address' => $router->site_path,
-				];
-
-				try {
-					$notifier = new Notifier($theme_config['contact'] ?? []);
-					$notifier->notify(
-						'[' . Config::$SITE_NAME . '] Password recovery request', // Subject
-						$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
-						$user_data[0]['email'] // Recipient
-					);
-					$user_notified = true;
-				}
-				catch (Exception $e) {
-					$rest_store->set('message', "Password recvery process failed - could not send email. Returned error: {$e->getMessage()}");
-				}
-
-				if ($user_notified) {
-					$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user_data[0]['email']}' LIMIT 1");
-					$rest_store->set('message', "Password recovery process started. We have sent you further informations to your email box.");
-				}
-			}
-		}
-		else {
+		if (!User::verifyUsername($_POST['email'])) {
 			$rest_store->set('message', "Provided email address is not valid.");
+			return;
 		}
+
+		$result = $db->query("SELECT `id`, `email` FROM `users` WHERE `email` = '{$email}'");
+		$user_data = $db->fetchAll($result);
+
+		if (count($user_data) != 1) {
+			return;
+		}
+
+		$user_notified  = false;
+		$new_password   = User::generatePassword();
+		$content_fields = [
+			'Message' => "You have requested password recovery to your administration panel. Here is your new password: <strong>{$new_password}</strong>. Please use it to log in and change it as soon as possible.",
+			'Page address' => $router->site_path,
+		];
+
+		try {
+			$notifier = new Notifier($theme_config['contact'] ?? []);
+			$notifier->notify(
+				'[' . Config::$SITE_NAME . '] Password recovery request', // Subject
+				$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
+				$user_data[0]['email'] // Recipient
+			);
+			$user_notified = true;
+		}
+		catch (Exception $e) {
+			$rest_store->set('message', "Password recvery process failed - system could not send email notificatios. Returned error: {$e->getMessage()}");
+		}
+
+		if ($user_notified) {
+			$result = $db->query("UPDATE `users` SET `password` = '{$new_password}' WHERE `id` = '{$user_data[0]['email']}' LIMIT 1");
+		}
+
+		/**
+		 * Display message about password recovery process even if provided email
+		 * address does not exist in database to prevent email sniffing.
+		 */
+		$rest_store->set('message', "Password recovery process started. If you have provided existing email address you will get further instructions.");
 
 		break;
 }

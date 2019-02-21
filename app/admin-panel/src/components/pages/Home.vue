@@ -17,7 +17,7 @@
 
 			<div class="c-Home__poweredby">
 				Powered by
-				<strong>VIZU</strong>
+				<a href="https://github.com/peronczyk/VIZU/" target="_blank" title="Simple Landing Page Generator"><strong>VIZU</strong></a>
 			</div>
 		</div>
 	</div>

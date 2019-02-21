@@ -9,11 +9,10 @@
 
 			<div class="Col-8 Col-12@SM">
 				<textarea
-					@input = "$emit('input', $event.target.value)"
-					:value = "value"
-					:name  = "fieldData.id"
-					class  = "u-Width--full"
-					type   = "text"
+					v-model = "value"
+					@input  = "$emit('input', $event.target.value)"
+					:name   = "fieldData.id"
+					type    = "text"
 				></textarea>
 			</div>
 		</div>

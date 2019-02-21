@@ -33,7 +33,7 @@
 				<form method="post" @submit.prevent="passwordChangeAction">
 					<label>
 						<input
-							v-model     = "passwordChangeData.currentPassword"
+							v-model     = "passwordChangeData['password_current']"
 							type        = "password"
 							name        = "password_current"
 							placeholder = "Current password"
@@ -41,7 +41,7 @@
 					</label>
 					<label>
 						<input
-							v-model     = "passwordChangeData.newPassword1"
+							v-model     = "passwordChangeData['password_new_1']"
 							type        = "password"
 							name        = "password_new_1"
 							placeholder = "New password"
@@ -49,13 +49,13 @@
 					</label>
 					<label>
 						<input
-							v-model     = "passwordChangeData.newPassword2"
+							v-model     = "passwordChangeData['password_new_2']"
 							type        = "password"
 							name        = "password_new_2"
 							placeholder = "Confirm new password"
 						>
 					</label>
-					<button type="submit">Send</button>
+					<button type="submit">Change</button>
 				</form>
 
 				<h3>Add user</h3>
@@ -68,7 +68,7 @@
 							placeholder = "Email address"
 						>
 					</label>
-					<button type="submit">Send</button>
+					<button type="submit">Add</button>
 				</form>
 			</div>
 		</div>
@@ -82,13 +82,12 @@
 // Dependencies
 import axios from 'axios';
 import { mapActions } from 'vuex';
+import prepareFormData from '../../vendor/PrepareFormData.js';
 
 export default {
 	data() {
 		return {
-			user: {
-				email: 'changeme@domain.com'
-			},
+			user: {},
 			usersList: [],
 			passwordChangeData: {},
 			addUserData: {},
@@ -100,19 +99,15 @@ export default {
 			'openToast',
 		]),
 
-		passwordChangeAction() {
-			let formData = new FormData();
-			axios.post('../admin-api/users/password-change', this.passwordChangeData)
-				.then(receivedStatus => {
-					console.info('passwordChangeAction done');
-					console.log(receivedStatus);
+		getUsersList() {
+			axios.get('../admin-api/users/list')
+				.then(result => {
+					this.usersList = result.data['users-list'];
 				});
 		},
 
-		addUserAction() {
-			let formData = new FormData();
-			formData.append('email', this.addUserData.email)
-			axios.post('../admin-api/users/add', formData)
+		passwordChangeAction() {
+			axios.post('../admin-api/users/password-change', prepareFormData(this.passwordChangeData))
 				.then(result => {
 					if (result.data.message) {
 						this.openToast(result.data.message);
@@ -120,10 +115,12 @@ export default {
 				});
 		},
 
-		getUsersList() {
-			axios.get('../admin-api/users/list')
+		addUserAction() {
+			axios.post('../admin-api/users/add', prepareFormData(this.addUserData))
 				.then(result => {
-					this.usersList = result.data['users-list'];
+					if (result.data.message) {
+						this.openToast(result.data.message);
+					}
 				});
 		},
 
