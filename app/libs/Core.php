@@ -50,36 +50,27 @@ class Core {
 	 */
 
 	public static function error($msg, $file = null, $line = null, $debug = null) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+		header('vizu-error-msg: ' . $msg);
+
 		// Hide server document root from file path
 		$document_root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
 		$file = str_replace($document_root, '', $file);
 
-		if (self::isAjaxRequest()) {
-			header('Content-type: application/json');
-			echo json_encode([
-				'error' => [
-					'str'  => $msg,
-					'file' => $file,
-					'line' => $line
-				]
-			]);
+		echo self::commonHtmlHeader('Critical error');
+		echo '<figure>;(</figure><h1>Something went<br>terribly wrong</h1><hr><p>' . $msg . '</p><ul>';
+
+		if (empty($debug)) {
+			echo '<li>File: <strong>' . $file . '</strong></li><li>Line: <strong>' . $line . '</strong></li>';
 		}
 		else {
-			echo self::commonHtmlHeader('Critical error');
-			echo '<figure>;(</figure><h1>Something went<br>terribly wrong</h1><hr><p>' . $msg . '</p><ul>';
-
-			if (empty($debug)) {
-				echo '<li>File: <strong>' . $file . '</strong></li><li>Line: <strong>' . $line . '</strong></li>';
-			}
-			else {
-				$debug[0]['file'] = str_replace($document_root, '', $debug[0]['file']);
-				echo '<li>Invoked by: ' . $debug[0]['file'] . ' (line: <strong>' . $debug[0]['line'] . '</strong>)</li>';
-				echo '<li>Occurs in: ' . $file . ' (line: <strong>' . $line . '</strong>)</li>';
-			}
-
-			echo '</ul>';
-			echo self::commonHtmlFooter();
+			$debug[0]['file'] = str_replace($document_root, '', $debug[0]['file']);
+			echo '<li>Invoked by: ' . $debug[0]['file'] . ' (line: <strong>' . $debug[0]['line'] . '</strong>)</li>';
+			echo '<li>Occurs in: ' . $file . ' (line: <strong>' . $line . '</strong>)</li>';
 		}
+
+		echo '</ul>';
+		echo self::commonHtmlFooter();
 
 		exit;
 	}
@@ -126,16 +117,6 @@ class Core {
 			}
 		}
 		return $processed_array;
-	}
-
-
-	/** ----------------------------------------------------------------------------
-	 * Check if page was requested with asynchronous call
-	 * @return Boolean
-	 */
-
-	public static function isAjaxRequest() {
-		return (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') == 'xmlhttprequest');
 	}
 
 

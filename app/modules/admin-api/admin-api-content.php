@@ -55,9 +55,9 @@ switch($router->getRequestChunk(2)) {
 		}
 
 		$rest_store->merge([
-			'fields'                  => $fields_to_return,
-			'languages'               => $languages,
-			'active-language'         => $active_lang,
+			'fields'          => $fields_to_return,
+			'languages'       => $languages,
+			'active-language' => $active_lang,
 		]);
 
 		break;

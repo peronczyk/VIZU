@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `fields` (
 	`language` varchar(2) NOT NULL,
 	`id` varchar(50) NOT NULL,
 	`content` text,
+	`subcontent` text,
 	`created` timestamp NOT NULL,
 	`modified` timestamp NOT NULL,
 	`version` INTEGER NOT NULL

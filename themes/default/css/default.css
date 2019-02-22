@@ -177,6 +177,14 @@ button {
 			font-weight: 700;
 		}
 
+	.Header__logo {
+		position: absolute;
+		top: 50px;
+		left: 50px;
+		width: 70px;
+		height: 70px;
+	}
+
 	.Header__text {
 		max-width: 500px;
 		will-change: opacity, transform;
@@ -223,8 +231,16 @@ button {
 
 
 @media (max-width: 640px) {
+	h1 {
+		font-size: 40px;
+	}
+
 	.Header {
 		height: auto;
+	}
+
+	.Header__logo {
+		position: static;
 	}
 
 	.Main__content,

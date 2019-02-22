@@ -9,7 +9,7 @@
  * =================================================================================
  */
 
-header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found', true, 404);
 
 $tpl = new Template();
 $tpl->setTemplatesDir(__ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME);

@@ -83,6 +83,14 @@ export default {
 				.then(result => {
 					this.$store.commit('setUserAccess', result.data['user-access'] || 0);
 					this.authMessage = result.data.message || result.data.error.message || null;
+				})
+				.catch(error => {
+					let response = error.response || {};
+					let headers  = response.headers || {};
+
+					this.openToast('<strong>Status: ' + response.status + '</strong><br>' + (headers['vizu-error-msg'] || 'Unknown error occured. Please contact administrators.'));
+
+					console.log(response);
 				});
 		},
 

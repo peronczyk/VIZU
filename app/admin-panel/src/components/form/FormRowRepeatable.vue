@@ -4,7 +4,7 @@
 		<p><strong>{{ fieldData.props.name }}:</strong></p>
 		<ul>
 			<li
-				v-for = "groupNum in count"
+				v-for = "groupNum in fieldData['groups-number']"
 				:key  = "groupNum"
 			>
 				<a @click.prevent="removeGroup(groupNum)" class="c-FormRowRepeatable__remove"></a>
@@ -14,7 +14,7 @@
 				>
 					{{ subField.props.name }}
 					<small v-if="subField.props.desc">{{ subField.props.desc }}</small>
-					<input type="text" :name="subField.props.id + num">
+					<input type="text" :name="subField.props.id + groupNum">
 				</label>
 			</li>
 			<li>
@@ -31,12 +31,6 @@
 export default {
 	props: {
 		fieldData: Object,
-	},
-
-	data() {
-		return {
-			count: 4,
-		}
 	},
 
 	methods: {

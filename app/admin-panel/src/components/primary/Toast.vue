@@ -2,7 +2,7 @@
 
 	<transition name="slide-right">
 		<dialog v-if="isToastVisible" class="c-Toast">
-			<p>{{ toastContent }}</p>
+			<p v-html="toastContent"></p>
 		</dialog>
 	</transition>
 
@@ -53,6 +53,10 @@ export default {
 	background-color: $color-dark;
 	box-shadow: $shadow-lg-medium;
 	will-change: visibility, opacity, transform;
+
+	a {
+		color: $color-blue-light;
+	}
 }
 
 </style>
