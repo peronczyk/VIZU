@@ -1,7 +1,7 @@
 <template>
 
 	<div class="c-FormRowRepeatable">
-		<p><strong>{{ fieldData.props.name }}</strong></p>
+		<p><strong>{{ fieldData.props.name }}:</strong></p>
 		<ul>
 			<li
 				v-for = "groupNum in count"
@@ -70,7 +70,7 @@ export default {
 		width: 33.3%;
 		min-height: 80px;
 		margin: -1px 0 0 -1px;
-		padding: 30px 20px;
+		padding: 30px 20px 20px 20px;
 		border: 1px solid $color-lines;
 
 		&:last-child {

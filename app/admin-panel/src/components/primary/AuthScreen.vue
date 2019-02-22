@@ -3,7 +3,7 @@
 	<div class="c-Auth">
 		<div class="c-Auth__left">
 			<div>
-				<h1>{{ siteName || 'Website' }}</h1>
+				<h1><strong>{{ siteName || 'Website' }}</strong></h1>
 				<h2>Administration panel</h2>
 			</div>
 		</div>
@@ -145,7 +145,7 @@ export default {
 
 		svg {
 			width: 60px;
-			height: 50px;
+			height: 60px;
 		}
 	}
 

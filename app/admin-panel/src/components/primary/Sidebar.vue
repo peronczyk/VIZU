@@ -63,7 +63,7 @@ export default {
 		height: 16vh;
 
 		svg {
-			height: 40%;
+			height: 50%;
 		}
 
 		.u-Color {
