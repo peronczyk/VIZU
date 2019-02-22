@@ -41,6 +41,12 @@
 					</div>
 				</transition>
 			</div>
+
+			<div class="c-Auth__logo">
+				<a href="https://github.com/peronczyk/VIZU/" target="_blank" title="Simple Landing Page Generator">
+					<svg><use xlink:href="#logo-vizu"></use></svg>
+				</a>
+			</div>
 		</div>
 	</div>
 
@@ -123,12 +129,24 @@ export default {
 	}
 
 	&__message {
-		margin-top: 20px;
+		margin: 20px 0;
 		color: $color-red;
 	}
 
 	&__pwdrec {
 		padding-top: 20px;
+	}
+
+	&__logo {
+		position: absolute;
+		top: $gutter;
+		left: $gutter;
+		width: auto;
+
+		svg {
+			width: 60px;
+			height: 50px;
+		}
 	}
 
 	form {

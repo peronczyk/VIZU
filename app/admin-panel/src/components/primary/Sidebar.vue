@@ -2,10 +2,7 @@
 
 	<div class="c-Sidebar">
 		<div class="c-Sidebar__logo">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" title="VIZU">
-				<path class="u-Color--dark" d="M2.8 0h57.7v100z"/>
-				<path class="u-Color--blue" d="M60.5 50h29V0h29l-58 100V50"/>
-			</svg>
+			<svg><use xlink:href="#logo-vizu"></use></svg>
 		</div>
 
 		<nav class="c-Sidebar__nav">
