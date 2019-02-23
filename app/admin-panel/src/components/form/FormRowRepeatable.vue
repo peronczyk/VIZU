@@ -41,9 +41,7 @@ export default {
 
 	data() {
 		return {
-			value: {
-				'groups-number': 0,
-			},
+			value: {},
 		}
 	},
 
@@ -53,10 +51,19 @@ export default {
 			this.$emit('input', this.value);
 		},
 
-		removeGroup(groupNum) {
-			this.fieldData.children.forEach(childField => {
-				delete this.value[childField.props.id + '__' + groupNum];
-			});
+		removeGroup(groupNumber) {
+			for (let i = groupNumber; i <= this.value['groups-number']; i++) {
+				this.fieldData.children.forEach(childField => {
+					let actualKey   = childField.props.id + '__' + i;
+					let previousKey = childField.props.id + '__' + (i - 1);
+
+					if (i > groupNumber && this.value[actualKey]) {
+						this.value[previousKey] = this.value[actualKey];
+					}
+					delete this.value[actualKey];
+				});
+			}
+
 			this.value['groups-number']--;
 			this.$emit('input', this.value);
 		},
@@ -67,10 +74,6 @@ export default {
 	},
 
 	created() {
-		if (this.fieldData['groups-number']) {
-			this.value['groups-number'] = this.fieldData['groups-number'];
-		}
-
 		if (this.fieldData.value) {
 			this.value = this.fieldData.value;
 			this.$emit('input', this.value);

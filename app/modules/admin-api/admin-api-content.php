@@ -70,7 +70,6 @@ switch($router->getRequestChunk(2)) {
 	case 'save':
 		$admin_actions->requireAdminAccessRights();
 
-
 		$query_common_where = "`template` = '{$source_template_name}' AND `language` = '{$active_lang}'"; // String used almost in all queries as WHERE
 		$changed_field_ids = []; // Count changes that was made
 

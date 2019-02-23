@@ -39,9 +39,13 @@ class Repeatable {
 		foreach ($this->_template->template_fields as $key => $field) {
 			// Closing tag
 			if ($field['type'] == '/' . self::FIELD_TYPE) {
-				$this->_template->template_fields[$started_key]['groups-number'] = 0;
+				$groups_number = 0;
+
 				if (isset($fields_data[$started_id])) {
-					$this->_template->template_fields[$started_key]['value'] = json_decode($fields_data[$started_id]['subcontent']);
+					$content = json_decode($fields_data[$started_id]['content'], true);
+					if (is_array($content)) {
+						$this->_template->template_fields[$started_key]['value'] = $content;
+					}
 				}
 
 				unset($this->_template->template_fields[$key]);
