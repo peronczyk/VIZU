@@ -7,7 +7,7 @@
 
 				<transition name="fade">
 					<div class="u-PageTop__buttons" v-if="isFormReady">
-						<label class="u-PageTop__option">
+						<label class="u-PageTop__option u-PageTop__option--short">
 							Language:
 							<select v-model="activeLanguage">
 								<option
@@ -19,7 +19,6 @@
 							</select>
 						</label>
 
-						<button class="Btn Btn--gray" type="reset" @click.prevent="resetForm">Reset</button>
 						<button class="Btn Btn--primary" type="submit">Save changes</button>
 					</div>
 				</transition>

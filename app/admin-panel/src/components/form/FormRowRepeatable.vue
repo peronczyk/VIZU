@@ -4,17 +4,23 @@
 		<p><strong>{{ fieldData.props.name }}:</strong></p>
 		<ul>
 			<li
-				v-for = "groupNum in fieldData['groups-number']"
+				v-for = "groupNum in value['groups-number']"
 				:key  = "groupNum"
 			>
-				<a @click.prevent="removeGroup(groupNum)" class="c-FormRowRepeatable__remove"></a>
+				<a @click.prevent="removeGroup(groupNum - 1)" class="c-FormRowRepeatable__remove"></a>
+				<strong>{{ groupNum }}</strong>
 				<label
 					v-for = "(subField, subFieldNum) in fieldData.children"
 					:key  = "subFieldNum"
 				>
 					{{ subField.props.name }}
 					<small v-if="subField.props.desc">{{ subField.props.desc }}</small>
-					<input type="text" :name="subField.props.id + groupNum">
+					<input
+						@input  = "handleInputChange"
+						v-model = "value[subField.props.id + '__' + (groupNum - 1)]"
+						:name   = "subField.props.id + (groupNum - 1)"
+						type    = "text"
+					>
 				</label>
 			</li>
 			<li>
@@ -33,15 +39,43 @@ export default {
 		fieldData: Object,
 	},
 
-	methods: {
-		addGroup() {
-			this.count++;
-		},
-
-		removeGroup() {
-			this.count--;
+	data() {
+		return {
+			value: {
+				'groups-number': 0,
+			},
 		}
 	},
+
+	methods: {
+		addGroup() {
+			this.value['groups-number']++;
+			this.$emit('input', this.value);
+		},
+
+		removeGroup(groupNum) {
+			this.fieldData.children.forEach(childField => {
+				delete this.value[childField.props.id + '__' + groupNum];
+			});
+			this.value['groups-number']--;
+			this.$emit('input', this.value);
+		},
+
+		handleInputChange() {
+			this.$emit('input', this.value);
+		},
+	},
+
+	created() {
+		if (this.fieldData['groups-number']) {
+			this.value['groups-number'] = this.fieldData['groups-number'];
+		}
+
+		if (this.fieldData.value) {
+			this.value = this.fieldData.value;
+			this.$emit('input', this.value);
+		}
+	}
 }
 
 </script>
@@ -52,6 +86,8 @@ export default {
 @import '../../assets/styles/definitions.scss';
 
 .c-FormRowRepeatable {
+	$repeatable-elem-padding: 20px;
+
 	ul {
 		display: flex;
 		flex-wrap: wrap;
@@ -64,7 +100,7 @@ export default {
 		width: 33.3%;
 		min-height: 80px;
 		margin: -1px 0 0 -1px;
-		padding: 30px 20px 20px 20px;
+		padding: $repeatable-elem-padding;
 		border: 1px solid $color-lines;
 
 		&:last-child {
@@ -86,8 +122,8 @@ export default {
 
 	&__remove {
 		position: absolute;
-		top: 4px;
-		right: 4px;
+		top: 6px;
+		right: 6px;
 		width: 28px;
 		height: 28px;
 		transition: .2s;
