@@ -16,9 +16,11 @@ if (IN_ADMIN_API !== true) {
 // Select action
 switch($router->getRequestChunk(2)) {
 	case 'list':
+		$admin_actions->requireAdminAccessRights();
+		
 		// Get data from database for all fields
 		$result = $db->query("SELECT `id`, `modified` FROM `fields` WHERE `template` = 'home'");
-		$fields_data = $core->processArray($db->fetchAll($result), 'id');
+		$fields_data = Core::processArray($db->fetchAll($result), 'id');
 
 		$history_data = [];
 

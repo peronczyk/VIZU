@@ -22,7 +22,7 @@ $active_lang = (!empty($router->query['language']) && strlen($router->query['lan
 
 // Get data from database for all fields
 $result = $db->query("SELECT * FROM `fields` WHERE `template` = '{$source_template_name}' AND `language` = '{$active_lang}'");
-$fields_data = $core->processArray($db->fetchAll($result), 'id');
+$fields_data = Core::processArray($db->fetchAll($result), 'id');
 
 // Run template handler
 $template_file = __ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME . '/templates/' . $source_template_name . '.html';

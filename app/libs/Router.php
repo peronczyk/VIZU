@@ -163,7 +163,7 @@ class Router {
 	 */
 
 	public function redirect($path, $add_request = false, $add_query = false) {
-		$redirect_url = $this->site_path . '/' . $path;
+		$redirect_url = trim($this->site_path, '/') . '/' . $path;
 
 		if ($add_request && count($this->request) > 0) {
 			if (substr($redirect_url, -1) != '/') {

@@ -101,10 +101,14 @@
 
 			<div class="Main__repeatable">
 				<h2>{{ lang id='repeatable-header' }}</h2>
-				{{ repeatable id='repeatable-test' name='Repeatable fields test' }}
-					<span>{{ simple id='simple-inner-1' name='Inner simple 1' desc='Some description' }}</span>
-					<span>{{ rich id='rich-inner-1' name='Inner rich 1' }}</span>
-				{{ /repeatable }}
+				<ul class="Tiles">
+					{{ repeatable id='tiles' name='Repeatable fields example' }}
+						<li>
+							<h3>{{ simple id='tile-header' name='Tile header' desc='Some example description' }}</h3>
+							<p>{{ simple id='tile-text' name='Tile text' }}</p>
+						</li>
+					{{ /repeatable }}
+				</ul>
 			</div>
 		</div>
 	</main>

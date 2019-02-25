@@ -23,7 +23,7 @@ class Core {
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) {
 			session_start([
 				'cookie_httponly' => true,
-				'cookie_secure' => true
+				'cookie_secure' => Config::$FORCE_HTTPS
 			]);
 		}
 	}
@@ -104,7 +104,7 @@ class Core {
 	 * @return array
 	 */
 
-	public function processArray($array, $key_name) {
+	public static function processArray($array, $key_name) {
 		if (!is_array($array)) {
 			return false;
 		}

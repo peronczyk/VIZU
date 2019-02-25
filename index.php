@@ -100,11 +100,10 @@ $dependency_container
 
 
 /**
- * If user is not in installation process start language library
- * and set active language.
+ * Start language library and set active language If user is not in installation process.
  */
 
-if ($router->getFirstRequest() !== 'install') {
+if (!in_array($router->getFirstRequest(), ['admin', 'install'])) {
 	try {
 		$result = $db->query('SELECT * FROM `languages`');
 		$lang_list = $db->fetchAll($result);

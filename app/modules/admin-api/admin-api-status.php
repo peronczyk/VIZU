@@ -3,6 +3,7 @@
 $rest_store->merge([
 	'user-access' => $user->getAccess(),
 	'site-name'   => Config::$SITE_NAME,
+	'session' => $_SESSION,
 ]);
 
 if ($user->getAccess() > 0) {

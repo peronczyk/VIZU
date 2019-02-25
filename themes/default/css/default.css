@@ -211,8 +211,15 @@ button {
 		width: 50%;
 	}
 
-	.Main__repeatable {
+.Tiles {
+	display: flex;
+	flex-wrap: wrap;
+	list-style-type: none;
+}
 
+	.Tiles li {
+		width: 33.333%;
+		background-color: #1f1e38;
 	}
 
 .Footer {

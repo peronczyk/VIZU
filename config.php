@@ -49,6 +49,14 @@ class Config {
 	static $THEME_NAME = 'default';
 
 	/**
+	 * Turn true only if you are sure that you will use HTTPS.
+	 * When turned on you will not be able to log into admin panel
+	 * on non-https connections.
+	 * @var Boolean
+	 */
+	static $FORCE_HTTPS = false;
+
+	/**
 	 * Application directory location
 	 * @var String
 	 */

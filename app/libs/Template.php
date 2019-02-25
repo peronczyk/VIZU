@@ -47,6 +47,17 @@ class Template {
 
 
 	/** ----------------------------------------------------------------------------
+	 * Replace template file content stored in this instance.
+	 * Usefull for pre-parsing template.
+	 */
+
+	public function replaceTemplateFileContent(string $new_content) {
+		$this->template_file_content = $new_content;
+		return $this;
+	}
+
+
+	/** ----------------------------------------------------------------------------
 	 * Assign vars to parse
 	 */
 
@@ -56,6 +67,15 @@ class Template {
 		}
 
 		return $this;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Get assigned vars
+	 */
+
+	public function getAssignedVars() {
+		return $this->vars;
 	}
 
 
@@ -166,19 +186,11 @@ class Template {
 
 
 	/** ----------------------------------------------------------------------------
-	 * Parse template
+	 * Parse string with provided array of values in format 'id' => 'value'
+	 * @link http://stackoverflow.com/questions/5017582/php-looping-template-engine-from-scratch
 	 */
 
-	public function parse(array $translations = []) {
-		$content = $this->getTemplateFileContent();
-		$fields  = $this->getTemplateFields();
-
-		/**
-		 * Prepare all fields
-		 * @todo needed to be replaced
-		 * @link http://stackoverflow.com/questions/5017582/php-looping-template-engine-from-scratch
-		 */
-
+	public static function parseStringWithValues(string $string, array $fields, array $vars) {
 		$patterns     = [];
 		$replacements = [];
 		$n = 0;
@@ -199,20 +211,12 @@ class Template {
 			 */
 			$patterns[$n] = '/{{ ' . $field_type . '[\p{L}0-9\'=\-_\:\.\(\)\s]+id=\'' . $field_id . '\'[\p{L}0-9\'=\-_\:\.\(\)\s]+}}/u';
 
-			switch($field_type) {
-				case 'lang':
-					$replacements[$n] = $translations[$field_id] ?? $field_id;
-					break;
-
-				default:
-					$replacements[$n] = $this->vars[$field_id] ?? strtoupper($field_type . ':' . $field_id);
-					break;
-			}
+			$replacements[$n] = $vars[$field_id] ?? "<!-- {$field_type} : {$field_id} -->";
 			$n++;
 		}
 
-		if (is_array($this->vars)) {
-			foreach ($this->vars as $key => $var) {
+		if (is_array($vars)) {
+			foreach ($vars as $key => $var) {
 				if (!empty($key)) {
 					$patterns[] = '/{{ ' . $key . ' }}/';
 					$replacements[] = $var;
@@ -220,7 +224,7 @@ class Template {
 			}
 		}
 
-		$parsed = preg_replace($patterns, $replacements, $content);
+		$parsed = preg_replace($patterns, $replacements, $string);
 		$preg_status = preg_last_error();
 
 		// If regular expression was performed without errors
@@ -248,5 +252,22 @@ class Template {
 
 			throw new Exception("Unable to display template because of error in parsing function. Returned error:<br>{$preg_status_text}");
 		}
+
+		return false;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Parse template stored in class state
+	 */
+
+	public function parse(array $translations = []) {
+		$content = $this->getTemplateFileContent();
+		$fields  = $this->getTemplateFields();
+		$vars    = $this->getAssignedVars();
+
+		$vars = array_merge($vars, $translations);
+
+		return self::parseStringWithValues($content, $fields, $vars);
 	}
 }

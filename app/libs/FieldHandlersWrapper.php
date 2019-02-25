@@ -71,4 +71,14 @@ class FieldHandlersWrapper {
 		$this->runHandlersMethod('removeNotEditableFields');
 		return $this;
 	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Parsing hooks that will be fired before template parse method.
+	 */
+
+	public function preParse($fields_data) : object {
+		$this->runHandlersMethod('preParse', [$fields_data]);
+		return $this;
+	}
 }

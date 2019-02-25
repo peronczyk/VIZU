@@ -161,7 +161,7 @@ class User {
 			return true;
 		}
 		else {
-			throw new Exception("Incorrect login details were provided");
+			throw new Exception("Sorry, you entered an incorrect email address or password.");
 		}
 	}
 

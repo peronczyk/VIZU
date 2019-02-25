@@ -10,22 +10,24 @@
  */
 
 $source_template_name = 'home';
-$template_file        = __ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME . '/templates/' . $source_template_name . '.html';
-$home_page_template   = new Template($template_file);
-$template_fields      = $home_page_template->getTemplateFields();
+$template_file = __ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME . '/templates/' . $source_template_name . '.html';
+$home_page_template = new Template($template_file);
+$template_fields = $home_page_template->getTemplateFields();
 
 
 /**
- * If there are codded fields in template get their values from database
+ * If there are coded fields in template get their values from database
  */
 
 if (count($template_fields) > 0) {
 
 	// Get data from database for all fields
 	$result = $db->query("SELECT `id`, `content` FROM `fields` WHERE `template` = 'home' AND `language` = '{$lang->getActiveLangCode()}'");
-	$fields_data = $core->processArray($db->fetchAll($result), 'id');
+	$fields_data = Core::processArray($db->fetchAll($result), 'id');
 
 	if (is_array($fields_data) && count($fields_data) > 0) {
+		$field_handlers = new FieldHandlersWrapper($home_page_template, $dependency_container);
+		$field_handlers->preParse($fields_data);
 
 		// Loop over fields from template
 		foreach ($template_fields as $field_id => $field) {
