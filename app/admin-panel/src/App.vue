@@ -26,7 +26,7 @@
 
 // Dependencies
 import axios from 'axios';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 // Components
 import Loader from './components/objects/Loader.vue';
@@ -51,16 +51,14 @@ export default {
 		])
 	},
 
+	methods: {
+		...mapActions([
+			'fetchAppStatus',
+		]),
+	},
+
 	created() {
-		this.$root.isContentLoading = true;
-		axios.get('../admin-api/status/')
-			.then(result => {
-				this.$store.commit('appIsReady');
-				this.$store.commit('setUserAccess', result.data['user-access']);
-				this.$store.commit('setAppVersion', result.data['app-version']);
-				this.$store.commit('setPhpVersion', result.data['php-version']);
-				this.$store.commit('setSiteName', result.data['site-name']);
-			});
+		this.fetchAppStatus();
 	},
 }
 

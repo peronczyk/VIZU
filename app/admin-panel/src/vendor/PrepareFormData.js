@@ -10,8 +10,5 @@ export default function(formValues) {
 		}
 	};
 
-	console.log(formValues);
-
-
 	return formData;
 }

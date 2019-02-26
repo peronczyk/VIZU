@@ -90,7 +90,7 @@ elseif ($install->checkDbTables()) {
 		if (isset($_POST['op']) && $_POST['op'] === 'add_user') {
 			$status = false;
 			if (User::verifyPassword($_POST['password']) && User::verifyUsername($_POST['email'])) {
-				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('" . $_POST['email'] . "', '" . User::passwordEncode($_POST['password']) . "');");
+				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('{$_POST['email']}', '" . User::passwordEncode($_POST['password']) . "');");
 				if ($result) {
 					$status = true;
 				}

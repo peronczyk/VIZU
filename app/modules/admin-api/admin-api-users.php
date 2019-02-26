@@ -24,11 +24,7 @@ switch ($router->getRequestChunk(2)) {
 			$user->login($_POST['email'] ?? '', $_POST['password'] ?? '');
 		}
 		catch (Exception $e) {
-			$rest_store->set('error', [
-				'message' => $e->getMessage(),
-				'file'    => $e->getFile(),
-				'line'    => $e->getLine(),
-			]);
+			$rest_store->set('message', $e->getMessage());
 		}
 		$rest_store->set('user-access', $user->getAccess());
 
@@ -126,15 +122,14 @@ switch ($router->getRequestChunk(2)) {
 				$email // Recipient
 			);
 		}
-		catch (\Exception $e) {
+		catch (Exception $e) {
 			$rest_store->set('message', "Failed to send account creation notification. Error thrown: '{$e->getMessage()}'");
 			$rest_store->set('trace', $e->getTrace());
 			break;
 		}
 
 		// Add user to database
-		$query = $db->query("INSERT INTO `users` VALUES ('', '{$email}', '{$user->password_encode($generated_password)}')");
-
+		$query = $db->query("INSERT INTO `users` (email, password) VALUES ('{$email}', '" . User::passwordEncode($generated_password). "')");
 		$rest_store->set('message', "Administrator account with email address {$email} has been created.");
 
 		break;
@@ -156,10 +151,12 @@ switch ($router->getRequestChunk(2)) {
 	case 'password-change':
 		$admin_actions->requireAdminAccessRights();
 
+		$rest_store->set('success', false);
+
 		$error_msg        = null;
-		$password_current = $_POST['password_current'] || '';
-		$password_new_1   = $_POST['password_new_1'] || '';
-		$password_new_2   = $_POST['password_new_2'] || '';
+		$password_current = $_POST['password_current'] ?? '';
+		$password_new_1   = $_POST['password_new_1'] ?? '';
+		$password_new_2   = $_POST['password_new_2'] ?? '';
 
 		if (empty($password_current)) {
 			$error_msg = 'Current password not provided';
@@ -170,7 +167,7 @@ switch ($router->getRequestChunk(2)) {
 		elseif ($password_new_1 !== $password_new_2) {
 			$error_msg = 'New passwords does not match';
 		}
-		elseif ($password_current === $password_new_1) {
+		elseif ($password_current == $password_new_1) {
 			$error_msg = 'New password should be different than previous one';
 		}
 		elseif (strlen($password_new_1) < 5) {
@@ -201,6 +198,7 @@ switch ($router->getRequestChunk(2)) {
 
 		if ($result) {
 			$rest_store->set('message', 'Password changed');
+			$rest_store->set('success', true);
 			$_SESSION['password'] = $new_password;
 		}
 		else {

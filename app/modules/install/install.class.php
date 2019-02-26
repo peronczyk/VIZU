@@ -32,13 +32,17 @@ class Install {
 
 	public function checkDbTables() {
 		try {
-			$table_fields = $this->_db->query('SELECT 1 FROM `fields` LIMIT 1');
-			$table_users  = $this->_db->query('SELECT 1 FROM `users` LIMIT 1');
+			$result = $this->_db->query('SELECT 1 FROM `fields` LIMIT 1');
+			$table_fields = $this->_db->fetchAll($result);
+
+			$result = $this->_db->query('SELECT 1 FROM `users` LIMIT 1');
+			$table_users = $this->_db->fetchAll($result);
 		}
 		catch (Exception $e) {
 			return false;
 		}
-		return ($table_fields && $table_users);
+
+		return (is_arraY($table_fields) && is_array($table_users));
 	}
 
 
@@ -47,8 +51,13 @@ class Install {
 	 */
 
 	public function checkDbUsers() {
-		$result = $this->_db->query('SELECT `id` FROM `users`', true);
-		return (count($this->_db->fetchAll($result)) > 0);
+		try {
+			$result = $this->_db->query('SELECT `id` FROM `users`', true);
+			return (count($this->_db->fetchAll($result)) > 0);
+		}
+		catch (Exception $e) {
+			return false;
+		}
 	}
 
 

@@ -29,7 +29,6 @@
 
 			<div class="Col-6 Col-12@MD">
 				<h3>Password change</h3>
-				<p><small>For user: <strong>{{ user.email }}</strong></small></p>
 				<form method="post" @submit.prevent="passwordChangeAction">
 					<label>
 						<input
@@ -97,6 +96,7 @@ export default {
 	methods: {
 		...mapActions([
 			'openToast',
+			'userLogout',
 		]),
 
 		getUsersList() {
@@ -112,6 +112,9 @@ export default {
 					if (result.data.message) {
 						this.openToast(result.data.message);
 					}
+					if (result.data.success) {
+						this.userLogout();
+					}
 				});
 		},
 
@@ -121,6 +124,7 @@ export default {
 					if (result.data.message) {
 						this.openToast(result.data.message);
 					}
+					this.getUsersList();
 				});
 		},
 
@@ -128,6 +132,7 @@ export default {
 			axios.get('../admin-api/users/delete?user-id=' + userId)
 				.then(result => {
 					this.openToast((result.data.success) ? 'User deleted' : 'User deletion failed');
+					this.getUsersList();
 				});
 		},
 	},

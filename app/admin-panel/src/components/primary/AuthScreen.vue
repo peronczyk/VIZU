@@ -57,7 +57,7 @@
 
 // Dependencies
 import axios from 'axios';
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapMutations } from 'vuex';
 import prepareFormData from '../../vendor/PrepareFormData.js';
 
 export default {
@@ -74,23 +74,31 @@ export default {
 	},
 
 	methods: {
+		...mapMutations([
+			'setUserAccess',
+		]),
+
 		...mapActions([
 			'openToast',
+			'fetchAppStatus',
 		]),
 
 		userLogin() {
 			axios.post('../admin-api/users/login', prepareFormData(this.formValues))
 				.then(result => {
-					this.$store.commit('setUserAccess', result.data['user-access'] || 0);
-					this.authMessage = result.data.message || result.data.error.message || null;
+					if (result.data['user-access'] > 0) {
+						this.setUserAccess(result.data['user-access']);
+						this.fetchAppStatus();
+					}
+					else {
+						this.authMessage = result.data.message || null;
+					}
 				})
 				.catch(error => {
 					let response = error.response || {};
 					let headers  = response.headers || {};
 
 					this.openToast('<strong>Status: ' + response.status + '</strong><br>' + (headers['vizu-error-msg'] || 'Unknown error occured. Please contact administrators.'));
-
-					console.log(response);
 				});
 		},
 

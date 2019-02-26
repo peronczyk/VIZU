@@ -38,6 +38,20 @@ export default new Vuex.Store({
 	},
 
 	actions: {
+		fetchAppStatus({ commit, dispatch }) {
+			axios.get('../admin-api/status/')
+				.then(result => {
+					commit('appIsReady');
+					commit('setUserAccess', result.data['user-access']);
+					commit('setAppVersion', result.data['app-version']);
+					commit('setPhpVersion', result.data['php-version']);
+					commit('setSiteName', result.data['site-name']);
+				})
+				.catch(error => {
+					dispatch('openToast', 'Failed to fatch admin status');
+				});
+		},
+
 		userLogout({ commit }) {
 			commit('setUserAccess', 0);
 
