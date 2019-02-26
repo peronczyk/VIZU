@@ -80,6 +80,31 @@ class Template {
 
 
 	/** ----------------------------------------------------------------------------
+	 * Change default keys in array to $key_name values taken from inside the array
+	 *
+	 * @param array $array
+	 * @param string $key_name
+	 *
+	 * @return array
+	 */
+
+	public static function setArrayKeysAsIds(array $array, string $key_name = 'id') : array {
+		if (!is_array($array)) {
+			return false;
+		}
+
+		$processed_array = [];
+		foreach ($array as $val) {
+			if (isset($val[$key_name])) {
+				$processed_array[$val[$key_name]] = $val;
+				unset($processed_array[$val[$key_name]][$key_name]);
+			}
+		}
+		return $processed_array;
+	}
+
+
+	/** ----------------------------------------------------------------------------
 	 * Prepare array of fields found in content
 	 *
 	 * @param String $content
@@ -261,12 +286,10 @@ class Template {
 	 * Parse template stored in class state
 	 */
 
-	public function parse(array $translations = []) {
+	public function parse(array $additional_vars = []) {
 		$content = $this->getTemplateFileContent();
 		$fields  = $this->getTemplateFields();
-		$vars    = $this->getAssignedVars();
-
-		$vars = array_merge($vars, $translations);
+		$vars    = array_merge($this->getAssignedVars(), $additional_vars);
 
 		return self::parseStringWithValues($content, $fields, $vars);
 	}

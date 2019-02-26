@@ -41,7 +41,9 @@ export default {
 
 	data() {
 		return {
-			value: {},
+			value: {
+				'groups-number': 0,
+			},
 		}
 	},
 

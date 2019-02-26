@@ -23,14 +23,16 @@ if (count($template_fields) > 0) {
 
 	// Get data from database for all fields
 	$result = $db->query("SELECT `id`, `content` FROM `fields` WHERE `template` = 'home' AND `language` = '{$lang->getActiveLangCode()}'");
-	$fields_data = Core::processArray($db->fetchAll($result), 'id');
+	$fields_unsorted_data = $db->fetchAll($result);
+	$fields_data = Template::setArrayKeysAsIds($fields_unsorted_data);
 
 	if (is_array($fields_data) && count($fields_data) > 0) {
 		$field_handlers = new FieldHandlersWrapper($home_page_template, $dependency_container);
 		$field_handlers->preParse($fields_data);
 
 		// Loop over fields from template
-		foreach ($template_fields as $field_id => $field) {
+		foreach ($template_fields as $field) {
+			$field_id = $field['props']['id'] ?? null;
 			if (isset($fields_data[$field_id]['content'])) {
 				$home_page_template->assign([$field_id => $fields_data[$field_id]['content']]);
 			}

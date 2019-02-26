@@ -96,31 +96,6 @@ class Core {
 
 
 	/** ----------------------------------------------------------------------------
-	 * Change default keys in array to $key_name values taken from inside the array
-	 *
-	 * @param array $array
-	 * @param string $key_name
-	 *
-	 * @return array
-	 */
-
-	public static function processArray($array, $key_name) {
-		if (!is_array($array)) {
-			return false;
-		}
-
-		$processed_array = [];
-		foreach ($array as $val) {
-			if (isset($val[$key_name])) {
-				$processed_array[$val[$key_name]] = $val;
-				unset($processed_array[$val[$key_name]][$key_name]);
-			}
-		}
-		return $processed_array;
-	}
-
-
-	/** ----------------------------------------------------------------------------
 	 * Aplication messages HTML header structure
 	 *
 	 * @return string

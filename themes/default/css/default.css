@@ -150,6 +150,7 @@ button {
 		pointer-events: none;
 	}
 
+
 .Header {
 	display: flex;
 	align-items: center;
@@ -191,6 +192,7 @@ button {
 		animation: 1s ease-out 0s 1 slidein;
 	}
 
+
 .Main {
 	padding: 8vh 0;
 	border-top: 1px solid #dcdcd9;
@@ -211,6 +213,11 @@ button {
 		width: 50%;
 	}
 
+	.Main__repeatable {
+		width: 100%;
+	}
+
+
 .Tiles {
 	display: flex;
 	flex-wrap: wrap;
@@ -218,9 +225,16 @@ button {
 }
 
 	.Tiles li {
-		width: 33.333%;
-		background-color: #1f1e38;
+		margin: 0 1px 1px 0;
+		padding: 30px;
+		width: calc(33.333% - 1px);
+		background-color: #fff;
 	}
+
+		.Tiles li h3 {
+			margin-top: 0;
+		}
+
 
 .Footer {
 	padding-top: 40px;

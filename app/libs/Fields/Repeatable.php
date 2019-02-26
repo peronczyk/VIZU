@@ -122,7 +122,7 @@ class Repeatable {
 			/**
 			 * Get saved array of values of this repeatable field
 			 */
-			if (isset($field_data) && !isset($field_data['content'])) {
+			if (isset($field_data) && isset($field_data['content'])) {
 				list($groups_number, $field_content_data) = self::getSubfieldsValuesFromFieldContent($field_data['content'] ?? null);
 			}
 
@@ -133,7 +133,7 @@ class Repeatable {
 			preg_match($pattern, $template_file_content, $match);
 			$repeatable_inner_code = $match[1] ?? '';
 
-			/*
+			/**
 			 * Prepare repeated content with fields replaced with values
 			 */
 			$inner_fields = \Template::getFieldsFromString($repeatable_inner_code);
@@ -148,11 +148,18 @@ class Repeatable {
 					$group_replace[$subfield['tag']] = $field_content_data[$subfield_id][$i] ?? "<!-- {$subfield_id} -->";
 				}
 
-				$group_parsed_code .= strtr($replace_from, $replace_to, $repeatable_inner_code);
+				$group_parsed_code .= strtr($repeatable_inner_code, $group_replace);
 			}
 
-			$from = $field['tag'] . $repeatable_inner_code . '{{ /' . self::FIELD_TYPE . ' }}';
-			$this->_template->replaceTemplateFileContent(str_replace($from, $group_parsed_code, $template_file_content));
+			/**
+			 * Final replacement of whole repeatable field
+			 */
+			$replace_from = $field['tag'] . $repeatable_inner_code . '{{ /' . self::FIELD_TYPE . ' }}';
+			$replace_to = (!empty($group_parsed_code))
+				? $group_parsed_code
+				: "<!-- " . self::FIELD_TYPE . " : {$field_id} -->";
+
+			$this->_template->replaceTemplateFileContent(str_replace($replace_from, $replace_to, $template_file_content));
 		});
 
 		$this->_template->removeFieldType(self::FIELD_TYPE);
