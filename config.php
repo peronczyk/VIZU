@@ -75,12 +75,12 @@ class Config {
 	static $STORAGE_DIR = 'storage/';
 
 	/**
-	 * IP Address of development enviroment. After setting this debug mode will be
-	 * set on this enviroment. By default localhost IPs are treated as DEV_IP
-	 * so you don't need to add here IPs like 127.0.0.1.
+	 * IP addresses of development environments.
+	 * If the page is launched on one of them, the debug mode
+	 * will be enabled automatically.
 	 * @var Array
 	 */
-	static $DEV_IP = ['127.0.0.1', '0.0.0.0', '::1'];
+	static $DEV_ENV_IP = ['127.0.0.1', '0.0.0.0', '::1'];
 
 	/**
 	 * Forces debug mode for everybody.

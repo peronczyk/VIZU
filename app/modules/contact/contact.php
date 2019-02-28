@@ -78,7 +78,7 @@ if (count($contact_fields_errors) > 0) {
 
 if (!empty($contact_config['recaptcha_secret'])) {
 	$curl = new libs\Curl();
-	if ($core->isDev()) {
+	if (Core::isDebugMode()) {
 		$curl->disableSsl();
 	}
 

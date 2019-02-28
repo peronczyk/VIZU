@@ -111,12 +111,10 @@ class Repeatable {
 	 */
 
 	public function preParse($fields_data) {
-		$template_file_content = $this->_template->getTemplateFileContent();
-
-		$this->_template->iterateTemplateFieldsType(self::FIELD_TYPE, function($key, $field) use ($template_file_content, $fields_data) {
+		$this->_template->iterateTemplateFieldsType(self::FIELD_TYPE, function($key, $field) use ($fields_data) {
 			$field_id = $field['props']['id'];
 			$field_data = $fields_data[$field_id] ?? null;
-			$group_parsed_code = "<!-- " . self::FIELD_TYPE . " : {$field_id} -->";
+			$group_parsed_code = '';
 			$groups_number = 0;
 
 			/**
@@ -126,10 +124,12 @@ class Repeatable {
 				list($groups_number, $field_content_data) = self::getSubfieldsValuesFromFieldContent($field_data['content'] ?? null);
 			}
 
+			$template_file_content = $this->_template->getTemplateFileContent();
+
 			/**
 			 * Get inner html code of repeatable block
 			 */
-			$pattern = '/' . $field['tag'] . '(.*){{ \/' . self::FIELD_TYPE . ' }}/us';
+			$pattern = '/' . $field['tag'] . '(.*){{ \/' . self::FIELD_TYPE . ' }}/usiU';
 			preg_match($pattern, $template_file_content, $match);
 			$repeatable_inner_code = $match[1] ?? '';
 
@@ -138,17 +138,19 @@ class Repeatable {
 			 */
 			$inner_fields = \Template::getFieldsFromString($repeatable_inner_code);
 
-			// Iterate group number times
-			for ($i = 0; $i < $groups_number; $i++) {
-				$group_replace = [];
+			if (count($inner_fields) > 0) {
+				// Iterate group number times
+				for ($i = 0; $i < $groups_number; $i++) {
+					$group_replace = [];
 
-				// Iterate each of he group subfields
-				foreach ($inner_fields as $subfield) {
-					$subfield_id = $subfield['props']['id'];
-					$group_replace[$subfield['tag']] = $field_content_data[$subfield_id][$i] ?? "<!-- {$subfield_id} -->";
+					// Iterate each of he group subfields
+					foreach ($inner_fields as $subfield) {
+						$subfield_id = $subfield['props']['id'];
+						$group_replace[$subfield['tag']] = $field_content_data[$subfield_id][$i] ?? "<!-- {$subfield_id} -->";
+					}
+
+					$group_parsed_code .= strtr($repeatable_inner_code, $group_replace);
 				}
-
-				$group_parsed_code .= strtr($repeatable_inner_code, $group_replace);
 			}
 
 			/**
@@ -157,7 +159,7 @@ class Repeatable {
 			$replace_from = $field['tag'] . $repeatable_inner_code . '{{ /' . self::FIELD_TYPE . ' }}';
 			$replace_to = (!empty($group_parsed_code))
 				? $group_parsed_code
-				: "<!-- " . self::FIELD_TYPE . " : {$field_id} -->";
+				: "<!-- empty { " . self::FIELD_TYPE . " : {$field_id} } -->";
 
 			$this->_template->replaceTemplateFileContent(str_replace($replace_from, $replace_to, $template_file_content));
 		});

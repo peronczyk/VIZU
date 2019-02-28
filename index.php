@@ -76,7 +76,7 @@ switch (Config::$DB_TYPE) {
 	case 'SQLite':
 		$db = new SQLite(
 			Config::$STORAGE_DIR . 'database/' . Config::$SQLITE_FILE_NAME,
-			$core->isDev()
+			Core::isDebugMode()
 		);
 		break;
 

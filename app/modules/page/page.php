@@ -26,10 +26,10 @@ if (count($template_fields) > 0) {
 	$fields_unsorted_data = $db->fetchAll($result);
 	$fields_data = Template::setArrayKeysAsIds($fields_unsorted_data);
 
-	if (is_array($fields_data) && count($fields_data) > 0) {
-		$field_handlers = new FieldHandlersWrapper($home_page_template, $dependency_container);
-		$field_handlers->preParse($fields_data);
+	$field_handlers = new FieldHandlersWrapper($home_page_template, $dependency_container);
+	$field_handlers->preParse($fields_data);
 
+	if (is_array($fields_data) && count($fields_data) > 0) {
 		// Loop over fields from template
 		foreach ($template_fields as $field) {
 			$field_id = $field['props']['id'] ?? null;

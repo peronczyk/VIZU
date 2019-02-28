@@ -16,7 +16,7 @@ class Core {
 	 */
 
 	public function __construct() {
-		if ($this->isDev()) {
+		if (self::isDebugMode()) {
 			$this->forceDisplayPhpErrors();
 		}
 
@@ -37,6 +37,19 @@ class Core {
 		ini_set('display_errors', '1');
 		ini_set('display_startup_errors', '1');
 		error_reporting(E_ALL);
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Check if application is in forced debug mode or in auto debug mode
+	 * that is set automatically on development environments.
+	 */
+
+	public static function isDebugMode() : bool {
+		return (
+			Config::$DEBUG === true
+			|| (is_array(Config::$DEV_ENV_IP) && in_array($_SERVER['REMOTE_ADDR'], Config::$DEV_ENV_IP))
+		);
 	}
 
 
@@ -73,15 +86,6 @@ class Core {
 		echo self::commonHtmlFooter();
 
 		exit;
-	}
-
-
-	/** ----------------------------------------------------------------------------
-	 * Check if application is in development mode
-	 */
-
-	public function isDev() : bool {
-		return (Config::$DEBUG === true || (is_array(Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)));
 	}
 
 
