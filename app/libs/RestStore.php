@@ -26,7 +26,7 @@ class RestStore {
 	 * @param $value
 	 */
 
-	public function set(string $key, $value) {
+	public function set(string $key, $value) : self {
 		$this->store[$key] = $value;
 		return $this;
 	}
@@ -38,7 +38,7 @@ class RestStore {
 	 * @param array $array
 	 */
 
-	public function merge(array $array) {
+	public function merge(array $array) : self {
 		$this->store = array_merge($this->store, $array);
 		return $this;
 	}

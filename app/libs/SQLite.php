@@ -70,7 +70,7 @@ class SQLite implements SqlDb {
 	 *
 	 */
 
-	public function query(string $query) {
+	public function query(string $query) : self {
 		if (!$this->connection) {
 			$this->connect();
 		}

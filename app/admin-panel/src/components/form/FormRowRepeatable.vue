@@ -93,6 +93,8 @@ export default {
 .c-FormRowRepeatable {
 	$repeatable-elem-padding: 20px;
 
+	margin-top: 20px;
+
 	ul {
 		display: flex;
 		flex-wrap: wrap;

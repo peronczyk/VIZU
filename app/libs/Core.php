@@ -49,7 +49,7 @@ class Core {
 	 * @param array $debug - Pass here debug_backtrace()
 	 */
 
-	public static function error($msg, $file = null, $line = null, $debug = null) {
+	public static function error(string $msg, string $file = null, int $line = null, bool $debug = null) {
 		header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 		header('vizu-error-msg: ' . $msg);
 
@@ -80,8 +80,8 @@ class Core {
 	 * Check if application is in development mode
 	 */
 
-	public function isDev() {
-		return (\Config::$DEBUG === true || (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)));
+	public function isDev() : bool {
+		return (Config::$DEBUG === true || (is_array(Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)));
 	}
 
 
@@ -89,7 +89,7 @@ class Core {
 	 * GETTER : Mtime
 	 */
 
-	public static function getMtime() {
+	public static function getMtime() : float {
 		list($usec, $sec) = explode (' ', microtime());
 		return (float)$usec + (float)$sec;
 	}
@@ -101,7 +101,7 @@ class Core {
 	 * @return string
 	 */
 
-	public static function commonHtmlHeader($title = 'VIZU') {
+	public static function commonHtmlHeader($title = 'VIZU') : string {
 		return '<!DOCTYPE html><html>
 			<head>
 				<meta charset="utf-8">
@@ -151,7 +151,7 @@ class Core {
 	 * @return string
 	 */
 
-	public static function commonHtmlFooter() {
+	public static function commonHtmlFooter() : string {
 		return '</div></main></body></html>';
 	}
 

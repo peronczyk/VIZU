@@ -12,7 +12,7 @@ class DependencyContainer {
 	 * Add
 	 */
 
-	public function add(Object $dependency, string $name = null) : object {
+	public function add(object $dependency, string $name = null) : self {
 		$this->dependencies[$name ?? get_class($dependency)] = $dependency;
 		return $this;
 	}

@@ -48,7 +48,7 @@ export default new Vuex.Store({
 					commit('setSiteName', result.data['site-name']);
 				})
 				.catch(error => {
-					dispatch('openToast', 'Failed to fatch admin status');
+					dispatch('openToast', 'Failed to fetch admin status');
 				});
 		},
 

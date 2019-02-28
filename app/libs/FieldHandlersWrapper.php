@@ -57,7 +57,7 @@ class FieldHandlersWrapper {
 	 *
 	 */
 
-	public function assignValues(array $fields_data) : object {
+	public function assignValues(array $fields_data) : self {
 		$this->runHandlersMethod('assignValues', [$fields_data]);
 		return $this;
 	}
@@ -67,7 +67,7 @@ class FieldHandlersWrapper {
 	 *
 	 */
 
-	public function removeNotEditableFields() : object {
+	public function removeNotEditableFields() : self {
 		$this->runHandlersMethod('removeNotEditableFields');
 		return $this;
 	}
@@ -77,7 +77,7 @@ class FieldHandlersWrapper {
 	 * Parsing hooks that will be fired before template parse method.
 	 */
 
-	public function preParse($fields_data) : object {
+	public function preParse($fields_data) : self {
 		$this->runHandlersMethod('preParse', [$fields_data]);
 		return $this;
 	}

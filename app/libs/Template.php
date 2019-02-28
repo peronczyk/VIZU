@@ -51,7 +51,7 @@ class Template {
 	 * Usefull for pre-parsing template.
 	 */
 
-	public function replaceTemplateFileContent(string $new_content) {
+	public function replaceTemplateFileContent(string $new_content) : self {
 		$this->template_file_content = $new_content;
 		return $this;
 	}
@@ -61,7 +61,7 @@ class Template {
 	 * Assign vars to parse
 	 */
 
-	public function assign(array $array) {
+	public function assign(array $array) : self {
 		foreach ($array as $key => $val) {
 			$this->vars[$key] = $val;
 		}
@@ -152,7 +152,7 @@ class Template {
 	 * Remove specified field types from template fields
 	 */
 
-	public function removeFieldType($type) : object {
+	public function removeFieldType($type) : self {
 		$processed_fields = [];
 
 		foreach($this->template_fields as $key => $field) {
@@ -171,7 +171,7 @@ class Template {
 	 *
 	 */
 
-	public function iterateTemplateFieldsType(string $type, callable $callback) : object {
+	public function iterateTemplateFieldsType(string $type, callable $callback) : self {
 		foreach ($this->template_fields as $key => $field) {
 			if ($field['type'] == $type) {
 				$callback($key, $field);
@@ -186,7 +186,7 @@ class Template {
 	 *
 	 */
 
-	public function removeDuplicateTemplateFieldsByType(string $type) : object {
+	public function removeDuplicateTemplateFieldsByType(string $type) : self {
 		$ids_found = [];
 		$remove_count = 0;
 
@@ -221,7 +221,7 @@ class Template {
 		$n = 0;
 
 		foreach ($fields as $field) {
-			if (!isset($field['props'])) {
+			if (!isset($field['props']) || !isset($field['props']['id'])) {
 				continue;
 			}
 
