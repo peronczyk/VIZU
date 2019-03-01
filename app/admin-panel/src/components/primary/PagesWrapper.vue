@@ -21,7 +21,7 @@
 	min-height: 100vh;
 
 	&__inner {
-		padding: 0 $gutter * 1.5;
+		padding: 0 #{$gutter * 1.5};
 		width: 100%;
 		min-height: 100vh;
 		will-change: opacity, transform;

@@ -24,7 +24,7 @@
 						<div class="c-Auth__message" v-if="authMessage">{{ authMessage }}</div>
 					</transition>
 
-					<button type="submit" class="u-Width--full">Login</button>
+					<button class="Btn u-Width--full" type="submit">Login</button>
 				</form>
 
 				<a @click.prevent="togglePasswordRecoveryBox">Password recovery</a>
@@ -36,7 +36,7 @@
 								<input type="email" name="email" placeholder="Email" v-model="formValues.email">
 							</label>
 
-							<button type="submit">Recover</button>
+							<button class="Btn" type="submit">Recover</button>
 						</form>
 					</div>
 				</transition>

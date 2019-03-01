@@ -125,6 +125,8 @@ export default {
 <style lang="scss">
 
 .c-Content {
+	padding-bottom: 12vh;
+
 	&__fields {
 		position: relative;
 		min-height: 200px;

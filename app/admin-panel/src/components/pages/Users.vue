@@ -54,7 +54,7 @@
 							placeholder = "Confirm new password"
 						>
 					</label>
-					<button type="submit">Change</button>
+					<button class="Btn" type="submit">Change</button>
 				</form>
 
 				<h3>Add user</h3>
@@ -67,7 +67,7 @@
 							placeholder = "Email address"
 						>
 					</label>
-					<button type="submit">Add</button>
+					<button class="Btn" type="submit">Add</button>
 				</form>
 			</div>
 		</div>

@@ -2,7 +2,7 @@
 
 	<div class="c-FormRowRepeatable">
 		<p><strong>{{ fieldData.props.name }}:</strong></p>
-		<ul>
+		<ul class="c-FormRowRepeatable__list">
 			<li
 				v-for = "groupNum in value['groups-number']"
 				:key  = "groupNum"
@@ -118,27 +118,27 @@ export default {
 .c-FormRowRepeatable {
 	$repeatable-elem-padding: 20px;
 
-	margin-top: 20px;
+	margin: $input-margin 0;
 
-	ul {
+	&__list {
 		display: flex;
 		flex-wrap: wrap;
 		margin-right: -2px;
 		list-style-type: none;
-	}
 
-	li {
-		position: relative;
-		width: 33.3%;
-		min-height: 80px;
-		margin: -1px 0 0 -1px;
-		padding: $repeatable-elem-padding;
-		border: 1px solid $color-lines;
+		& > li {
+			position: relative;
+			width: 33.3%;
+			min-height: 80px;
+			margin: -1px 0 0 -1px;
+			padding: $repeatable-elem-padding;
+			border: 1px solid $color-lines;
 
-		&:last-child {
-			display: flex;
-			align-items: center;
-			justify-content: center;
+			&:last-child {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
 		}
 	}
 
