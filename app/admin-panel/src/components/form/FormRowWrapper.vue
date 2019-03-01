@@ -2,19 +2,19 @@
 	<div class="c-FormRowWrapper">
 		<form-row-repeatable
 			v-if        = "fieldData.type == 'repeatable'"
-			@input      = "$emit('input', $event)"
+			@input      = "handleInputChange"
 			:field-data = "fieldData"
 		/>
 
 		<form-row-rich
 			v-if        = "fieldData.type == 'rich'"
-			@input      = "$emit('input', $event)"
+			@input      = "handleInputChange"
 			:field-data = "fieldData"
 		/>
 
 		<form-row-simple
 			v-if        = "fieldData.type == 'simple'"
-			@input      = "$emit('input', $event)"
+			@input      = "handleInputChange"
 			:field-data = "fieldData"
 		/>
 	</div>
@@ -48,9 +48,9 @@ export default {
 	},
 
 	methods: {
-		addRepeatableGroup(fieldId) {
-			console.log(fieldId);
-		},
+		handleInputChange($event) {
+			this.$emit('input', $event);
+		}
 	},
 }
 

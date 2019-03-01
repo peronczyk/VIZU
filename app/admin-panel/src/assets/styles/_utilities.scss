@@ -180,3 +180,15 @@
 		width: 100%;
 	}
 }
+
+.u-FormRow {
+	display: flex;
+
+	&__label {
+		width: 33.333%;
+	}
+
+	&__input {
+		width: 66.666%;
+	}
+}

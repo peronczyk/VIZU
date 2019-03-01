@@ -8,23 +8,41 @@
 				:key  = "groupNum"
 			>
 				<a @click.prevent="removeGroup(groupNum - 1)" class="c-FormRowRepeatable__remove"></a>
+
 				<strong>{{ groupNum }}</strong>
-				<label
+
+				<div
 					v-for = "(subField, subFieldNum) in fieldData.children"
 					:key  = "subFieldNum"
+					class = "c-FormRowRepeatable__row"
 				>
 					{{ subField.props.name }}
 					<small v-if="subField.props.desc">{{ subField.props.desc }}</small>
-					<input
-						@input  = "handleInputChange"
-						v-model = "value[subField.props.id + '__' + (groupNum - 1)]"
-						:name   = "subField.props.id + (groupNum - 1)"
-						type    = "text"
-					>
-				</label>
+
+					<div class="c-FormRowRepeatable__row__field">
+						<input
+							@input  = "handleInputChange"
+							v-if    = "subField.type == 'simple'"
+							v-model = "value[subField.props.id + '__' + (groupNum - 1)]"
+							:name   = "subField.props.id + (groupNum - 1)"
+							type    = "text"
+						>
+
+						<rte
+							@input  = "handleInputChange"
+							v-if    = "subField.type == 'rich'"
+							v-model = "value[subField.props.id + '__' + (groupNum - 1)]"
+							:name   = "subField.props.id + (groupNum - 1)"
+						/>
+					</div>
+				</div>
 			</li>
+
 			<li>
-				<button class="Btn Btn--small" @click.prevent="addGroup()">Add repeatable group</button>
+				<button
+					@click.prevent="addGroup()"
+					class="Btn Btn--small"
+				>Add repeatable group</button>
 			</li>
 		</ul>
 	</div>
@@ -34,7 +52,14 @@
 
 <script>
 
+// Components
+import Rte from '../objects/Rte.vue';
+
 export default {
+	components: {
+		Rte,
+	},
+
 	props: {
 		fieldData: Object,
 	},
@@ -117,12 +142,14 @@ export default {
 		}
 	}
 
-	label {
+	&__row {
+		margin-bottom: $input-margin;
+
 		small {
 			display: block;
 		}
 
-		input {
+		&__field {
 			margin-top: 6px;
 		}
 	}

@@ -1,29 +1,33 @@
 <template>
 
-	<label class="c-FormRowRich">
-		<div class="Grid Grid--center Grid--gutter">
-			<div class="Col-4 Col-12@SM">
-				{{ fieldData.props.name }}<br>
-				<small v-if="fieldData.props.desc">{{ fieldData.props.desc }}</small>
-			</div>
-
-			<div class="Col-8 Col-12@SM">
-				<textarea
-					v-model = "value"
-					@input  = "$emit('input', $event.target.value)"
-					:name   = "fieldData.props.id"
-					type    = "text"
-				></textarea>
-			</div>
+	<div class="c-FormRowRich u-FormRow">
+		<div class="u-FormRow__label">
+			{{ fieldData.props.name }}<br>
+			<small v-if="fieldData.props.desc">{{ fieldData.props.desc }}</small>
 		</div>
-	</label>
+
+		<div class="u-FormRow__input">
+			<rte
+				@input   = "$emit('input', $event)"
+				:name    = "fieldData.props.id"
+				:value   = "value"
+			/>
+		</div>
+	</div>
 
 </template>
 
 
 <script>
 
+// Components
+import Rte from '../objects/Rte.vue';
+
 export default {
+	components: {
+		Rte,
+	},
+
 	props: {
 		fieldData: Object,
 	},
@@ -31,15 +35,14 @@ export default {
 	data() {
 		return {
 			value: '',
-		}
+		};
 	},
 
 	created() {
 		if (this.fieldData.value) {
 			this.value = this.fieldData.value;
-			this.$emit('input', this.value);
 		}
-	}
+	},
 }
 
 </script>
