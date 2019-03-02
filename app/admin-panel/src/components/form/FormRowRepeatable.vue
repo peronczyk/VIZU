@@ -118,7 +118,7 @@ export default {
 .c-FormRowRepeatable {
 	$repeatable-elem-padding: 20px;
 
-	margin: $input-margin 0;
+	margin: #{$input-margin * 2} 0 #{$input-margin * 3} 0;
 
 	&__list {
 		display: flex;

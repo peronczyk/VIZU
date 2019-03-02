@@ -164,7 +164,7 @@ export default {
 .c-Rte {
 	$buttons-size: 40px;
 
-	border: 1px solid $color-inputs;
+	border: 1px solid $color-input-borders;
 
 	&.is-Focused {
 		border-color: $color-blue;
@@ -256,6 +256,7 @@ export default {
 		max-height: 600px;
 		padding: $input-padding;
 		overflow: auto;
+		color: $color-inputs;
 
 		ul,
 		ol {

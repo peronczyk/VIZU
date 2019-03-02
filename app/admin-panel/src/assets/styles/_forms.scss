@@ -19,7 +19,8 @@ textarea {
 	padding: 0 $input-padding;
 	vertical-align: middle;
 	background-color: transparent;
-	border: 1px solid $color-inputs;
+	border: 1px solid $color-input-borders;
+	color: $color-inputs;
 	transition: .2s;
 
 	&:focus {

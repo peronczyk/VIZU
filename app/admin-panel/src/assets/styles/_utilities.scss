@@ -183,9 +183,13 @@
 
 .u-FormRow {
 	display: flex;
+	margin-bottom: $input-margin;
 
 	&__label {
 		width: 33.333%;
+		padding-right: $gutter;
+		line-height: 1.4em;
+		cursor: default;
 	}
 
 	&__input {

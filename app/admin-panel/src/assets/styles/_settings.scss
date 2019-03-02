@@ -66,10 +66,11 @@ $color-green-light			: lighten($color-green, 10);
 $color-green-dark			: darken($color-green, 10);
 
 $color-text					: #4e4e4e;
+$color-inputs				: #373737;
 $color-interactive			: $color-blue;
 $color-interactive-hover	: $color-blue-dark;
 $color-lines				: #e5e5e5;
-$color-inputs				: #c4c4c4;
+$color-input-borders		: #c4c4c4;
 
 
 /* ---------------------------------------------------------------------------------
@@ -84,7 +85,7 @@ $gutter: 2.2vw;
 
 $input-padding: 16px;
 
-$input-margin: 1.5vh;
+$input-margin: 1.6vh;
 
 
 /* ---------------------------------------------------------------------------------
