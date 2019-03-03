@@ -15,13 +15,13 @@ $contact_config = $theme_config['contact'];
 
 if (!is_array($contact_config)) {
 	$rest_store
-		->set('message', 'Theme configuration file not found or does not contain contact form configuration')
+		->set('error', 'Theme configuration file not found or does not contain contact form configuration')
 		->output();
 }
 
 if (!is_array($contact_config['fields'])) {
 	$rest_store
-		->set('message', 'Theme contact configuration does not contain fields setup')
+		->set('error', 'Theme contact configuration does not contain fields setup')
 		->output();
 }
 
@@ -77,7 +77,7 @@ if (count($contact_fields_errors) > 0) {
  */
 
 if (!empty($contact_config['recaptcha_secret'])) {
-	$curl = new libs\Curl();
+	$curl = new Curl();
 	if (Core::isDebugMode()) {
 		$curl->disableSsl();
 	}
@@ -129,7 +129,7 @@ foreach ($users as $user) {
 
 if (!$main_recipient) {
 	$rest_store
-		->set('message', $lang->_t('mailer-recipient-error', 'Message recipient not configured'))
+		->set('error', $lang->_t('mailer-recipient-error', 'Message recipient not configured'))
 		->output();
 }
 
@@ -147,7 +147,8 @@ if (count($contact_fields_errors) > 0) {
 
 $content_fields = [];
 foreach ($contact_config['fields'] as $form_field) {
-	$content_fields[$lang->_t($form_field['label'])] = $_POST[$form_field['name']];
+	$field_text_label = $lang->_t($form_field['label'] ?? $form_field['name']);
+	$content_fields[$field_text_label] = $_POST[$form_field['name']];
 }
 
 
@@ -165,10 +166,10 @@ try {
 		$bcc // BCC
 	);
 
-	$result_message = $lang->_t('mailer-sent', 'Message sent');
+	$rest_store->set('message', $lang->_t('mailer-sent', 'Message sent'));
 }
 catch (Exception $e) {
-	$result_message = $lang->_t('mailer-error', 'Error while sending message:') . ' ' . $e->getMessage();
+	$rest_store->set('error', $lang->_t('mailer-error', 'Error while sending message:') . ' ' . $e->getMessage());
 }
 
 
@@ -176,6 +177,4 @@ catch (Exception $e) {
  * Output AJAX response
  */
 
-$rest_store
-	->set('message', $result_message)
-	->output();
+$rest_store->output();

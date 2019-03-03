@@ -35,7 +35,7 @@ class Recaptcha3 {
 		$validation = $this->curl->call(self::VERIFY_API_URL, 'POST', [
 			// POST params required by reCAPTCHA verifier
 			'secret'   => $this->secret,
-			'response' => $this->mailer->sanitiseString($_POST['recaptcha_token'] ?? ''),
+			'response' => $_POST['recaptcha_token'] ?? '',
 			'remoteip' => $_SERVER['HTTP_CLIENT_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR']
 		]);
 

@@ -77,7 +77,7 @@ class Notifier {
 	 */
 
 	public function prepareBodyWithTable(array $fields, $lang = null) {
-		$style_table   = 'style="border-collapse:collapse;"';
+		$style_table   = 'style="width:100%; border-collapse:collapse;"';
 		$style_caption = 'style="padding: 10px 0 5px 0;"';
 		$style_content = 'style="padding-bottom: 10px; border-bottom: 1px solid #dedede;"';
 
