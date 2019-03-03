@@ -17,6 +17,7 @@
 
 
 define('VIZU_VERSION', '1.3.0');
+define('__ROOT__', __DIR__);
 
 
 /**
@@ -75,7 +76,7 @@ switch (Config::$DB_TYPE) {
 	case 'SQLite':
 		$db = new SQLite(
 			Config::$STORAGE_DIR . 'database/' . Config::$SQLITE_FILE_NAME,
-			$core->isDev()
+			Core::isDebugMode()
 		);
 		break;
 
@@ -89,22 +90,33 @@ switch (Config::$DB_TYPE) {
 
 
 /**
- * If user is not in installation process start language library
- * and set active language.
+ * Setup dependancy container
  */
 
-if ($router->getFirstRequest() !== 'install') {
+$dependency_container = new DependencyContainer();
+$dependency_container
+	->add($router)
+	->add($db);
+
+
+/**
+ * Start language library and set active language If user is not in installation process.
+ */
+
+if (!in_array($router->getFirstRequest(), ['admin', 'install'])) {
 	try {
 		$result = $db->query('SELECT * FROM `languages`');
 		$lang_list = $db->fetchAll($result);
 	}
 	catch (Exception $e) {
-		Core::error('Languages database table does not exist. Probably application was not installed properly. Please run <a href="install/">installation</a> process.', __FILE__, __LINE__, debug_backtrace());
+		Core::error('Languages database table does not exist. Probably application was not installed properly. Please run <a href="' . $router->site_path . '/install/">installation</a> process.', __FILE__, __LINE__, debug_backtrace());
 	}
 	$lang = new Language($router, $db);
 	$lang->setList($lang_list);
 	$lang->autoSetLanguage();
 	$lang->loadThemeTranslations();
+
+	$dependency_container->add($lang);
 }
 
 

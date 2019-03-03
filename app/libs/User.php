@@ -142,13 +142,13 @@ class User {
 
 	public function login($email, $password) {
 		if (empty($email)) {
-			return 'Account login (email) not provided';
+			throw new Exception("Account login (email) not provided");
 		}
 		if (empty($password)) {
-			return 'Account password not provided';
+			throw new Exception("Account password not provided");
 		}
 		if (!self::verifyUsername($email)) {
-			return 'Provided email address is not correct';
+			throw new Exception("Provided email address is not correct");
 		}
 
 		$result = $this->_db->query('SELECT `id`, `password` FROM `users` WHERE `email` = "' . $email . '" LIMIT 1');
@@ -161,7 +161,7 @@ class User {
 			return true;
 		}
 		else {
-			return 'Incorrect login details were provided';
+			throw new Exception("Sorry, you entered an incorrect email address or password.");
 		}
 	}
 

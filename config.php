@@ -49,6 +49,14 @@ class Config {
 	static $THEME_NAME = 'default';
 
 	/**
+	 * Turn true only if you are sure that you will use HTTPS.
+	 * When turned on you will not be able to log into admin panel
+	 * on non-https connections.
+	 * @var Boolean
+	 */
+	static $FORCE_HTTPS = false;
+
+	/**
 	 * Application directory location
 	 * @var String
 	 */
@@ -67,12 +75,12 @@ class Config {
 	static $STORAGE_DIR = 'storage/';
 
 	/**
-	 * IP Address of development enviroment. After setting this debug mode will be
-	 * set on this enviroment. By default localhost IPs are treated as DEV_IP
-	 * so you don't need to add here IPs like 127.0.0.1.
+	 * IP addresses of development environments.
+	 * If the page is launched on one of them, the debug mode
+	 * will be enabled automatically.
 	 * @var Array
 	 */
-	static $DEV_IP = ['127.0.0.1', '0.0.0.0', '::1'];
+	static $DEV_ENV_IP = ['127.0.0.1', '0.0.0.0', '::1'];
 
 	/**
 	 * Forces debug mode for everybody.
@@ -99,23 +107,23 @@ class Config {
 	static $PASSWORD_SALT = 'SomeRand0mString';
 
 	/**
-	 * Categories of fields that can be used in templates.
+	 * Field types that are allowed to be edited in admin panel.
+	 * @example {{ fieldtype id='foo' }}
 	 * @var Array
 	 */
-	static $FIELD_CATEGORIES = [
-
-		// Fields, that can be edited in 'Content' CMS.
-		'content' => ['text', 'setting'],
-
-		// Other fields.
-		'other' => ['lang'],
-	];
+	static $EDITABLE_FIELD_TYPES = ['simple', 'rich', 'repeatable'];
 
 	/**
-	 * Determines how field can be edited in admin panel.
+	 * Field types that has its start and end tag.
+	 * @example {{ paired }}Foo{{ /paired }}
+	 */
+	static $PAIRED_FIELD_TYPES = ['repeatable'];
+
+	/**
+	 * Other acceptable field types that can be used in template files.
 	 * @var Array
 	 */
-	static $FIELD_TYPES = ['simple', 'rich'];
+	static $OTHER_FIELD_TYPES = ['lang'];
 
 	/**
 	 * Name of the library class name that will handle SQL queries

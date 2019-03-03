@@ -11,7 +11,7 @@
 
 class Language {
 
-	public $translations = [];
+	private $translations = [];
 
 	private $lang_code;
 	private $lang_list;
@@ -122,7 +122,7 @@ class Language {
 	public function exists($lang_code) {
 		$lang_list = $this->getList();
 		if ($lang_list && count($lang_list) > 0) {
-			foreach($lang_list as $lang) {
+			foreach ($lang_list as $lang) {
 				if ($lang['code'] == $lang_code && (bool)$lang['active'] === true) {
 					return true;
 				}
@@ -155,6 +155,15 @@ class Language {
 
 
 	/** ----------------------------------------------------------------------------
+	 * Get stored translations
+	 */
+
+	public function getTranslations() {
+		return $this->translations;
+	}
+
+
+	/** ----------------------------------------------------------------------------
 	 * Translate string
 	 *
 	 * @param string $key - Key name that will be returned from loaded translations
@@ -166,11 +175,16 @@ class Language {
 	 */
 
 	public function _t($key, $additionals = false) {
-		if (isset($this->translations[$key])) return $this->translations[$key];
-		elseif ($additionals) {
-			if (is_array($additionals) && isset($additionals[$key])) return $additionals[$key];
-			else return $additionals;
+		if (isset($this->translations[$key])) {
+			return $this->translations[$key];
 		}
-		else return $key;
+		elseif ($additionals) {
+			return (is_array($additionals) && isset($additionals[$key]))
+				? $additionals[$key]
+				: $additionals;
+		}
+		else {
+			return $key;
+		}
 	}
 }

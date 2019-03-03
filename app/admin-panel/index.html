@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<base href="{{ site_path }}/admin/">
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+
+		<title>{{ site_name }} &mdash; Administration panel</title>
+
+		<link rel="shortcut icon" type="image/png" href="{{ resources_path }}/favicon.png">
+
+		<script>
+			window.resourcesPath = '{{ resources_path }}';
+		</script>
+	</head>
+
+	<body>
+		<div id="app"></div>
+
+		<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" style="display:none;">
+			<style>
+				.vizu-logo-left { fill: #1f1e38; }
+				.vizu-logo-right { fill: #0095ff; }
+			</style>
+			<symbol id="logo-vizu" viewBox="0 0 120 120" title="VIZU">
+				<path class="vizu-logo-left" d="M2.8 10h57.7v100z"/>
+				<path class="vizu-logo-right" d="M58.5 60h31V10h29l-58 100z"/>
+			</symbol>
+		</svg>
+
+		<svg id="svg-icons" style="display:none;">
+			<style>
+				.a { stroke:currentColor; fill:none; }
+				.b { fill:currentColor; }
+			</style>
+
+			<symbol id="icon-24_devices-mobile" viewBox="0 0 24 24">
+				<g class="a">
+					<path class="st0" d="M6.5 5.5v-3c0-1.1.9-2 2-2h13c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2h-9"/>
+					<path class="st0" d="M8.5 23.5h-6c-1.1 0-2-.9-2-2v-12c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2z"/>
+				</g>
+				<g class="a">
+					<circle cx="5.5" cy="20.5" r="1"/>
+					<circle cx="14.5" cy="17.5" r="1"/>
+				</g>
+			</symbol>
+
+			<symbol id="icon-24_document" viewBox="0 0 24 24">
+				<path class="a" d="M19.5 22.5h-14c-1.1 0-2-.9-2-2v-18c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2zM7.5 5.5h9M7.5 9.5h9M7.5 13.5h9M7.5 17.5h7"/>
+			</symbol>
+
+			<symbol id="icon-24_download" viewBox="0 0 24 24">
+				<g class="a">
+					<path d="M1.5 15.5c-.6 0-1 .4-1 1v5c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-5c0-.6-.5-1-1-1h-4.3c-.8 2.3-3 4-5.7 4-2.6 0-4.8-1.7-5.7-4H1.5z"/>
+					<path d="M11.5 1.5v12l-4-4 4 4 4-4"/>
+				</g>
+			</symbol>
+
+			<symbol id="icon-24_gearwheel" viewBox="0 0 24 24">
+				<g class="a">
+					<circle cx="12" cy="12" r="3.5"/>
+					<path d="M21.4 9.9h-1.3c-.2-.8-.5-1.5-.9-2.2l.9-.9c.8-.8.8-2.1 0-3-.8-.8-2.1-.8-3 0l-.9.9c-.7-.4-1.4-.7-2.2-.9V2.5c0-1.2-.9-2.1-2.1-2.1s-2 1-2 2.2v1.3c-1 .2-1.5.5-2.2.9l-.9-.9c-.8-.8-2.1-.8-3 0-.8.8-.8 2.1 0 3l.9.9c-.3.6-.6 1.1-.8 2.1H2.6C1.4 9.9.5 10.8.5 12c0 1.2.9 2.1 2.1 2.1h1.3c.2.8.5 1.5.9 2.2l-.9.9c-.8.8-.8 2.1 0 3 .8.8 2.1.8 3 0l.9-.9c.7.4 1.4.7 2.2.9v1.3c0 1.2.9 2.1 2.1 2.1s2.1-.9 2.1-2.1v-1.3c1-.2 1.5-.5 2.2-.9l.9.9c.8.8 2.1.8 3 0 .8-.8.8-2.1 0-3l-1-1c.4-.6.8-1.4.9-2.1h1.3c1.2 0 2.1-.9 2.1-2.1-.1-1.2-1-2.1-2.2-2.1z"/>
+				</g>
+			</symbol>
+
+			<symbol id="icon-24_home" viewBox="0 0 24 24">
+				<g class="a">
+					<path d="M1 12l9.6-9.4c.8-.8 2.1-.8 2.8 0L23 12"/>
+					<path d="M19.5 14.5v6c0 1.1-.9 2-2 2h-11c-1.1 0-2-.9-2-2v-6"/>
+				</g>
+			</symbol>
+
+			<symbol id="icon-24_history" viewBox="0 0 24 24">
+				<g class="b">
+					<path d="M16.2 15.4L13 12.2V7h1v4.8l2.9 2.8"/>
+					<path d="M13.5 3C8.3 3 4 7.3 4 12.5v2.1L.8 11.4l-.7.7 4.4 4.4 4.4-4.4-.7-.7L5 14.6v-2.1C5 7.8 8.8 4 13.5 4S22 7.8 22 12.5 18.2 21 13.5 21c-2.6 0-4.9-1.2-6.5-3l-.7.7c1.7 2 4.3 3.3 7.2 3.3 5.2 0 9.5-4.3 9.5-9.5S18.7 3 13.5 3z"/>
+				</g>
+			</symbol>
+
+			<symbol id="icon-24_user" viewBox="0 0 24 24">
+				<path class="b" d="M19.4 23H3.6c-2 0-3.6-1.5-3.6-3.5 0-1.8 2-2.8 3.3-3.4l3.4-1.7C5.3 12.5 5 10.2 5 8.5 5 4.4 6.7 0 11.5 0S18 4.4 18 8.5c0 1.7-.3 4-1.7 5.8l3.4 1.7c.8.4 3.3 1.7 3.3 3.4 0 2.1-1.6 3.6-3.6 3.6zM11.5 1C6.3 1 6 7.2 6 8.5c0 1.7.3 4 1.9 5.7.1.1.1.2.1.4s-.1.3-.3.4l-4 2c-1.4.6-2.7 1.4-2.7 2.5C1 20.9 2.1 22 3.6 22h15.7c1.5 0 2.6-1.1 2.6-2.5 0-.7-1.1-1.8-2.7-2.5l-4-2c-.1-.1-.2-.2-.3-.4 0-.2 0-.3.1-.4 1.5-1.6 1.9-4 1.9-5.7.1-1.8-.3-7.5-5.4-7.5z"/>
+			</symbol>
+		</svg>
+
+		<script src="{{ resources_path }}/dist/app.js"></script>
+	</body>
+
+</html>

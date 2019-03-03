@@ -70,7 +70,7 @@ class SQLite implements SqlDb {
 	 *
 	 */
 
-	public function query(string $query) {
+	public function query(string $query) : self {
 		if (!$this->connection) {
 			$this->connect();
 		}
@@ -94,7 +94,8 @@ class SQLite implements SqlDb {
 			return $result;
 		}
 		else {
-			throw new \Exception("Query needs to be performed before trying to fetch.");
+			$last_error_msg = $this->connection->errorInfo()[2] ?? 'no error';
+			throw new \Exception("Previous query was not performed or resulted in error. Returned error: {$last_error_msg}");
 		}
 	}
 

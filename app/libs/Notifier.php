@@ -77,7 +77,7 @@ class Notifier {
 	 */
 
 	public function prepareBodyWithTable(array $fields, $lang = null) {
-		$style_table   = 'style="border-collapse:collapse;"';
+		$style_table   = 'style="width:100%; border-collapse:collapse;"';
 		$style_caption = 'style="padding: 10px 0 5px 0;"';
 		$style_content = 'style="padding-bottom: 10px; border-bottom: 1px solid #dedede;"';
 
@@ -88,7 +88,7 @@ class Notifier {
 		}
 
 		$body = "<html><body><table {$style_table}><tbody>";
-		foreach($fields as $label => $value) {
+		foreach ($fields as $label => $value) {
 			$body .= "<tr><td {$style_caption}><strong>{$label}:</strong></td></tr><tr><td {$style_content}>{$value}</td></tr>";
 		}
 		$body .= '</tbody></table></body></html>';
@@ -114,7 +114,7 @@ class Notifier {
 			$this->mailer->addReplyTo($reply_to);
 		}
 
-		foreach($bcc as $bcc_email) {
+		foreach ($bcc as $bcc_email) {
 			$this->mailer->addBCC($bcc_email);
 		}
 

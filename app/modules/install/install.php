@@ -28,7 +28,7 @@ $user = new User($db);
  */
 
 if ($router->getRequestChunk(1) === 'error') {
-	echo libs\Core::commonHtmlHeader('VIZU Installer: Error');
+	echo Core::commonHtmlHeader('VIZU Installer: Error');
 	echo '<h3>Error occured</h3><hr>';
 
 	switch (@$_SESSION['vizu']['install']['error']) {
@@ -90,7 +90,7 @@ elseif ($install->checkDbTables()) {
 		if (isset($_POST['op']) && $_POST['op'] === 'add_user') {
 			$status = false;
 			if (User::verifyPassword($_POST['password']) && User::verifyUsername($_POST['email'])) {
-				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('" . $_POST['email'] . "', '" . User::passwordEncode($_POST['password']) . "');");
+				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('{$_POST['email']}', '" . User::passwordEncode($_POST['password']) . "');");
 				if ($result) {
 					$status = true;
 				}

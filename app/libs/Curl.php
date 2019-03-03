@@ -7,8 +7,6 @@
 #
 # ==================================================================================
 
-namespace libs;
-
 class Curl {
 
 	private $handle; // cURL handle
@@ -31,7 +29,7 @@ class Curl {
 	 * @param array $options
 	 */
 
-	public function call(string $url, string $method = 'GET', array $data = [], array $options = []) {
+	public function call(string $url, string $method = 'GET', array $data = [], array $options = []) : self {
 		$this->handle = curl_init();
 		$options = $options + $this->default_options;
 

@@ -10,12 +10,13 @@
 	'scroll-down'            => 'Przewiń w dół',
 	'editable-fields'        => 'Poniższe pola są edytowalne z poziomu <a href="admin/">panelu administratora.</a>',
 	'example-form'           => 'Przykładowy formularz kontaktowy',
+	'repeatable-header'      => 'Przykład pól powtarzalnych',
 
 
 	# ------------------------------------------------------------------------------
 	# Page : 404
 
-	'page-not-found-title'   => '404 Nie znaleziono',
+	'page-not-found-title'   => 'Nie znaleziono',
 	'page-not-found-desc'    => 'Strona nie została znaleziona.',
 	'page-not-found-link'    => 'Strona główna',
 

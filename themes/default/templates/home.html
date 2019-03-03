@@ -7,9 +7,9 @@
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<meta name="description" content="{{ setting type='simple' id='site-description' name='Site description' desc='This could be edited in admin panel' max='160' }}">
+	<meta name="description" content="{{ simple id='site-description' name='Site description' desc='This could be edited in admin panel' max='160' }}">
 
-	<title>{{ setting type='simple' id='site-title' name='Site name' }}</title>
+	<title>{{ simple id='site-title' name='Site title' }}</title>
 
 	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700">
 	<link rel="stylesheet" type="text/css" href="{{ theme_path }}css/default.css">
@@ -18,13 +18,13 @@
 	<link rel="icon" sizes="32x32" href="{{ theme_path }}images/favicon32.png" type="image/png">
 	<link rel="icon" sizes="64x64" href="{{ theme_path }}images/favicon64.png" type="image/png">
 
-	<meta property="og:title" content="{{ setting id='site-title' }}">
+	<meta property="og:title" content="{{ simple id='site-title' }}">
 	<meta property="og:url" content="{{ site_path }}">
 	<meta property="og:image" content="{{ theme_path }}images/og-image.png">
-	<meta property="og:description" content="{{ setting id='site-description' }}">
+	<meta property="og:description" content="{{ simple id='site-description' }}">
 
 	<script>
-		var recaptchaSiteKey = '{{ setting type='simple' id='recaptcha-site-key' name='reCAPTCHA 3 Site Key' desc='Public key required to filter out spammers' }}';
+		var recaptchaSiteKey = "{{ simple id='recaptcha-site-key' name='reCAPTCHA 3 Site Key' desc='Public key required to filter out spammers' }}";
 	</script>
 
 </head>
@@ -37,6 +37,15 @@
 				<li class="Header__lang__en"><a href="./en/">EN</a></li>
 				<li class="Header__lang__pl"><a href="./pl/">PL</a></li>
 			</ul>
+
+			<svg class="Header__logo" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 120 120">
+				<style>
+					.vizu-logo-left { fill: #1f1e38; }
+					.vizu-logo-right { fill: #0095ff; }
+				</style>
+				<path class="vizu-logo-right" d="M58.5 60h31V10h29l-58 100z"/>
+				<path class="vizu-logo-left" d="M2.8 10h57.7v100z"/>
+			</svg>
 
 			<hgroup class="Header__text">
 				<h1>{{ lang id='welcome' }}</h1>
@@ -52,9 +61,9 @@
 		<div class="Inner">
 			<div class="Main__content">
 				<h2>{{ lang id='editable-fields' }}</h2>
-				<h3>{{ text type='simple' id='editable-header' name='Editable header' desc='Edit this in admin panel' }}</h3>
+				<h3>{{ simple id='editable-header' name='Editable header' desc='Edit this in admin panel' }}</h3>
 
-				<article>{{ text type='rich' id='editable-article' name='Editable article' desc='This text could also be edited' }}</article>
+				<article>{{ rich id='editable-article' name='Editable article' desc='This text could also be edited' }}</article>
 
 				<ul>
 					<li>Current language: {{ lang_code }}</li>
@@ -67,6 +76,11 @@
 				<h2>{{ lang id='example-form' }}</h2>
 
 				<form class="ContactForm" id="contact-form" method="post" action="{{ lang_code }}/contact">
+
+					<!--
+						The value of hidden field below
+						will be inserted automatically with JS script.
+					-->
 					<input type="hidden" name="recaptcha_token">
 
 					<label>
@@ -89,6 +103,18 @@
 					<p class="ContactForm__message" id="contact-form-info"></p>
 				</form>
 			</div>
+
+			<div class="Main__repeatable">
+				<h2>{{ lang id='repeatable-header' }}</h2>
+				<ul class="Tiles">
+					{{ repeatable id='tiles' name='Repeatable fields example' }}
+						<li>
+							<h3>{{ simple id='tile-header' name='Tile header' desc='Some example description' }}</h3>
+							<p>{{ rich id='tile-text' name='Tile text' }}</p>
+						</li>
+					{{ /repeatable }}
+				</ul>
+			</div>
 		</div>
 	</main>
 
@@ -98,7 +124,7 @@
 		</div>
 	</footer>
 
-	<script src="https://www.google.com/recaptcha/api.js?render={{ setting id='recaptcha-site-key' }}" async></script>
+	<script src="https://www.google.com/recaptcha/api.js?render={{ simple id='recaptcha-site-key' }}" async></script>
 	<script src="{{ theme_path }}scripts/jquery-3.3.1.min.js"></script>
 	<script src="{{ theme_path }}scripts/vizu-contact-form.js"></script>
 

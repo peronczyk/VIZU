@@ -9,29 +9,32 @@
  * =================================================================================
  */
 
-$tpl = new Template();
-$tpl->setTheme(Config::$THEME_NAME);
-
-$template_content = $tpl->getContent('home');
-$template_fields  = $tpl->getFields($template_content);
+$source_template_name = 'home';
+$template_file = __ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME . '/templates/' . $source_template_name . '.html';
+$home_page_template = new Template($template_file);
+$template_fields = $home_page_template->getTemplateFields();
 
 
 /**
- * If there are codded fields in template get their values from database
+ * If there are coded fields in template get their values from database
  */
 
 if (count($template_fields) > 0) {
 
 	// Get data from database for all fields
 	$result = $db->query("SELECT `id`, `content` FROM `fields` WHERE `template` = 'home' AND `language` = '{$lang->getActiveLangCode()}'");
-	$fields_data = $core->processArray($db->fetchAll($result), 'id');
+	$fields_unsorted_data = $db->fetchAll($result);
+	$fields_data = Template::setArrayKeysAsIds($fields_unsorted_data);
+
+	$field_handlers = new FieldHandlersWrapper($home_page_template, $dependency_container);
+	$field_handlers->preParse($fields_data);
 
 	if (is_array($fields_data) && count($fields_data) > 0) {
-
 		// Loop over fields from template
-		foreach($template_fields as $field_id => $field) {
+		foreach ($template_fields as $field) {
+			$field_id = $field['props']['id'] ?? null;
 			if (isset($fields_data[$field_id]['content'])) {
-				$tpl->assign([$field_id => $fields_data[$field_id]['content']]);
+				$home_page_template->assign([$field_id => $fields_data[$field_id]['content']]);
 			}
 		}
 	}
@@ -42,14 +45,13 @@ if (count($template_fields) > 0) {
  * Assign common fields that will be available in template
  */
 
-$tpl->assign([
+$home_page_template->assign([
 	'site_path'    => $router->site_path . '/',
 	'theme_path'   => Config::$THEMES_DIR . Config::$THEME_NAME . '/',
 	'app_path'     => Config::$APP_DIR,
 	'lang_code'    => $lang->getActiveLangCode(),
 	'db_connected' => (int)$db->isConnected(),
 	'db_queries'   => (int)$db->getQueriesNumber(),
-	'fields'       => print_r($template_fields, true), // For debug purposes
 ]);
 
 
@@ -57,7 +59,7 @@ $tpl->assign([
  * Parse and display
  */
 
-$parsed_html = $tpl->parse($template_content, $template_fields, $lang->translations);
+$parsed_html = $home_page_template->parse($lang->getTranslations());
 
 if (!empty($parsed_html)) {
 	echo $parsed_html;

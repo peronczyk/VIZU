@@ -7,6 +7,8 @@
 	<title>Page not found</title>
 
 	<style>
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+
 		body {
 			font-family: Roboto, Arial, sans-serif;
 		}
@@ -16,13 +18,22 @@
 			max-width: 500px;
 		}
 
+		h1 { margin-bottom: -10px; font-size: 80px; }
+		h2 { margin-bottom: 30px; font-size: 40px; }
+
+		p { margin-bottom: 10px; }
+
+		hr { margin-bottom: 30px; }
+
 		a { text-decoration: none; }
 		a:hover { text-decoration: underline; }
 	</style>
 </head>
 <body>
 	<div>
-		<h1>{{ lang id='page-not-found-title' }}</h1>
+		<h1>404</h1>
+		<h2>{{ lang id='page-not-found-title' }}</h2>
+		<hr>
 		<p>{{ lang id='page-not-found-desc' }}</p>
 		<p><a href="{{ site_path }}">&lsaquo; {{ lang id='page-not-found-link' }}</a></p>
 	</div>
