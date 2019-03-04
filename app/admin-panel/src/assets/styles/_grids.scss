@@ -1,0 +1,84 @@
+
+/*
+ * =================================================================================
+ *
+ * GRID SYSTEM BASED ON FLEX
+ *
+ * =================================================================================
+ */
+
+.Grid {
+	display: flex;
+	flex: 0 1 auto;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	&--top {
+		align-items: flex-start;
+	}
+
+	&--center {
+		align-items: center;
+	}
+
+	&--bottom {
+		align-items: flex-end;
+	}
+
+	[class*='Col-'] {
+		flex: 0 0 auto;
+
+		&.Col {
+			&--top {
+				align-self: flex-start;
+			}
+			&--center {
+				align-self: center;
+			}
+			&--bottom {
+				align-self: flex-end;
+			}
+		}
+	}
+}
+
+
+/* ---------------------------------------------------------------------------------
+ * COLUMN DEFINITIONS FOR GRID SYSTEM
+ * Example classname produced by mixin below: .Col-6@XL
+ */
+
+
+
+// Default screen size
+@include columns();
+
+// Screen size: Ultra large
+@include narrower-than(ul) {
+	@include columns('\\@UL');
+}
+
+// Screen size: Extra large
+@include narrower-than(xl) {
+	@include columns('\\@XL');
+}
+
+// Screen size: Large
+@include narrower-than(lg) {
+	@include columns('\\@LG');
+}
+
+// Screen size: Medium
+@include narrower-than(md) {
+	@include columns('\\@MD');
+}
+
+// Screen size: Small
+@include narrower-than(sm) {
+	@include columns('\\@SM');
+}
+
+// Screen size: Extra small
+@include narrower-than(xs) {
+	@include columns('\\@XS');
+}

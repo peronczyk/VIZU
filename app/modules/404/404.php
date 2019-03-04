@@ -9,25 +9,22 @@
  * =================================================================================
  */
 
-header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found', true, 404);
 
 $tpl = new Template();
-$tpl->setTheme(Config::$THEME_NAME);
+$tpl->setTemplatesDir(__ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME);
 
-if ($tpl->getTemplatePath('404')) {
-	$template_content = $tpl->getContent('404');
-	$template_fields  = $tpl->getFields($template_content);
-
+try {
 	$tpl->assign([
-		'site_path'   => $router->site_path . '/',
-		'theme_path'  => 'themes/' . Config::$THEME_NAME . '/',
-		'app_path'    => Config::$APP_DIR
+		'site_path'  => $router->site_path . '/',
+		'theme_path' => Config::$THEMES_DIR . Config::$THEME_NAME . '/',
+		'app_path'   => Config::$APP_DIR
 	]);
 
-	echo $tpl->parse($template_content, $template_fields, $lang->translations);
+	echo $tpl->parseFile('templates/404.html', $lang->getTranslations());
 }
 
-else {
+catch (Exception $e) {
 	echo '<h1>404 Not Found</h1>';
 	echo '<p>The page that you have requested could not be found.</p>';
 }

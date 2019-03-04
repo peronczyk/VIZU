@@ -150,6 +150,7 @@ button {
 		pointer-events: none;
 	}
 
+
 .Header {
 	display: flex;
 	align-items: center;
@@ -177,11 +178,20 @@ button {
 			font-weight: 700;
 		}
 
+	.Header__logo {
+		position: absolute;
+		top: 50px;
+		left: 50px;
+		width: 70px;
+		height: 70px;
+	}
+
 	.Header__text {
 		max-width: 500px;
 		will-change: opacity, transform;
 		animation: 1s ease-out 0s 1 slidein;
 	}
+
 
 .Main {
 	padding: 8vh 0;
@@ -203,6 +213,29 @@ button {
 		width: 50%;
 	}
 
+	.Main__repeatable {
+		width: 100%;
+	}
+
+
+.Tiles {
+	display: flex;
+	flex-wrap: wrap;
+	list-style-type: none;
+}
+
+	.Tiles li {
+		margin: 0 1px 1px 0;
+		padding: 30px;
+		width: calc(33.333% - 1px);
+		background-color: #fff;
+	}
+
+		.Tiles li h3 {
+			margin-top: 0;
+		}
+
+
 .Footer {
 	padding-top: 40px;
 	padding-bottom: 80px;
@@ -219,8 +252,16 @@ button {
 
 
 @media (max-width: 640px) {
+	h1 {
+		font-size: 40px;
+	}
+
 	.Header {
 		height: auto;
+	}
+
+	.Header__logo {
+		position: static;
 	}
 
 	.Main__content,

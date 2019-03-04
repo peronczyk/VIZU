@@ -1,0 +1,31 @@
+{
+  "name": "vizu-admin-panel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "dev": "webpack --mode=development --progress --colors --watch",
+    "build": "webpack --mode=production"
+  },
+  "author": "Bartosz Perończyk",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "axios": "^0.18.0",
+    "babel-loader": "^8.0.4",
+    "css-loader": "^1.0.0",
+    "node-sass": "^4.5.3",
+    "plon": "^1.1.4",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.0",
+    "vue": "^2.6.6",
+    "vue-loader": "^15.4.2",
+    "vue-router": "^3.0.1",
+    "vue-svg-loader": "^0.10.0",
+    "vue-template-compiler": "^2.4.2",
+    "vuex": "^3.0.1",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
+  }
+}

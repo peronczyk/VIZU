@@ -99,18 +99,28 @@ class Router {
 	public function getModuleToLoad() {
 		$first_request = $this->getFirstRequest();
 		if ($first_request) {
-			$module_file = \Config::$APP_DIR . 'modules/' . $first_request . '/' . $first_request . '.php';
-			if (file_exists($module_file)) return $module_file;
+			$module_file = Config::$APP_DIR . 'modules/' . $first_request . '/' . $first_request . '.php';
+			if (file_exists($module_file)) {
+				return $module_file;
+			}
 			else {
-				$error404_module_file = \Config::$APP_DIR . 'modules/404/404.php';
-				if (file_exists($error404_module_file)) return $error404_module_file;
-				else Core::error('Requested module "' . \Config::$DEFAULT_MODULE . '" and module "404" does not exist.', __FILE__, __LINE__, debug_backtrace());
+				$error404_module_file = Config::$APP_DIR . 'modules/404/404.php';
+				if (file_exists($error404_module_file)) {
+					return $error404_module_file;
+				}
+				else {
+					Core::error('Requested module "' . Config::$DEFAULT_MODULE . '" and module "404" does not exist.', __FILE__, __LINE__, debug_backtrace());
+				}
 			}
 		}
 		else {
-			$default_module_file = \Config::$APP_DIR . 'modules/' . \Config::$DEFAULT_MODULE . '/' . \Config::$DEFAULT_MODULE . '.php';
-			if (file_exists($default_module_file)) return $default_module_file;
-			else Core::error('Configured default module "' . \Config::$DEFAULT_MODULE . '" does not exist', __FILE__, __LINE__, debug_backtrace());
+			$default_module_file = Config::$APP_DIR . 'modules/' . Config::$DEFAULT_MODULE . '/' . Config::$DEFAULT_MODULE . '.php';
+			if (file_exists($default_module_file)) {
+				return $default_module_file;
+			}
+			else {
+				Core::error('Configured default module "' . Config::$DEFAULT_MODULE . '" does not exist', __FILE__, __LINE__, debug_backtrace());
+			}
 		}
 		return false;
 	}
@@ -121,9 +131,16 @@ class Router {
 	 */
 
 	public function getFirstRequest() {
-		return (isset($this->request[0]))
-			? $this->request[0]
-			: null;
+		return $this->getRequestChunk(0);
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Get specified element of the request
+	 */
+
+	public function getRequestChunk(int $number) {
+		return $this->request[$number] ?? null;
 	}
 
 
@@ -146,10 +163,12 @@ class Router {
 	 */
 
 	public function redirect($path, $add_request = false, $add_query = false) {
-		$redirect_url = $this->site_path . '/' . $path;
+		$redirect_url = trim($this->site_path, '/') . '/' . $path;
 
 		if ($add_request && count($this->request) > 0) {
-			if (substr($redirect_url, -1) != '/') $redirect_url .= '/';
+			if (substr($redirect_url, -1) != '/') {
+				$redirect_url .= '/';
+			}
 			$redirect_url .= implode('/', $this->request);
 		}
 		if ($add_query && !empty($_SERVER['QUERY_STRING'])) {

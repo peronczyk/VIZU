@@ -1,0 +1,65 @@
+/*
+ * Page transition
+ */
+.page {
+	&-enter-active {
+		animation: scale-in .5s forwards;
+	}
+
+	&-leave-to {
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+
+	&-leave-active {
+		animation: scale-out .5s forwards;
+	}
+}
+
+/*
+ * Fade transition
+ */
+.fade {
+	&-enter-active,
+	&-leave-active {
+		transition: .3s;
+	}
+
+	&-enter,
+	&-leave-to {
+		opacity: 0;
+	}
+}
+
+/*
+ * Appear transition
+ */
+.appear {
+	&-enter-active,
+	&-leave-active {
+		transition: .5s;
+	}
+
+	&-enter,
+	&-leave-to {
+		opacity: 0;
+		transform: scale(.9);
+	}
+}
+
+/*
+ * Slide right transition
+ */
+.slide-right {
+	&-enter-active,
+	&-leave-active {
+		transition: .3s;
+	}
+
+	&-enter,
+	&-leave-to {
+		opacity: 0;
+		transform: translateX(20px);
+	}
+}

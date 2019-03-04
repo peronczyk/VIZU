@@ -42,8 +42,13 @@ class User {
 		// Set up access level by checking if user is logged in
 
 		if (!empty($_SESSION['id']) && !empty($_SESSION['password'])) {
-			$result = $this->_db->query('SELECT `email`, `password` FROM `users` WHERE `id` = "' . (int)$_SESSION['id'] . '" LIMIT 1', true);
-			$user_data = $this->_db->fetch($result);
+			try {
+				$result = $this->_db->query("SELECT `email`, `password` FROM `users` WHERE `id` = '{$_SESSION['id']}' LIMIT 1");
+				$user_data = $this->_db->fetchAll($result);
+			}
+			catch (Exception $e) {
+				$user_data = [];
+			}
 
 			if (count($user_data) > 0) {
 				if ($_SESSION['password'] === $user_data[0]['password']) {
@@ -102,7 +107,7 @@ class User {
 	 * Verify login (email address)
 	 */
 
-	public function verifyUsername($username) {
+	public static function verifyUsername($username) {
 		return (filter_var($username, FILTER_VALIDATE_EMAIL) !== false);
 	}
 
@@ -111,7 +116,7 @@ class User {
 	 * Verify password
 	 */
 
-	public function verifyPassword($password) {
+	public static function verifyPassword($password) {
 		return strlen($password) > 6;
 	}
 
@@ -122,7 +127,7 @@ class User {
 	 * @return {string} salted password hash
 	 */
 
-	public function passwordEncode($password) {
+	public static function passwordEncode($password) {
 		return hash('sha256', $password . \Config::$PASSWORD_SALT);
 	}
 
@@ -137,26 +142,26 @@ class User {
 
 	public function login($email, $password) {
 		if (empty($email)) {
-			return 'Account login (email) not provided';
+			throw new Exception("Account login (email) not provided");
 		}
 		if (empty($password)) {
-			return 'Account password not provided';
+			throw new Exception("Account password not provided");
 		}
-		if (!$this->verifyUsername($email)) {
-			return 'Provided email address is not correct';
+		if (!self::verifyUsername($email)) {
+			throw new Exception("Provided email address is not correct");
 		}
 
 		$result = $this->_db->query('SELECT `id`, `password` FROM `users` WHERE `email` = "' . $email . '" LIMIT 1');
-		$user_data = $this->_db->fetch($result);
+		$user_data = $this->_db->fetchAll($result);
 
-		if (count($user_data) > 0 && $this->passwordEncode($password) === $user_data[0]['password']) {
+		if (count($user_data) > 0 && self::passwordEncode($password) === $user_data[0]['password']) {
 			$this->setAccess(1);
 			$_SESSION['id'] = $user_data[0]['id'];
 			$_SESSION['password'] = $user_data[0]['password'];
 			return true;
 		}
 		else {
-			return 'Incorrect login details were provided';
+			throw new Exception("Sorry, you entered an incorrect email address or password.");
 		}
 	}
 
@@ -178,7 +183,7 @@ class User {
 	 * letters and 2 digits at the end. One of the letters are uppercase.
 	 */
 
-	public function generatePassword(int $length = 10) {
+	public static function generatePassword(int $length = 10) {
 		// Length paramenter must be a multiple of 2
 		if (($length % 2) !== 0) {
 			$length++;

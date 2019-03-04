@@ -10,18 +10,19 @@
 	'scroll-down'            => 'Scroll down',
 	'editable-fields'        => 'The following fields are editable in the <a href="admin/">administration panel</a>',
 	'example-form'           => 'Example contact form',
+	'repeatable-header'      => 'Repeatable fields example',
 
 
 	# ------------------------------------------------------------------------------
 	# Page : 404
 
-	'page-not-found-title'   => '404 Not Found',
+	'page-not-found-title'   => 'Not Found',
 	'page-not-found-desc'    => 'The page that you have requested could not be found.',
 	'page-not-found-link'    => 'Home page',
 
 
 	# ------------------------------------------------------------------------------
-	# Forms labels
+	# Form labels
 
 	'form-send'              => 'Send message',
 	'form-label-email'       => 'Your e-mail address',

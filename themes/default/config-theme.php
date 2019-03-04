@@ -1,6 +1,9 @@
 <?php return [
 	// Contact form settings
 	'contact' => [
+		// Sender email address.
+		'from' => 'test@somedomain.com',
+
 		// ID of default user to send email via contact form.
 		'default_recipient' => 1,
 

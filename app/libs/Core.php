@@ -11,25 +11,20 @@
 
 class Core {
 
-	// Check if script is running as AJAX request
-	public static $ajax_loaded = false;
-
-
 	/** ----------------------------------------------------------------------------
 	 * Constructor
 	 */
 
 	public function __construct() {
-		if ($this->isDev()) {
+		if (self::isDebugMode()) {
 			$this->forceDisplayPhpErrors();
 		}
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) {
-			session_start();
-		}
-
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-			self::$ajax_loaded = true;
+			session_start([
+				'cookie_httponly' => true,
+				'cookie_secure' => Config::$FORCE_HTTPS
+			]);
 		}
 	}
 
@@ -46,6 +41,19 @@ class Core {
 
 
 	/** ----------------------------------------------------------------------------
+	 * Check if application is in forced debug mode or in auto debug mode
+	 * that is set automatically on development environments.
+	 */
+
+	public static function isDebugMode() : bool {
+		return (
+			Config::$DEBUG === true
+			|| (is_array(Config::$DEV_ENV_IP) && in_array($_SERVER['REMOTE_ADDR'], Config::$DEV_ENV_IP))
+		);
+	}
+
+
+	/** ----------------------------------------------------------------------------
 	 * Display critical errors
 	 *
 	 * @param string $msg
@@ -54,49 +62,30 @@ class Core {
 	 * @param array $debug - Pass here debug_backtrace()
 	 */
 
-	public static function error($msg, $file = null, $line = null, $debug = null) {
+	public static function error(string $msg, string $file = null, int $line = null, bool $debug = null) {
+		header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+		header('vizu-error-msg: ' . $msg);
 
 		// Hide server document root from file path
 		$document_root = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
 		$file = str_replace($document_root, '', $file);
 
-		if (self::$ajax_loaded === true) {
-			header('Content-type: application/json');
-			echo json_encode([
-				'error' => [
-					'str'  => $msg,
-					'file' => $file,
-					'line' => $line
-				]
-			]);
+		echo self::commonHtmlHeader('Critical error');
+		echo '<figure>;(</figure><h1>Something went<br>terribly wrong</h1><hr><p>' . $msg . '</p><ul>';
+
+		if (empty($debug)) {
+			echo '<li>File: <strong>' . $file . '</strong></li><li>Line: <strong>' . $line . '</strong></li>';
 		}
 		else {
-			echo self::commonHtmlHeader('Critical error');
-			echo '<figure>;(</figure><h1>Something went<br>terribly wrong</h1><hr><p>' . $msg . '</p><ul>';
-
-			if (empty($debug)) {
-				echo '<li>File: <strong>' . $file . '</strong></li><li>Line: <strong>' . $line . '</strong></li>';
-			}
-			else {
-				$debug[0]['file'] = str_replace($document_root, '', $debug[0]['file']);
-				echo '<li>Invoked by: ' . $debug[0]['file'] . ' (line: <strong>' . $debug[0]['line'] . '</strong>)</li>';
-				echo '<li>Occurs in: ' . $file . ' (line: <strong>' . $line . '</strong>)</li>';
-			}
-
-			echo '</ul>';
-			echo self::commonHtmlFooter();
+			$debug[0]['file'] = str_replace($document_root, '', $debug[0]['file']);
+			echo '<li>Invoked by: ' . $debug[0]['file'] . ' (line: <strong>' . $debug[0]['line'] . '</strong>)</li>';
+			echo '<li>Occurs in: ' . $file . ' (line: <strong>' . $line . '</strong>)</li>';
 		}
-		if ($headers_sent) ob_end_flush();
+
+		echo '</ul>';
+		echo self::commonHtmlFooter();
+
 		exit;
-	}
-
-
-	/** ----------------------------------------------------------------------------
-	 * Check if application is in development mode
-	 */
-
-	public function isDev() {
-		return (\Config::$DEBUG === true || (is_array(\Config::$DEV_IP) && in_array($_SERVER['REMOTE_ADDR'], \Config::$DEV_IP)));
 	}
 
 
@@ -104,32 +93,9 @@ class Core {
 	 * GETTER : Mtime
 	 */
 
-	public static function get_mtime() {
+	public static function getMtime() : float {
 		list($usec, $sec) = explode (' ', microtime());
 		return (float)$usec + (float)$sec;
-	}
-
-
-	/** ----------------------------------------------------------------------------
-	 * Change default keys in array to $key_name values taken from inside the array
-	 *
-	 * @param array $array
-	 * @param string $key_name
-	 *
-	 * @return array
-	 */
-
-	public function processArray($array, $key_name) {
-		if (!is_array($array)) return false;
-
-		$processed_array = [];
-		foreach($array as $val) {
-			if (isset($val[$key_name])) {
-				$processed_array[$val[$key_name]] = $val;
-				unset($processed_array[$val[$key_name]][$key_name]);
-			}
-		}
-		return $processed_array;
 	}
 
 
@@ -139,7 +105,7 @@ class Core {
 	 * @return string
 	 */
 
-	public static function commonHtmlHeader($title = 'VIZU') {
+	public static function commonHtmlHeader($title = 'VIZU') : string {
 		return '<!DOCTYPE html><html>
 			<head>
 				<meta charset="utf-8">
@@ -189,7 +155,7 @@ class Core {
 	 * @return string
 	 */
 
-	public static function commonHtmlFooter() {
+	public static function commonHtmlFooter() : string {
 		return '</div></main></body></html>';
 	}
 

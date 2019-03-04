@@ -9,25 +9,21 @@
  * =================================================================================
  */
 
+$rest_store = new RestStore();
+
 $contact_config = $theme_config['contact'];
 
 if (!is_array($contact_config)) {
-	$ajax
-		->set('message', 'Theme configuration file not found or does not contain contact form configuration')
-		->send();
+	$rest_store
+		->set('error', 'Theme configuration file not found or does not contain contact form configuration')
+		->output();
 }
 
 if (!is_array($contact_config['fields'])) {
-	$ajax
-		->set('message', 'Theme contact configuration does not contain fields setup')
-		->send();
+	$rest_store
+		->set('error', 'Theme contact configuration does not contain fields setup')
+		->output();
 }
-
-
-$ajax = new Ajax();
-$tpl  = new Template();
-
-$tpl->setTheme(Config::$THEME_NAME);
 
 
 /**
@@ -68,11 +64,11 @@ foreach ($contact_config['fields'] as $form_field) {
  */
 
 if (count($contact_fields_errors) > 0) {
-	$ajax
+	$rest_store
 		->set('success', false)
 		->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-form-invalid', 'One or more fields have an error.'))
 		->set('form-errors', $contact_fields_errors)
-		->send();
+		->output();
 }
 
 
@@ -81,8 +77,8 @@ if (count($contact_fields_errors) > 0) {
  */
 
 if (!empty($contact_config['recaptcha_secret'])) {
-	$curl = new libs\Curl();
-	if ($core->isDev()) {
+	$curl = new Curl();
+	if (Core::isDebugMode()) {
 		$curl->disableSsl();
 	}
 
@@ -93,18 +89,18 @@ if (!empty($contact_config['recaptcha_secret'])) {
 		$recaptcha_result = $recaptcha3->validate($token);
 	}
 	catch (Exception $e) {
-		return $ajax
+		return $rest_store
 			->set('success', false)
 			->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-error', 'Anti-spam system error.') . ' ' . $e->getMessage())
-			->send();
+			->output();
 	}
 
 	// Stop code execution if reCAPTCHA validator recognize user as not a human
 	if ($recaptcha_result === false) {
-		return $ajax
+		return $rest_store
 			->set('success', false)
 			->set('error', $lang->_t('mailer-not-sent', 'Message not sent') . '<br>' . $lang->_t('mailer-captcha-invalid', 'You have been recognized as spammer.'))
-			->send();
+			->output();
 	}
 }
 
@@ -117,9 +113,9 @@ $bcc = [];
 $main_recipient = null;
 
 $result = $db->query('SELECT `id`, `email` FROM `users`');
-$users  = $db->fetch($result);
+$users  = $db->fetchAll($result);
 
-foreach($users as $user) {
+foreach ($users as $user) {
 	if ($user['id'] == $contact_config['default_recipient']) {
 		$main_recipient = $user['email'];
 		if ($contact_config['inform_all'] !== true) {
@@ -132,25 +128,27 @@ foreach($users as $user) {
 }
 
 if (!$main_recipient) {
-	$ajax
-		->set('message', $lang->_t('mailer-recipient-error', 'Message recipient not configured'))
-		->send();
+	$rest_store
+		->set('error', $lang->_t('mailer-recipient-error', 'Message recipient not configured'))
+		->output();
 }
 
 if (count($contact_fields_errors) > 0) {
-	$ajax
+	$rest_store
 		->set('form-errors', $contact_fields_errors)
-		->send();
+		->output();
 }
 
 
 /**
- * Prepare message body
+ * Prepare message body. There is no need to validate POST elements because
+ * PHPMailer has its own validation.
  */
 
 $content_fields = [];
 foreach ($contact_config['fields'] as $form_field) {
-	$content_fields[$lang->_t($form_field['label'])] = $_POST[$form_field['name']];
+	$field_text_label = $lang->_t($form_field['label'] ?? $form_field['name']);
+	$content_fields[$field_text_label] = $_POST[$form_field['name']];
 }
 
 
@@ -162,16 +160,16 @@ try {
 	$notifier = new Notifier($contact_config);
 	$notifier->notify(
 		"[{$router->domain}] Contact message", // Subject
-		$notifier->prepareBodyWithTable($content_fields, $lang->get()), // Body
+		$notifier->prepareBodyWithTable($content_fields, $lang->getActiveLangCode()), // Body
 		$main_recipient, // Recipient
 		$_POST['email'], // Reply to
 		$bcc // BCC
 	);
 
-	$result_message = $lang->_t('mailer-sent', 'Message sent');
+	$rest_store->set('message', $lang->_t('mailer-sent', 'Message sent'));
 }
 catch (Exception $e) {
-	$result_message = $lang->_t('mailer-error', 'Error while sending message:') . ' ' . $e->getMessage();
+	$rest_store->set('error', $lang->_t('mailer-error', 'Error while sending message:') . ' ' . $e->getMessage());
 }
 
 
@@ -179,6 +177,4 @@ catch (Exception $e) {
  * Output AJAX response
  */
 
-$ajax
-	->set('message', $result_message)
-	->send();
+$rest_store->output();

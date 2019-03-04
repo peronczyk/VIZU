@@ -27,8 +27,8 @@ $user = new User($db);
  * Display error after performing action that fails
  */
 
-if ($router->request[1] === 'error') {
-	echo libs\Core::commonHtmlHeader('VIZU Installer: Error');
+if ($router->getRequestChunk(1) === 'error') {
+	echo Core::commonHtmlHeader('VIZU Installer: Error');
 	echo '<h3>Error occured</h3><hr>';
 
 	switch (@$_SESSION['vizu']['install']['error']) {
@@ -87,10 +87,10 @@ elseif ($install->checkDbTables()) {
 	else {
 
 		// Action: Add user to database
-		if ($_POST['op'] === 'add_user') {
+		if (isset($_POST['op']) && $_POST['op'] === 'add_user') {
 			$status = false;
-			if ($user->verifyPassword($_POST['password']) && $user->verifyUsername($_POST['email'])) {
-				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('" . $_POST['email'] . "', '" . $user->passwordEncode($_POST['password']) . "');");
+			if (User::verifyPassword($_POST['password']) && User::verifyUsername($_POST['email'])) {
+				$result = $db->query("INSERT INTO `users` (email, password) VALUES ('{$_POST['email']}', '" . User::passwordEncode($_POST['password']) . "');");
 				if ($result) {
 					$status = true;
 				}
@@ -102,7 +102,7 @@ elseif ($install->checkDbTables()) {
 			else {
 				$_SESSION['vizu']['install'] = [
 					'error' => 2,
-					'message' => $db->getConn()->error
+					'message' => $db->getConnection()->error
 				];
 				header('location: ' . $router->site_path . '/install/error');
 			}
@@ -138,14 +138,23 @@ elseif ($install->checkDbTables()) {
 else {
 
 	// Action : Put data in to database
-	if ($_POST['op'] === 'install') {
-		$status = $db->importFile($module_path . 'db.sql');
+	if (isset($_POST['op']) && $_POST['op'] === 'install') {
+		$db_install_file = 'db.sql';
 
-		if ($status) header('location: ' . $router->site_path . '/install');
+		try {
+			$status = $install->importSqlFile(__DIR__ . '/' . $db_install_file);
+		}
+		catch (Exception $e) {
+			Core::error($e->getMessage(), __FILE__, __LINE__, debug_backtrace());
+		}
+
+		if ($status) {
+			header('location: ' . $router->site_path . '/install');
+		}
 		else {
 			$_SESSION['vizu']['install'] = [
 				'error'   => 1,
-				'message' => $db->getConn()->error
+				'message' => $db->getConnection()->error
 			];
 			header('location: ' . $router->site_path . '/install/error');
 		}
@@ -159,7 +168,7 @@ else {
 			<hr>
 			<h1>VIZU is <u>not</u> installed</h1>
 			<h2>Proceed installation?</h2>
-			<p>All data will be inserted to database "<?php echo $db->getDbName(); ?>".</p>
+			<p>All data will be inserted into <?php echo Config::$DB_TYPE; ?> database "<?php echo $db->getDbName(); ?>".</p>
 
 			<form action="" method="post">
 				<input type="hidden" name="op" value="install">

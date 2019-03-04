@@ -10,79 +10,30 @@
  */
 
 class Template {
+	private $template_file_path;
+	private $template_file_content;
+	public $template_fields;
 
 	/**
-	 * Assignement storage. This values will be parsed in to the template
-	 * eg.: {{ text id='foo'}} will be changed with 'foo' => 'Bar'
+	 * Basic assignement storage. This keys and values will be parsed at the
+	 * beginning of parsing process.
+	 * @example {{ some_name }} will be changed to 'Lorem ipsum' if $vars will
+	 *   contain 'some_name' => 'Lorem ipsum' array element.
 	 */
-	public $vars = array();
-
-	/**
-	 * Stores theme name (folder)
-	 */
-	private $theme;
-
-	/**
-	 * Templates direcotory name that is inside each theme
-	 */
-	private $tpl_dir = 'templates/';
-
-	/**
-	 * Template files extension
-	 */
-	private $tpl_ext = '.html';
+	public $vars = [];
 
 
 	/** ----------------------------------------------------------------------------
-	 * SETTER : Theme direcory name
+	 * Constructor
 	 */
 
-	public function setTheme(string $theme_name) {
-		$this->theme = $theme_name;
-	}
-
-
-	/** ----------------------------------------------------------------------------
-	 * Check if template exists
-	 *
-	 * @return String|false - Return template path or false if not found
-	 */
-
-	public function getTemplatePath(string $file) {
-		if (empty($this->theme)) {
-			Core::error('Theme not set', __FILE__, __LINE__, debug_backtrace());
+	public function __construct(string $template_file_path) {
+		if (!file_exists($template_file_path)) {
+			throw new Exception("Template file does not exist: {$template_file_path}");
 		}
-
-		$file_path = \Config::$THEMES_DIR . $this->theme . '/' . $this->tpl_dir . $file . $this->tpl_ext;
-		if (!file_exists($file_path)) {
-			return false;
-		}
-
-		return $file_path;
-	}
-
-
-	/** ----------------------------------------------------------------------------
-	 * Load field class
-	 *
-	 * @return String
-	 */
-
-	public function loadFieldClass(string $field_name) {
-		$class_file = 'app/fields/' . $field_name . '.php';
-		if (file_exists($class_file)) {
-			require_once $class_file;
-			$class_name = 'fields\\' . $field_name;
-			if (class_exists($class_name)) {
-				return new $class_name();
-			}
-			else {
-				return 'Template field handling file does not have proper class: "' . $field_name . '"';
-			}
-		}
-		else {
-			return 'Template field handling file does not exist: "' . $class_file . '"';
-		}
+		$this->template_file_path = $template_file_path;
+		$this->template_file_content = file_get_contents($this->template_file_path);
+		$this->template_fields = self::getFieldsFromString($this->template_file_content);
 	}
 
 
@@ -90,15 +41,19 @@ class Template {
 	 * Get contents of template file
 	 */
 
-	public function getContent(string $file) {
-		$file_path = $this->getTemplatePath($file);
+	public function getTemplateFileContent() {
+		return $this->template_file_content;
+	}
 
-		if (!$file_path) {
-			Core::error('Template file does not exist: ' . $file_path, __FILE__, __LINE__, debug_backtrace());
-			return false;
-		}
 
-		return file_get_contents($file_path);
+	/** ----------------------------------------------------------------------------
+	 * Replace template file content stored in this instance.
+	 * Usefull for pre-parsing template.
+	 */
+
+	public function replaceTemplateFileContent(string $new_content) : self {
+		$this->template_file_content = $new_content;
+		return $this;
 	}
 
 
@@ -106,10 +61,46 @@ class Template {
 	 * Assign vars to parse
 	 */
 
-	public function assign(array $array) {
-		foreach($array as $key => $val) {
+	public function assign(array $array) : self {
+		foreach ($array as $key => $val) {
 			$this->vars[$key] = $val;
 		}
+
+		return $this;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Get assigned vars
+	 */
+
+	public function getAssignedVars() {
+		return $this->vars;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Change default keys in array to $key_name values taken from inside the array
+	 *
+	 * @param array $array
+	 * @param string $key_name
+	 *
+	 * @return array
+	 */
+
+	public static function setArrayKeysAsIds(array $array, string $key_name = 'id') : array {
+		if (!is_array($array)) {
+			return false;
+		}
+
+		$processed_array = [];
+		foreach ($array as $val) {
+			if (isset($val[$key_name])) {
+				$processed_array[$val[$key_name]] = $val;
+				unset($processed_array[$val[$key_name]][$key_name]);
+			}
+		}
+		return $processed_array;
 	}
 
 
@@ -120,34 +111,28 @@ class Template {
 	 * @return Array
 	 */
 
-	public function getFields(string $content) {
+	public static function getFieldsFromString(string $content) : array {
 		$num_matches = preg_match_all('/{{(.*?)}}/', $content, $matches);
+		list($full_tags, $field_contents) = $matches;
+
 		$fields = [];
 
-		foreach($matches[1] as $key => $val) {
-			$val    = trim($val);
-			$chunks = array_filter(explode(' ', $val));
-			$field  = [];
+		foreach ($field_contents as $key => $val) {
+			$field = [];
 
-			if (in_array($chunks[0], \Config::$FIELD_CATEGORIES['content']) or in_array($chunks[0], \Config::$FIELD_CATEGORIES['other'])) {
-				$field['category'] = $chunks[0];
+			$field['type'] = explode(' ', trim($val), 2)[0];
+			$field['tag'] = $full_tags[$key];
 
-				// Get params of the field
-
-				$num_params = preg_match_all("/([a-z]+)='([^']*)'/", $val, $params);
-				if (is_array($params)) {
-					foreach ($params[1] as $p => $param) {
-						$field[$params[1][$p]] = $params[2][$p];
-					}
-				}
-
-				// Add field to array if has ID and there is no existing entry with this ID
-
-				if (!empty($field['id']) && !isset($fields[$field['id']])) {
-					$fields[$field['id']] = $field;
-					unset($fields[$field['id']]['id']); // Remove additional ID from params array
-				}
+			/**
+			 * Get properties of the field
+			 * @example foo='bar' becomes array ['foo' => 'bar']
+			 */
+			$num_props = preg_match_all("/([a-z]+)='([^']*)'/", $val, $props);
+			if ($num_props) {
+				$field['props'] = array_combine($props[1], $props[2]);
 			}
+
+			array_push($fields, $field);
 		}
 
 		return $fields;
@@ -155,47 +140,108 @@ class Template {
 
 
 	/** ----------------------------------------------------------------------------
-	 * Parse template
-	 *
-	 * @param String $content - HTML code with template tags: {{ something }}
-	 * @param Array $fields
-	 * @param Array $translations
+	 * Get template fields array
 	 */
 
-	public function parse(string $content, array $fields, array $translations = []) {
+	public function getTemplateFields() : array {
+		return $this->template_fields;
+	}
 
-		// Prepare all fields
-		// @TODO: needed to be replaced
-		// http://stackoverflow.com/questions/5017582/php-looping-template-engine-from-scratch
 
+	/** ----------------------------------------------------------------------------
+	 * Remove specified field types from template fields
+	 */
+
+	public function removeFieldType($type) : self {
+		$processed_fields = [];
+
+		foreach($this->template_fields as $key => $field) {
+			if ($field['type'] != $type) {
+				array_push($processed_fields, $field);
+			}
+		};
+
+		$this->template_fields = $processed_fields;
+
+		return $this;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 *
+	 */
+
+	public function iterateTemplateFieldsType(string $type, callable $callback) : self {
+		foreach ($this->template_fields as $key => $field) {
+			if ($field['type'] == $type) {
+				$callback($key, $field);
+			}
+		}
+
+		return $this;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 *
+	 */
+
+	public function removeDuplicateTemplateFieldsByType(string $type) : self {
+		$ids_found = [];
+		$remove_count = 0;
+
+		$this->iterateTemplateFieldsType($type, function($key, $field) use (&$ids_found, &$remove_count) {
+			$field_id = $field['props']['id'] ?? null;
+
+			if ($field_id && !in_array($field_id, $ids_found)) {
+				array_push($ids_found, $field_id);
+			}
+			else {
+				unset($this->template_fields[$key]);
+				$remove_count++;
+			}
+		});
+
+		if ($remove_count) {
+			$this->template_fields = array_values($this->template_fields);
+		}
+
+		return $this;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Parse string with provided array of values in format 'id' => 'value'
+	 * @link http://stackoverflow.com/questions/5017582/php-looping-template-engine-from-scratch
+	 */
+
+	public static function parseStringWithValues(string $string, array $fields, array $vars) {
 		$patterns     = [];
 		$replacements = [];
 		$n = 0;
 
-		foreach($fields as $id => $field) {
-
-			// Match anything like {{ category something='something' id='id' somethin='something' }}
-			// (*UTF8) - selves problem with non latin characters in values
-			// \p{L}   - searches any character from unicode.
-			// /u      - allow searching for all unicode characters
-			$patterns[$n] = '/{{ ' . $field['category'] . '[\p{L}0-9\'=\-_\:\.\(\)\s]+id=\'' . $id . '\'[\p{L}0-9\'=\-_\:\.\(\)\s]+}}/u';
-
-			switch($field['category']) {
-				case 'lang':
-					if (isset($translations[$id])) $replacements[$n] = $translations[$id];
-					else $replacements[$n] = $id;
-					break;
-
-				default:
-					if (isset($this->vars[$id])) $replacements[$n] = $this->vars[$id];
-					else $replacements[$n] = strtoupper($field['category'] . ':' . $id);
-					break;
+		foreach ($fields as $field) {
+			if (!isset($field['props']) || !isset($field['props']['id'])) {
+				continue;
 			}
+
+			$field_type = $field['type'];
+			$field_id   = $field['props']['id'];
+
+			/**
+			 * Match anything like {{ type something='something' id='id' somethin='something' }}
+			 * (*UTF8) - selves problem with non latin characters in values
+			 * \p{L}   - searches any character from unicode.
+			 * /u      - allow searching for all unicode characters
+			 */
+			$patterns[$n] = '/{{ ' . $field_type . '[\p{L}0-9\'=\-_\:\.\(\)\s]+id=\'' . $field_id . '\'[\p{L}0-9\'=\-_\:\.\(\)\s]+}}/u';
+
+			$replacements[$n] = $vars[$field_id] ?? "<!-- {$field_type} : {$field_id} -->";
 			$n++;
 		}
 
-		if (is_array($this->vars)) {
-			foreach($this->vars as $key => $var) {
+		if (is_array($vars)) {
+			foreach ($vars as $key => $var) {
 				if (!empty($key)) {
 					$patterns[] = '/{{ ' . $key . ' }}/';
 					$replacements[] = $var;
@@ -203,7 +249,7 @@ class Template {
 			}
 		}
 
-		$parsed = preg_replace($patterns, $replacements, $content);
+		$parsed = preg_replace($patterns, $replacements, $string);
 		$preg_status = preg_last_error();
 
 		// If regular expression was performed without errors
@@ -225,9 +271,26 @@ class Template {
 					? $preg_status_list[$preg_status] . ' [' . $preg_status . ']'
 					: 'Unknown error [' . $preg_status . ']';
 			}
-			else $preg_status_text = $preg_status;
+			else {
+				$preg_status_text = $preg_status;
+			}
 
-			Core::error('Unable to display template becouse of error in parsing function. Returned error:<br>' . $preg_status_text, __FILE__, __LINE__, debug_backtrace());
+			throw new Exception("Unable to display template because of error in parsing function. Returned error:<br>{$preg_status_text}");
 		}
+
+		return false;
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Parse template stored in class state
+	 */
+
+	public function parse(array $additional_vars = []) {
+		$content = $this->getTemplateFileContent();
+		$fields  = $this->getTemplateFields();
+		$vars    = array_merge($this->getAssignedVars(), $additional_vars);
+
+		return self::parseStringWithValues($content, $fields, $vars);
 	}
 }
