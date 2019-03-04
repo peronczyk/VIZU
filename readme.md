@@ -1,6 +1,6 @@
 # VIZU 2.0.0
 
-Simple, dependency-free CMS system that allows for quick implementation of simple Web pages without having to configure anything in the administration panel. VIZU have native multi-language support.
+Simple, dependency-free CMS system that allows for quick implementation of landing pages without having to configure anything in the administration panel. VIZU have native multi-language support.
 
 ---
 ## Installation
