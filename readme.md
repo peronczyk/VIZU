@@ -1,6 +1,15 @@
-# VIZU 2.0.0
+# VIZU 2.0.1
 
-Simple, dependency-free CMS system that allows for quick implementation of landing pages without having to configure anything in the administration panel. VIZU have native multi-language support.
+The simplest landing page editor you can imagine. It is a dependency-free CMS system that allows for quick implementation of one-page websites without having to configure anything in the administration panel.
+
+---
+## Features:
+
+* Works out of the box,
+* very fast page load,
+* easy installation without the need to configure a dedicated MySQL database,
+* native multi-language support,
+* native support for easy implementation of contact forms with reCaptcha 3 spam detection.
 
 ---
 ## Installation
@@ -13,9 +22,44 @@ Simple, dependency-free CMS system that allows for quick implementation of landi
 ## Creating theme
 
 1. Start with creating theme directory in _themes/_.
-2. Create direcory "templates" inside your theme directory.
-3. HTML code should be put in "home.html" in "templates" directory.
-4. Every other aspect of your theme depends on your preferences.
+2. Create directory "templates" inside your theme directory.
+3. HTML code should be put in "home.html" file located in "templates" directory (eg: /themes/yourtheme/templates/home.html).
+4. Every other aspect of your theme depends on your preferences. You can use regular CSS, task runners etc.
+
+
+### Simple example code of theme template:
+
+```
+<!DOCTYPE html>
+<html lang="{{ lang_code }}">
+    <head>
+        <title>{{ simple id='page-title' name='Page title' }}</title>
+    </head>
+
+    <body>
+        <header>
+            <h1>{{ simple id='page-header' name='Page header' }}</h1>
+            {{ rich id='page-description' name='Page description' }}
+        </header>
+
+        <main>
+            <article>
+                {{ rich id='article-content' name='Article content' }}
+            </article>
+        </main>
+
+        <footer>
+            <ul>
+                {{ repeatable id='footer-links' name='Footer links' }}
+                    <li><a href="{{ simple id='href' name='Link href' }}">
+                        {{ simple id='content' name='Link content' }}
+                    </a></li>
+                {{ /repeatable }}
+            </ul>
+        </footer>
+    </body>
+</html>
+```
 
 
 ### Available field types:
@@ -57,7 +101,8 @@ To mark a place in the template where you want content to be managed in the admi
     ```
 
 
-### Predefined fields:
+### Predefined fields available in template files:
 
 * `{{ site_path }}`
 * `{{ theme_path }}`
+* `{{ lang_code }}`

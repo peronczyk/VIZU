@@ -33,21 +33,18 @@ class Repeatable {
 
 	public static function getSubfieldsValuesFromFieldContent(string $saved_data) {
 		$field_content_data = json_decode($saved_data, true);
-		$groups_number = $field_content_data['groups-number'] ?? null;
-
-		if (!$groups_number) {
-			return [0, []];
-		}
-
-		unset($field_content_data['groups-number']);
-
+		$groups_number = $field_content_data['groups-number'] ?? 0;
 		$values = [];
-		foreach ($field_content_data as $key => $val) {
-			$key_chunks = explode('__', $key);
-			if (!isset($values[$key_chunks[0]])) {
-				$values[$key_chunks[0]] = [];
+
+		if ($groups_number) {
+			unset($field_content_data['groups-number']);
+
+			foreach ($field_content_data as $key => $val) {
+				if (!empty($val)) {
+					list($val_name, $val_num) = explode('__', $key);
+					$values[$val_name][$val_num] = $val;
+				}
 			}
-			array_push($values[$key_chunks[0]], $val);
 		}
 
 		return [

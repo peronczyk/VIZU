@@ -42,7 +42,7 @@ if (count($template_fields) > 0) {
 
 
 /**
- * Assign common fields that will be available in template
+ * Assign common fields that will be available in the template files
  */
 
 $home_page_template->assign([

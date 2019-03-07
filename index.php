@@ -16,7 +16,7 @@
  */
 
 
-define('VIZU_VERSION', '2.0.0');
+define('VIZU_VERSION', '2.0.1');
 define('__ROOT__', __DIR__);
 
 
