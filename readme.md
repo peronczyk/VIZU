@@ -1,4 +1,4 @@
-# VIZU 2.0.1
+# VIZU 2.0.2
 
 The simplest landing page editor you can imagine. It is a dependency-free CMS system that allows for quick implementation of one-page websites without having to configure anything in the administration panel.
 

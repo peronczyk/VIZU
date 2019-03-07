@@ -16,7 +16,7 @@
  */
 
 
-define('VIZU_VERSION', '2.0.1');
+define('VIZU_VERSION', '2.0.2');
 define('__ROOT__', __DIR__);
 
 
@@ -30,6 +30,10 @@ define('__ROOT__', __DIR__);
 
 if (file_exists('config-override.php')) {
 	require_once 'config-override.php';
+}
+
+if (file_exists('config-override-dev.php')) {
+	require_once 'config-override-dev.php';
 }
 
 

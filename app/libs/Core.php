@@ -17,7 +17,7 @@ class Core {
 
 	public function __construct() {
 		if (self::isDebugMode()) {
-			$this->forceDisplayPhpErrors();
+			self::forceDisplayPhpErrors();
 		}
 
 		if (!function_exists('session_status') || session_status() == PHP_SESSION_NONE) {
@@ -26,6 +26,10 @@ class Core {
 				'cookie_secure' => Config::$FORCE_HTTPS
 			]);
 		}
+
+		if (Config::$FORCE_HTTPS) {
+			self::forceUseOfHttps();
+		}
 	}
 
 
@@ -33,10 +37,25 @@ class Core {
 	 * Force display PHP errors
 	 */
 
-	public function forceDisplayPhpErrors() {
+	public static function forceDisplayPhpErrors() {
 		ini_set('display_errors', '1');
 		ini_set('display_startup_errors', '1');
 		error_reporting(E_ALL);
+	}
+
+
+	/** ----------------------------------------------------------------------------
+	 * Force to use secure connection
+	 */
+
+	public static function forceUseOfHttps() {
+		if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
+			header('Strict-Transport-Security: max-age=31536000');
+		}
+		else {
+			header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], true, 301);
+			die();
+		}
 	}
 
 
