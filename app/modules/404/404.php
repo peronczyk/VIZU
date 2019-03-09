@@ -11,17 +11,18 @@
 
 header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found', true, 404);
 
-$tpl = new Template();
-$tpl->setTemplatesDir(__ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME);
+$source_template_name = '404';
+$template_file = __ROOT__ . '/' . Config::$THEMES_DIR . Config::$THEME_NAME . '/templates/' . $source_template_name . '.html';
 
 try {
+	$tpl = new Template($template_file);
 	$tpl->assign([
 		'site_path'  => $router->site_path . '/',
 		'theme_path' => Config::$THEMES_DIR . Config::$THEME_NAME . '/',
 		'app_path'   => Config::$APP_DIR
 	]);
 
-	echo $tpl->parseFile('templates/404.html', $lang->getTranslations());
+	echo $tpl->parse($lang->getTranslations());
 }
 
 catch (Exception $e) {
